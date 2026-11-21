@@ -18,6 +18,7 @@ import { HRPage } from './pages/HRPage'
 import { KnowledgePage } from './pages/KnowledgePage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { LoginPage } from './pages/LoginPage'
+import { AboutPage } from './pages/AboutPage'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { data, isLoading, isError } = useMe()
@@ -48,6 +49,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/logowanie" element={<LoginPage />} />
+      <Route path="/o-projekcie" element={<AboutPage />} />
       <Route element={<RequireAuth><Layout /></RequireAuth>}>
         <Route index element={<DashboardPage />} />
         <Route path="pracownicy" element={<EmployeesPage />} />

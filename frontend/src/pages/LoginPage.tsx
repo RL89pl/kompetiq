@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { api, ensureCsrf } from '../api/client'
 import { qk } from '../api/hooks'
 import type { Me } from '../api/types'
@@ -43,7 +43,8 @@ export function LoginPage() {
             po rozmowę oceniającą i plan rozwoju.
           </p>
         </div>
-        <p className="text-sm text-white/60">Asystent AI porządkuje i podpowiada. Ocenę wystawia przełożony.</p>
+        <p className="text-sm text-white/60">Asystent AI porządkuje i podpowiada. Ocenę wystawia przełożony.{' '}
+          <Link to="/o-projekcie" className="font-bold text-white underline underline-offset-2">Dokumentacja projektu</Link></p>
       </div>
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm space-y-5" aria-labelledby="login-title">
@@ -53,6 +54,7 @@ export function LoginPage() {
           <Field label="Hasło">{(id) => <Input id={id} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}</Field>
           <ErrorList error={error} />
           <Button type="submit" busy={busy} className="w-full justify-center py-2.5">Zaloguj się</Button>
+          <p className="text-center text-sm"><Link to="/o-projekcie" className="underline underline-offset-2">O projekcie i dokumentacja</Link></p>
         </form>
       </div>
     </div>

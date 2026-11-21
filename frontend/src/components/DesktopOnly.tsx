@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { CompassMark } from './Layout'
 
 /**
@@ -18,12 +19,14 @@ export function isSmartphone() {
 
 export function DesktopOnly({ children }: { children: ReactNode }) {
   const [phone, setPhone] = useState(isSmartphone)
+  const { pathname } = useLocation()
   useEffect(() => {
     const on = () => setPhone(isSmartphone())
     window.addEventListener('resize', on)
     return () => window.removeEventListener('resize', on)
   }, [])
-  if (!phone) return <>{children}</>
+  // publiczna dokumentacja projektu jest czytelna także na telefonie
+  if (!phone || pathname === '/o-projekcie') return <>{children}</>
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
       <CompassMark className="size-12" />
