@@ -1,0 +1,31 @@
+name: Deploy (produkcja)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script: |
+            set -e
+            cd /srv/services/kompetiq
+            grep -q '^WEB_PORT=' .env || { echo "Brak WEB_PORT w .env – zły katalog?"; exit 1; }
+
+            git fetch origin main
+            git reset --hard origin/main
+
+            docker compose up --build -d
+
+            docker compose exec -T web python manage.py migrate --noinput
+            docker compose exec -T web python manage.py collectstatic --noinput
+            docker compose exec -T web python manage.py import_competency_model --if-missing
+            docker compose exec -T web python manage.py ingest_legal_docs

@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import "@fontsource/atkinson-hyperlegible-next/400.css";
+@import "@fontsource/atkinson-hyperlegible-next/700.css";
+@import "@fontsource-variable/literata";
+
+@theme {
+  --font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --font-serif: "Literata Variable", Georgia, serif;
+
+  --color-ink: #17233b;
+  --color-ink-soft: #4a5670;
+  --color-paper: #f7f8fb;
+  --color-rule: #dde2ea;
+  --color-rule-strong: #c3cad6;
+  --color-first: #1e5fa8;
+  --color-first-tint: #e8f0fa;
+  --color-periodic: #5b3fa6;
+  --color-periodic-tint: #efebf8;
+  --color-ok: #2e7d4f;
+  --color-ok-tint: #e7f4ec;
+  --color-warn: #8f5600;
+  --color-warn-tint: #fdf2e1;
+  --color-bad: #b3261e;
+  --color-bad-tint: #fbe9e7;
+  --color-ai: #0f6e66;
+  --color-ai-tint: #e6f4f2;
+}
+
+html { background: var(--color-paper); color: var(--color-ink); }
+body { font-family: var(--font-sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+:focus-visible { outline: 3px solid var(--color-first); outline-offset: 2px; border-radius: 2px; }
+::selection { background: var(--color-first-tint); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+.prose-plain p + p { margin-top: 0.6em; }

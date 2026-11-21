@@ -1,0 +1,147 @@
+[
+ {
+  "q": "Kto dokonuje oceny okresowej?",
+  "a": "Ocenę okresową dokonuje bezpośredni przełożony ocenianego (oceniający), stosując kryteria oceny odpowiednie dla stanowiska pracy zajmowanego przez ocenianego.",
+  "basis": "§ 2 ust. 1 rozporządzenia PRM z 4.04.2016 (Dz.U. poz. 470)"
+ },
+ {
+  "q": "Na którym arkuszu sporządza się ocenę okresową?",
+  "a": "Arkusz A – kierownik urzędu będący stanowiskiem w służbie cywilnej; arkusz B – stanowisko, na którym praca polega na bezpośrednim kierowaniu pracownikami (inne niż kierownik urzędu); arkusz C – pozostałe stanowiska.",
+  "basis": "§ 3 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Jakie są kryteria obowiązkowe w arkuszach A, B i C?",
+  "a": "Arkusz B: zarządzanie ludźmi; podejmowanie decyzji i odpowiedzialność; organizacja pracy i orientacja na osiąganie celów; współpraca; komunikacja. Arkusz C: wykorzystywanie wiedzy i doskonalenie zawodowe; rzetelność; organizacja pracy i orientacja na osiąganie celów; współpraca; komunikacja. Arkusz A: kryteria jak w arkuszu B oraz zarządzanie strategiczne.",
+  "basis": "§ 4 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Ile kryteriów dodatkowych można wybrać i jak je dobrać?",
+  "a": "Oceniający może wybrać z wykazu kryteriów oceny nie więcej niż 3 kryteria dodatkowe, najistotniejsze ze względu na charakter obowiązków wynikających z opisu stanowiska pracy ocenianego. Wybór jest możliwy, jeżeli uzasadnia go charakter tych obowiązków.",
+  "basis": "§ 2 ust. 2 i § 5 ust. 2 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Co omawia się na rozmowie ustalającej kryteria oceny okresowej?",
+  "a": "Główne obowiązki wynikające z opisu stanowiska; kryteria obowiązkowe i dodatkowe (jeśli wybrane); oczekiwania oceniającego co do sposobu spełniania kryteriów; cele do osiągnięcia w okresie oceny i sposób ich realizacji – jeżeli ich określenie jest uzasadnione charakterem obowiązków. Następnie oceniający wpisuje do części I arkusza kryteria dodatkowe i termin sporządzenia oceny, a oceniany potwierdza to podpisem.",
+  "basis": "§ 5 i § 6 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "W jakim terminie trzeba ustalić kryteria oceny okresowej?",
+  "a": "W terminie 30 dni od dnia sporządzenia na piśmie poprzedniej oceny lub od dnia zatrudnienia ocenianego na czas nieokreślony, a w przypadku negatywnej oceny – w terminie 7 dni od dnia jej sporządzenia na piśmie.",
+  "basis": "§ 7 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Jak często sporządza się ocenę okresową?",
+  "a": "Co 24 miesiące, licząc od dnia zakończenia poprzedniej oceny okresowej lub od dnia zatrudnienia ocenianego na czas nieokreślony. Okres podlegania ocenie zaczyna się od zapoznania pracownika z kryteriami i kończy z dniem sporządzenia oceny na piśmie, dlatego zwykle jest krótszy niż 24 miesiące.",
+  "basis": "art. 81 ust. 4 ustawy o służbie cywilnej (t.j. Dz.U. 2026 poz. 590); Poradnik – oceny okresowe, rozdz. 4"
+ },
+ {
+  "q": "Jak nieobecność pracownika wpływa na termin oceny okresowej?",
+  "a": "Termin sporządzenia oceny wydłuża się o okres nieprzerwanej usprawiedliwionej nieobecności w pracy dłuższej niż miesiąc. O nowym terminie oceniający niezwłocznie zawiadamia ocenianego na piśmie, a kopię pisma dołącza do arkusza.",
+  "basis": "art. 81 ust. 7 ustawy; § 8 rozporządzenia z 4.04.2016; Poradnik – oceny okresowe"
+ },
+ {
+  "q": "Co, jeśli pracownik zmienił stanowisko w trakcie okresu oceny?",
+  "a": "Jeżeli w ciągu 6 miesięcy od ustalenia kryteriów (ocena po raz pierwszy) albo od sporządzenia ostatniej oceny nastąpi zmiana stanowiska wiążąca się z istotną zmianą zakresu obowiązków, w terminie 30 dni od zmiany ponownie przeprowadza się rozmowę i ustala kryteria; termin oceny się nie zmienia. W przypadku z art. 81 ust. 6 ustawy ocenę sporządza się nie wcześniej niż 7 dni przed zmianą stanowiska albo nie później niż 30 dni od niej. Przy zmianie oceniającego ocena jest sporządzana na podstawie wybranych wcześniej kryteriów.",
+  "basis": "§ 9 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Co omawia się na rozmowie oceniającej w ocenie okresowej?",
+  "a": "Główne obowiązki wykonywane w okresie oceny i sposób ich realizacji z uwzględnieniem spełniania kryteriów; sposób realizacji wyznaczonych celów (jeśli były); kierunki dalszego rozwoju zawodowego i potrzeby w zakresie podnoszenia kwalifikacji. Rozmowa odbywa się przed sporządzeniem oceny na piśmie, a jej wnioski bierze się pod uwagę przy ocenie.",
+  "basis": "§ 10 i § 11 ust. 2 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Jaka jest skala ocen cząstkowych i jak ustala się poziom w ocenie okresowej?",
+  "a": "Oceny cząstkowe: znacznie poniżej oczekiwań – 1 pkt, poniżej – 3 pkt, na poziomie – 5 pkt, powyżej – 7 pkt, znacznie powyżej – 9 pkt. Ogólny poziom to średnia arytmetyczna: od 1 do 2 pkt – znacznie poniżej; powyżej 2 do 4 – poniżej; powyżej 4 do 6 – na poziomie; powyżej 6 do 8 – powyżej; powyżej 8 do 9 – znacznie powyżej oczekiwań.",
+  "basis": "§ 11 ust. 1 pkt 1–2 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Kiedy ocena okresowa jest pozytywna, a kiedy negatywna?",
+  "a": "Pozytywna – przy ogólnym poziomie na poziomie oczekiwań, powyżej albo znacznie powyżej oczekiwań, pod warunkiem że żadna ocena cząstkowa nie jest na poziomie znacznie poniżej oczekiwań. Negatywna – przy ogólnym poziomie poniżej albo znacznie poniżej oczekiwań, a także gdy co najmniej jedna ocena cząstkowa jest na poziomie znacznie poniżej oczekiwań.",
+  "basis": "§ 11 ust. 1 pkt 3–4 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Czy trzeba uzasadniać ocenę okresową?",
+  "a": "Uzasadnienie jest obowiązkowe przy ocenie negatywnej. Przy ocenie pozytywnej oceniający może je sporządzić.",
+  "basis": "§ 11 ust. 3–4 rozporządzenia z 4.04.2016"
+ },
+ {
+  "q": "Kiedy do oceny dołącza się wniosek o kolejny stopień służbowy?",
+  "a": "Przy ocenie pozytywnej urzędnika służby cywilnej oceniający może dołączyć wniosek o przyznanie kolejnego stopnia służbowego (część III arkusza). Nie dotyczy pracownika służby cywilnej.",
+  "basis": "art. 89 ust. 1 ustawy; § 11 ust. 5 rozporządzenia z 4.04.2016; arkusze B i C, część III"
+ },
+ {
+  "q": "Jaki jest termin na sprzeciw od oceny okresowej?",
+  "a": "Od oceny okresowej przysługuje sprzeciw do dyrektora generalnego urzędu w terminie 7 dni od dnia zapoznania się z oceną.",
+  "basis": "art. 83 ust. 1 ustawy o służbie cywilnej (pouczenie w arkuszach B i C)"
+ },
+ {
+  "q": "Kiedy urzędnik służby cywilnej otrzymuje kolejny stopień służbowy?",
+  "a": "Może go otrzymać po pozytywnej ocenie okresowej, jeżeli zawiera ona umotywowany wniosek bezpośredniego przełożonego. Otrzymuje kolejny stopień, jeśli od ostatniego stopnia uzyskał dwie kolejne pozytywne oceny okresowe na jednym z dwóch najwyższych poziomów skali – w terminie 30 dni od zapoznania z oceną.",
+  "basis": "art. 89 ust. 1–2 ustawy o służbie cywilnej (t.j. Dz.U. 2026 poz. 590)"
+ },
+ {
+  "q": "Jak rozpatruje się sprzeciw od oceny okresowej i co dalej?",
+  "a": "Sprzeciw rozpatruje się w terminie 14 dni od dnia wniesienia. W razie uwzględnienia sprzeciwu ocenę zmienia się albo sporządza po raz drugi (od takiej oceny również przysługuje sprzeciw). W razie nierozpatrzenia sprzeciwu w terminie albo jego nieuwzględnienia oceniany może w terminie 14 dni od doręczenia decyzji albo od upływu terminu na rozpatrzenie odwołać się do sądu pracy.",
+  "basis": "art. 83 ust. 3–5 ustawy o służbie cywilnej (t.j. Dz.U. 2026 poz. 590)"
+ },
+ {
+  "q": "Co dzieje się po negatywnej ocenie okresowej?",
+  "a": "Oceniany podlega ponownej ocenie po upływie 6 miesięcy od dnia zapoznania się z negatywną oceną; kryteria ustala się w terminie 7 dni od sporządzenia negatywnej oceny. Termin ten nie podlega wydłużeniu z powodu nieobecności ani skróceniu.",
+  "basis": "art. 81 ust. 9 ustawy; § 7 pkt 2 rozporządzenia z 4.04.2016; Poradnik – oceny okresowe"
+ },
+ {
+  "q": "W jakim okresie można dokonać pierwszej oceny i co następuje po niej?",
+  "a": "Pierwsza ocena jest dokonywana nie wcześniej niż po upływie 8 miesięcy od nawiązania stosunku pracy i nie później niż miesiąc przed upływem okresu, na który zawarto umowę o pracę. Dokonuje jej bezpośredni przełożony w porozumieniu z kierującym komórką organizacyjną. Po ocenie kierujący komórką wnioskuje do dyrektora generalnego urzędu: przy ocenie pozytywnej – o zawarcie umowy na czas nieokreślony; przy negatywnej – o niezawieranie takiej umowy albo o rozwiązanie umowy na czas określony.",
+  "basis": "art. 38 ust. 1–3 ustawy o służbie cywilnej (t.j. Dz.U. 2026 poz. 590)"
+ },
+ {
+  "q": "Co bierze się pod uwagę w pierwszej ocenie w służbie cywilnej?",
+  "a": "Postawę ocenianego, jego zaangażowanie i postępy w pracy, relacje ze współpracownikami oraz terminowość wykonywania zadań, ocenianą za pomocą elementów: rzetelność; wykorzystywanie wiedzy i doskonalenie zawodowe; organizacja pracy i orientacja na osiąganie celów; komunikacja; współpraca. Ponadto wynik egzaminu ze służby przygotowawczej (jeśli oceniany był obowiązany do niego przystąpić) oraz sprawozdanie ocenianego.",
+  "basis": "§ 2 rozporządzenia PRM z 23.07.2015 (Dz.U. poz. 1144)"
+ },
+ {
+  "q": "Kiedy przeprowadza się rozmowę wstępną przed pierwszą oceną i co się na niej omawia?",
+  "a": "W terminie 21 dni od nawiązania stosunku pracy (przy zastępstwie – od ustalenia, że oceniany podlega pierwszej ocenie). Bezpośredni przełożony zapoznaje ocenianego ze sposobem dokonywania oceny, omawia główne obowiązki z opisu stanowiska i oczekiwania co do ich wykonywania, omawia oczekiwania co do postawy, zaangażowania, postępów, relacji i terminowości oraz wyznacza termin na złożenie sprawozdania.",
+  "basis": "§ 3 rozporządzenia z 23.07.2015"
+ },
+ {
+  "q": "Jak ustala się termin sprawozdania w pierwszej ocenie?",
+  "a": "Termin na złożenie sprawozdania (data początkowa i końcowa) ustala się tak, aby przypadał po upływie 8 miesięcy od nawiązania stosunku pracy i aby pierwsza ocena mogła nastąpić w terminie z art. 38 ust. 1 ustawy. Sprawozdanie obejmuje co najmniej 7 przepracowanych miesięcy i opisuje: wykonywane zadania, problemy i sposób ich rozwiązania, zdobytą wiedzę i umiejętności, wnioski dotyczące usprawnienia pracy.",
+  "basis": "§ 4 ust. 1 i § 6 rozporządzenia z 23.07.2015"
+ },
+ {
+  "q": "Jaka jest skala ocen w pierwszej ocenie?",
+  "a": "Oceny cząstkowe: 3 punkty – poniżej oczekiwań, 5 punktów – na poziomie oczekiwań, 7 punktów – powyżej oczekiwań. Ocena łączna to średnia arytmetyczna ocen cząstkowych.",
+  "basis": "§ 7 pkt 3 i § 9 ust. 1 rozporządzenia z 23.07.2015"
+ },
+ {
+  "q": "Kiedy pierwsza ocena jest pozytywna?",
+  "a": "Warunkami są: zaliczenie egzaminu ze służby przygotowawczej (nie dotyczy m.in. zastępstwa, absolwenta KSAP bez wniosku o mianowanie, zatrudnienia na wyższym stanowisku), złożenie sprawozdania w terminie, nie więcej niż jedna ocena cząstkowa w wysokości 3 punktów oraz ocena łączna nie niższa niż 5 punktów. W razie niespełnienia któregokolwiek warunku przyznaje się ocenę negatywną.",
+  "basis": "§ 10 ust. 1–3 rozporządzenia z 23.07.2015"
+ },
+ {
+  "q": "Czy kierujący komórką uczestniczy w pierwszej ocenie?",
+  "a": "W rozmowie oceniającej może uczestniczyć kierujący komórką organizacyjną, w której oceniany jest zatrudniony. Kierujący komórką potwierdza też dokonanie pierwszej oceny w arkuszu, a wnioski dotyczące rozwoju zawodowego (przy ocenie pozytywnej) przełożony może sporządzić w porozumieniu z nim.",
+  "basis": "§ 8 ust. 2 i § 10 ust. 6 rozporządzenia z 23.07.2015; arkusz pierwszej oceny"
+ },
+ {
+  "q": "Czy pierwszą ocenę trzeba uzasadnić?",
+  "a": "Przy negatywnej pierwszej ocenie bezpośredni przełożony sporządza uzasadnienie. Przy pozytywnej może je sporządzić.",
+  "basis": "§ 10 ust. 4–5 rozporządzenia z 23.07.2015"
+ },
+ {
+  "q": "Co zrobić po dokonaniu pierwszej oceny?",
+  "a": "Bezpośredni przełożony niezwłocznie umożliwia ocenianemu zapoznanie się z oceną. Oryginał arkusza wraz ze sprawozdaniem i pismami o zmianie terminów włącza się do akt osobowych, a kopię przekazuje się ocenianemu.",
+  "basis": "§ 11 rozporządzenia z 23.07.2015"
+ },
+ {
+  "q": "Jak korzystać z modelu kompetencji przy ocenie?",
+  "a": "Dobierz wskaźniki do zadań i zakresu odpowiedzialności na stanowisku. Poziom „na poziomie oczekiwań” opisuje standard wykonania. Oprzyj ocenę na konkretnych przykładach z ocenianego okresu: sytuacja, działanie i rezultat; uwzględnij powtarzalność zachowania, złożoność sytuacji i dostępne uprawnienia. Jeśli nie było okazji do zaobserwowania zachowania, odnotuj brak podstaw do oceny wskaźnika.",
+  "basis": "Model kompetencji – wskazówki stosowania"
+ },
+ {
+  "q": "Czy asystent AI może wystawić ocenę?",
+  "a": "Nie. Asystent pełni funkcję doradczą: porządkuje przykłady, wskazuje braki, proponuje sformułowania i pytania do rozmowy. Oceny cząstkowe i ostateczny poziom wybiera przełożony; wynik pozytywny lub negatywny wynika z przepisów i ocen przełożonego.",
+  "basis": "Zasady Kompasu Kompetencji"
+ }
+]

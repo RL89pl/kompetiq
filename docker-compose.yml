@@ -1,0 +1,62 @@
+name: kompetiq
+
+services:
+  db:
+    image: postgres:17
+    container_name: ${CONTAINER_NAME:-kompetiq}-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    image: kompetiq:latest
+    container_name: ${CONTAINER_NAME:-kompetiq}
+    # timeout 180 s: wywołania asystenta AI mogą trwać do ~2 minut
+    command: gunicorn kompetiq.wsgi:application --bind 0.0.0.0:8000 --workers ${WEB_WORKERS:-3} --timeout 180 --access-logfile -
+    volumes:
+      # nginx na hoście serwuje /static/ i /media/ z tego katalogu
+      - ./public:/app/public
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8650}:8000"
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=kompetiq.settings
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Opcjonalnie: polski model PLLuM (Ministerstwo Cyfryzacji) w infrastrukturze urzędu — dane nie opuszczają serwera.
+  # Uruchomienie: docker compose --profile pllum up -d ; w .env: LLM_BASE_URL=http://llm:8000/v1
+  llm:
+    profiles: ["pllum"]
+    container_name: ${CONTAINER_NAME:-kompetiq}-llm
+    image: vllm/vllm-openai:v0.11.0
+    command: --model ${LLM_MODEL:-CYFRAGOVPL/PLLuM-12B-instruct-2512} --max-model-len 16384
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  hf_cache:

@@ -1,0 +1,56 @@
+# ── Sekrety i konfiguracja lokalna ───────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ── Django: baza lokalna, pliki zebrane i przesłane ──────────────────────────
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+# STATIC_ROOT i MEDIA_ROOT (collectstatic, przesłane pliki)
+public/
+media/
+staticfiles/
+
+# ── Frontend (Vite / npm) ─────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Logi i pliki tymczasowe ───────────────────────────────────────────────────
+*.log
+logs/
+tmp/
+*.tmp
+*.bak
+
+# ── Edytory i system ──────────────────────────────────────────────────────────
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Narzędzia lokalne ─────────────────────────────────────────────────────────
+.claude/settings.local.json
+docker-compose.override.yml
