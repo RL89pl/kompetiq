@@ -37,7 +37,7 @@ export function LoginPage() {
       <div className="hidden flex-col justify-between bg-ink p-12 text-white md:flex">
         <CompassMark className="size-12 text-white" />
         <div className="max-w-md">
-          <p className="font-serif text-4xl leading-tight">Ocena oparta na tym, co pracownik rzeczywiście zrobił.</p>
+          <p className="font-serif text-4xl leading-tight">Rzetelna ocena kompetencji, krok po kroku.</p>
           <p className="mt-4 text-white/75">
             Pierwsza ocena i ocena okresowa w służbie cywilnej: od opisu stanowiska, przez przykłady zachowań,
             po rozmowę oceniającą i plan rozwoju.
