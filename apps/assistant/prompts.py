@@ -166,13 +166,24 @@ Nie zmieniaj ani nie proponuj ocen punktowych ani wyniku oceny — to decyzja pr
 Prośba przełożonego: {question}"""
 
 
+# Użytkownikiem asystenta jest zawsze oceniający (przełożony), a nie oceniany. Forma „Pan/Pani” z danych kadrowych
+# dotyczy wyłącznie ocenianego — model nie może jej przenosić na osobę, która zadaje pytanie.
+READER_NOTE = ('Odpowiadasz oceniającemu (przełożonemu), który zadał pytanie — nie ocenianemu. Do oceniającego nie '
+               'zwracaj się formą „Pan” ani „Pani” i nie używaj wobec niego form rodzajowych (nie znasz jego płci): '
+               'pisz bezosobowo (np. „należy”, „przełożony powinien”, „termin wynosi”). O ocenianym pisz w trzeciej '
+               'osobie (np. „ocenianemu przysługuje sprzeciw”, a nie „przysługuje Pani sprzeciw”).')
+
+_EMPLOYEE_ONLY = ('Poniższa forma dotyczy wyłącznie ocenianego: tekstów pisanych o nim oraz pytań i wypowiedzi, które '
+                  'oceniający skieruje do niego (np. podczas rozmowy). ')
+
 ADDRESS_NOTES = {
-    'PANI': ('Oceniana jest kobietą (forma wskazana przez kadry). W pytaniach i wypowiedziach kierowanych do niej używaj '
-             'formy „Pani” i żeńskich form czasowników (np. „Czy może Pani…”, „realizowała Pani”); pisząc o niej, '
-             'używaj słowa „Oceniana”.'),
-    'PAN': ('Oceniany jest mężczyzną (forma wskazana przez kadry). W pytaniach i wypowiedziach kierowanych do niego '
+    'PANI': (_EMPLOYEE_ONLY + 'Oceniana jest kobietą (forma wskazana przez kadry). W wypowiedziach kierowanych do niej '
+             'używaj formy „Pani” i żeńskich form czasowników (np. „Czy może Pani…”, „realizowała Pani”); pisząc o niej, '
+             'używaj słowa „Oceniana”. ' + READER_NOTE),
+    'PAN': (_EMPLOYEE_ONLY + 'Oceniany jest mężczyzną (forma wskazana przez kadry). W wypowiedziach kierowanych do niego '
             'używaj formy „Pan” i męskich form czasowników (np. „Czy może Pan…”, „realizował Pan”); pisząc o nim, '
-            'używaj słowa „Oceniany”.'),
+            'używaj słowa „Oceniany”. ' + READER_NOTE),
     '': ('Forma zwracania się do ocenianego nie została wskazana przez kadry. Nie zgaduj jej z imienia ani z treści: '
-         'używaj formy neutralnej „Pan/Pani” albo konstrukcji bezosobowych.'),
+         'w wypowiedziach kierowanych do ocenianego używaj formy neutralnej „Pan/Pani” albo konstrukcji bezosobowych. '
+         + READER_NOTE),
 }

@@ -277,8 +277,7 @@ def chat(request, conv: Conversation, text: str):
             return Message.objects.create(conversation=conv, role=Message.Role.ASSISTANT,
                                           content=prompts.NO_SOURCES_ANSWER, grounded=False)
         prompt = prompts.CHAT_FORMAL.format(context=_formal_context(a), question=question)
-        if a is not None:
-            prompt += f'\n\n{address_note(a)}'
+        prompt += f'\n\n{address_note(a) if a is not None else prompts.READER_NOTE}'
         feature = 'chat_formal'
     else:
         if a is None:

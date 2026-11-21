@@ -203,6 +203,8 @@ def test_formal_chat_cites_sources_and_keeps_history(org, api, fake):
                format='json')
     assert r.status_code == 200 and r.data['grounded'] and r.data['citations'][0]['cited_text'] == '7 dni'
     assert p.calls[0]['documents'][0]['title'].startswith('Pytania i odpowiedzi')
+    # asystent odpowiada oceniającemu — formy „Pan/Pani” nie przenosi na pytającego
+    assert 'Odpowiadasz oceniającemu' in p.calls[0]['prompt']
     c.post(f"/api/v1/assistant/conversations/{conv['id']}/messages/", {'content': 'A czy termin sprzeciwu się wydłuża?'},
            format='json')
     assert [h['role'] for h in p.calls[1]['history']] == ['user', 'assistant']
@@ -242,6 +244,7 @@ def test_interview_chat_uses_assessment_material(org, api, fake):
                {'content': 'Jakie pytania zadać Katarzynie na rozmowie?'}, format='json')
     assert r.status_code == 200
     call = p.calls[0]
+    assert 'Odpowiadasz oceniającemu' in call['prompt']
     assert call['documents'][0]['title'] == 'Materiał z oceny' and 'Nowicka' not in call['documents'][0]['text']
     assert 'Katarzyn' not in call['prompt']
     # inny przełożony nie otworzy rozmowy do cudzej oceny
@@ -285,3 +288,11 @@ def test_formal_gate_on_real_knowledge_base(org, api, fake):
         n = len(p.calls)
         c.post(url, {'content': q}, format='json')
         assert len(p.calls) == n + 1, q
+
+
+def test_address_note_applies_only_to_employee():
+    from apps.assistant import prompts
+    for key in ('PANI', 'PAN', ''):
+        note = prompts.ADDRESS_NOTES[key]
+        assert prompts.READER_NOTE in note  # do pytającego (oceniającego) bez formy „Pan/Pani”
+    assert 'wyłącznie ocenianego' in prompts.ADDRESS_NOTES['PANI']
