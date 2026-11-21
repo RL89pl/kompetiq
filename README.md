@@ -82,9 +82,7 @@ kontenera (vhost w `kompetiq.devcage.pl.nginx`). Frontend budowany jest w wieloe
 
 ```bash
 cp .env.example .env    # uzupełnij hasła, SECRET_KEY, hosty, ANTHROPIC_API_KEY
-docker compose up --build -d
-docker compose exec -T web python manage.py migrate --noinput
-docker compose exec -T web python manage.py collectstatic --noinput
+docker compose up --build -d   # migrate i collectstatic wykonuje entrypoint.sh przy każdym starcie
 docker compose exec -T web python manage.py import_competency_model --if-missing
 docker compose exec -T web python manage.py ingest_legal_docs
 docker compose exec web python manage.py createsuperuser

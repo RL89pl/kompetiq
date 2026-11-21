@@ -21,8 +21,12 @@ services:
     build: .
     image: kompetiq:latest
     container_name: ${CONTAINER_NAME:-kompetiq}
-    # timeout 180 s: wywołania asystenta AI mogą trwać do ~2 minut
-    command: gunicorn kompetiq.wsgi:application --bind 0.0.0.0:8000 --workers ${WEB_WORKERS:-3} --timeout 180 --access-logfile -
+    # gthread: wywołanie AI (do ~2 min) zajmuje jeden wątek, a nie cały worker, więc reszta aplikacji nie czeka.
+    # timeout 180 s: wywołania asystenta AI mogą trwać do ~2 minut. W logu %(M)s = czas obsługi żądania w ms.
+    command: >-
+      gunicorn kompetiq.wsgi:application --bind 0.0.0.0:8000
+      --workers ${WEB_WORKERS:-3} --worker-class gthread --threads ${WEB_THREADS:-8} --timeout 180
+      --access-logfile - --access-logformat '%(h)s "%(r)s" %(s)s %(b)s %(M)sms'
     volumes:
       # nginx na hoście serwuje /static/ i /media/ z tego katalogu
       - ./public:/app/public
