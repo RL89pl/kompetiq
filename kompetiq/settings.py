@@ -179,19 +179,25 @@ ASSISTANT_MIN_RETRIEVAL_SCORE = float(os.environ.get('ASSISTANT_MIN_RETRIEVAL_SC
 
 LEGAL_DOCS_DIR = BASE_DIR / 'docs_assets'
 
+EMAILLABS_SMTP = os.environ.get('EMAILLABS_SMTP', '')
+EMAILLABS_APP_KEY = os.environ.get('EMAILLABS_APP_KEY', '')
+EMAILLABS_SECRET_KEY = os.environ.get('EMAILLABS_SECRET_KEY', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'KompetIQ <kontakt@robertlewandowski.dev>')
+
 EMAIL_BACKEND_PATH = os.environ.get(
     'EMAIL_BACKEND',
-    'django.core.mail.backends.console.EmailBackend' if DEBUG else 'django.core.mail.backends.smtp.EmailBackend',
+    'kompetiq.emaillabs.EmailLabsBackend' if EMAILLABS_APP_KEY
+    else ('django.core.mail.backends.console.EmailBackend' if DEBUG else 'django.core.mail.backends.smtp.EmailBackend'),
 )
-MAILERS = {
-    'default': {
-        'BACKEND': EMAIL_BACKEND_PATH,
-        'OPTIONS': {
-            'host': os.environ.get('EMAIL_HOST', 'localhost'),
-            'port': int(os.environ.get('EMAIL_PORT', '25')),
-        } if 'smtp' in EMAIL_BACKEND_PATH else {},
-    },
-}
+if 'emaillabs' in EMAIL_BACKEND_PATH:
+    _mail_options = {'smtp_account': EMAILLABS_SMTP, 'app_key': EMAILLABS_APP_KEY,
+                     'secret_key': EMAILLABS_SECRET_KEY}
+elif 'smtp' in EMAIL_BACKEND_PATH:
+    _mail_options = {'host': os.environ.get('EMAIL_HOST', 'localhost'),
+                     'port': int(os.environ.get('EMAIL_PORT', '25'))}
+else:
+    _mail_options = {}
+MAILERS = {'default': {'BACKEND': EMAIL_BACKEND_PATH, 'OPTIONS': _mail_options}}
 
 LOGGING = {
     'version': 1,
