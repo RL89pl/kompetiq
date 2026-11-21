@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useAssessment, useCompetencyModel, useForms, useMe } from '../../api/hooks'
 import { AssistantDrawer } from '../../components/AssistantDrawer'
 import { MessageBox } from '../../components/MessageBox'
@@ -14,6 +14,7 @@ import { InterviewStep } from './InterviewStep'
 import { DevelopmentStep } from './DevelopmentStep'
 import { FinalizeStep } from './FinalizeStep'
 import type { StepProps } from './context'
+import { BehaviourGate, pendingRatings, SkippedNotice, type Filled } from './BehaviourGate'
 
 const COMPONENTS: Record<string, (p: StepProps) => React.ReactNode> = {
   stanowisko: JobStep, kryteria: CriteriaStep, zachowania: EvidenceStep, oceny: ScoresStep,
@@ -28,6 +29,10 @@ export function AssessmentPage() {
   const me = useMe()
   const [drawer, setDrawer] = useState(false)
   const [msg, setMsg] = useState(false)
+  const [gateTo, setGateTo] = useState<string | null>(null)
+  const [skipped, setSkipped] = useState<Filled[]>([])
+  const location = useLocation()
+  const navigate = useNavigate()
   if (a.isLoading || forms.isLoading || model.isLoading) return <Loading />
   if (a.error || !a.data) return <Notice tone="bad" title="Nie można otworzyć oceny.">Ocena nie istnieje albo nie masz do niej dostępu.</Notice>
   const as = a.data
@@ -36,6 +41,16 @@ export function AssessmentPage() {
   const first = as.form_type === 'FIRST'
   const accent = first ? 'first' : 'periodic'
   const props: StepProps = { a: as, form, model: model.data!, editable: as.can_edit }
+  // Wyjście z „Oceny zachowań” do dalszych etapów przy nieocenionych wskaźnikach wymaga świadomej decyzji.
+  const current = location.pathname.split('/').filter(Boolean)[2]
+  const gateIdx = steps.findIndex((s) => s.path === 'zachowania')
+  const guard = (target: string) => (e: React.MouseEvent) => {
+    const ti = steps.findIndex((s) => s.path === target)
+    if (as.can_edit && current === 'zachowania' && ti > gateIdx && pendingRatings(as, model.data!).length) {
+      e.preventDefault()
+      setGateTo(target)
+    }
+  }
 
   return (
     <div>
@@ -79,7 +94,7 @@ export function AssessmentPage() {
                   {i < steps.length - 1 && (
                     <span aria-hidden className={`absolute left-[11px] top-7 h-[calc(100%-1rem)] w-0.5 ${done ? (first ? 'bg-first' : 'bg-periodic') : 'bg-rule-strong'}`} />
                   )}
-                  <NavLink to={`/oceny/${as.id}/${s.path}`} className={({ isActive }) => `group block rounded-md py-1.5 pr-2 ${isActive ? 'font-bold' : ''}`}>
+                  <NavLink to={`/oceny/${as.id}/${s.path}`} onClick={guard(s.path)} className={({ isActive }) => `group block rounded-md py-1.5 pr-2 ${isActive ? 'font-bold' : ''}`}>
                     {({ isActive }) => (
                       <>
                         <span aria-hidden className={`absolute left-0 top-2 flex size-6 items-center justify-center rounded-full border-2 text-[12px] font-bold ${done ? (first ? 'border-first bg-first text-white' : 'border-periodic bg-periodic text-white') : isActive ? 'border-ink bg-white text-ink' : 'border-rule-strong bg-paper text-ink-soft'}`}>
@@ -97,6 +112,11 @@ export function AssessmentPage() {
           </ol>
         </nav>
         <div className="min-w-0">
+          {gateTo && (
+            <BehaviourGate a={as} model={model.data!} onBack={() => setGateTo(null)}
+              onSkipped={(f) => { setSkipped(f); navigate(`/oceny/${as.id}/${gateTo}`); setGateTo(null) }} />
+          )}
+          {current !== 'zachowania' && <SkippedNotice filled={skipped} onClose={() => setSkipped([])} />}
           <Routes>
             <Route index element={<Navigate to={(steps.find((s) => !s.done(as)) ?? steps[steps.length - 1]).path} replace />} />
             {steps.map((s, i) => {
@@ -106,7 +126,7 @@ export function AssessmentPage() {
                 <Route key={s.path} path={s.path} element={
                   <div>
                     <C {...props} />
-                    {next && <div className="mt-10 border-t border-rule pt-4 text-right"><NavLink to={`/oceny/${as.id}/${next.path}`} className="font-bold underline underline-offset-4">Dalej: {next.title}</NavLink></div>}
+                    {next && <div className="mt-10 border-t border-rule pt-4 text-right"><NavLink to={`/oceny/${as.id}/${next.path}`} onClick={guard(next.path)} className="font-bold underline underline-offset-4">Dalej: {next.title}</NavLink></div>}
                   </div>
                 } />
               )

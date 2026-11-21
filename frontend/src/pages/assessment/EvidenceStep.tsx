@@ -8,7 +8,7 @@ import { LevelScale } from '../../components/LevelScale'
 import { SuggestedLevel } from '../../components/SuggestedLevel'
 import { Badge, Button, ErrorList, Field, Input, Section, Textarea } from '../../components/ui'
 import { fmtDate, LEVEL_SHORT } from '../../lib'
-import type { StepProps } from './context'
+import { unratedIndicators, type StepProps } from './context'
 
 const COMPLETENESS: Record<string, string> = {
   complete: 'kompletny', missing_action: 'brak opisu działania', missing_result: 'brak rezultatu', too_general: 'zbyt ogólny',
@@ -91,7 +91,7 @@ function IndicatorBlock({ ind, crit, assessmentId, editable, questions, analysis
   const noEvidence = analysis?.indicators_without_evidence.includes(ind.id)
   return (
     <article className="border-t border-rule pt-5">
-      <h3 className="font-sans text-[17px] font-bold">{ind.text} {noEvidence && <Badge tone="warn">brak przykładów</Badge>}</h3>
+      <h3 className="font-sans text-[17px] font-bold">{ind.text} {!rating && <Badge tone="warn">nie oceniono</Badge>} {noEvidence && <Badge tone="warn">brak przykładów</Badge>}</h3>
       {questions && questions.length > 0 && (
         <ul className="mt-2 space-y-1 border-l-2 border-dashed border-ai pl-3 text-[15px] text-ai" aria-label="Pytania pomocnicze AI">
           {questions.map((q) => <li key={q}>{q}</li>)}
@@ -131,13 +131,25 @@ export function EvidenceStep({ a, form, model, editable }: StepProps) {
     <div className="space-y-8">
       <Section title="Ocena zachowań" description="Oprzyj ocenę na konkretnych przykładach z ocenianego okresu. Uwzględnij powtarzalność zachowania, złożoność sytuacji i uprawnienia ocenianego. Zapisuj na bieżąco, nie tylko przed oceną.">
         <div role="tablist" aria-label="Kryteria" className="flex flex-wrap gap-1">
-          {a.criteria.map((c) => (
-            <button key={c.id} role="tab" aria-selected={c.id === crit.id} onClick={() => setSel(c.id)}
-              className={`rounded-md px-3 py-1.5 text-[15px] ${c.id === crit.id ? 'bg-ink font-bold text-white' : 'bg-white hover:bg-rule/50'}`}>
-              {c.competency_name} <span className={c.id === crit.id ? 'text-white/70' : 'text-ink-soft'}>({c.evidence.length})</span>
-            </button>
-          ))}
+          {a.criteria.map((c) => {
+            const total = c.selected_indicators.length
+            const rated = total - unratedIndicators(c).length
+            const done = rated === total
+            const active = c.id === crit.id
+            return (
+              <button key={c.id} role="tab" aria-selected={active} onClick={() => setSel(c.id)}
+                title={`Ocenione wskaźniki: ${rated} z ${total}. Przykłady zachowań: ${c.evidence.length}.`}
+                className={`rounded-md px-3 py-1.5 text-[15px] ${active ? 'bg-ink font-bold text-white' : done ? 'bg-ok-tint hover:bg-rule/50' : 'bg-white hover:bg-rule/50'}`}>
+                {done && <span aria-hidden className={active ? 'text-white' : 'text-ok'}>✓ </span>}
+                {c.competency_name}{' '}
+                <span className={active ? 'text-white/70' : done ? 'text-ok' : 'text-ink-soft'}>
+                  ({rated}/{total}<span className="sr-only"> ocenionych wskaźników</span>)
+                </span>
+              </button>
+            )
+          })}
         </div>
+        <p className="mt-2 text-sm text-ink-soft">W nawiasie: ocenione wskaźniki / wszystkie wskaźniki kryterium. Wskaźnik jest oceniony, gdy wybierzesz poziom albo zaznaczysz „brak okazji do zaobserwowania”.</p>
       </Section>
 
       <div role="tabpanel" className="space-y-6">

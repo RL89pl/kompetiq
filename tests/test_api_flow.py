@@ -213,3 +213,23 @@ def test_openapi_docs_are_public_and_complete(db):
                  '/api/v1/assessments/{id}/export/{kind}/', '/api/v1/knowledge-documents/'):
         assert path in paths, path
     assert paths['/api/v1/hr/overview/']['get']['responses']['200']['content']
+
+
+def test_fill_no_basis_marks_only_unrated_indicators(org, api):
+    c = api(org.sup)
+    a = create(api, org.sup, org.emp)
+    crit = a['criteria'][0]
+    rated = crit['selected_indicators'][0]
+    c.put(f"/api/v1/criteria/{crit['id']}/rating/", {'indicator': rated, 'level': 4}, format='json')
+    total = sum(len(x['selected_indicators']) for x in a['criteria'])
+
+    r = c.post(f"/api/v1/assessments/{a['id']}/fill-no-basis/")
+    assert r.status_code == 200 and len(r.data['filled']) == total - 1
+    crits = r.data['assessment']['criteria']
+    assert all(len(x['ratings']) == len(x['selected_indicators']) for x in crits)
+    first = next(x for x in crits if x['id'] == crit['id'])
+    kept = next(x for x in first['ratings'] if x['indicator'] == rated)
+    assert kept['level'] == 4 and not kept['no_basis']
+    # ponowne wywołanie niczego nie zmienia; inny użytkownik nie może tego zrobić
+    assert c.post(f"/api/v1/assessments/{a['id']}/fill-no-basis/").data['filled'] == []
+    assert api(org.head).post(f"/api/v1/assessments/{a['id']}/fill-no-basis/").status_code in (403, 404)

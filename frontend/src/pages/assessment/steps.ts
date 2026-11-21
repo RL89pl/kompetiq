@@ -1,4 +1,5 @@
 import type { Assessment } from '../../api/types'
+import { criterionDone } from './context'
 
 export interface StepDef {
   path: string
@@ -25,7 +26,7 @@ export function stepsFor(a: Assessment): StepDef[] {
     },
     {
       path: 'zachowania', title: 'Ocena zachowań', hint: 'Wskaźniki, przykłady, sugerowany poziom',
-      done: (x) => x.criteria.every((c) => c.evidence.length > 0),
+      done: (x) => x.criteria.every(criterionDone),
     },
     {
       path: 'oceny', title: first ? 'Sprawozdanie i oceny cząstkowe' : 'Oceny cząstkowe',

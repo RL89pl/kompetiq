@@ -270,6 +270,23 @@ class AssessmentViewSet(InstitutionScopedMixin, mixins.ListModelMixin, mixins.Re
             raise ValidationError(str(e))
         return Response(AssessmentDetailSerializer(a, context={'request': request}).data)
 
+    @action(detail=True, methods=['post'], url_path='fill-no-basis')
+    def fill_no_basis(self, request, pk=None):
+        """Oznacza wszystkie nieocenione wskaźniki jako „brak okazji do zaobserwowania” (świadoma decyzja
+        oceniającego przy przejściu dalej). Nie zmienia wskaźników już ocenionych."""
+        a = self.get_object()
+        ensure_editable(a, request)
+        filled = []
+        for crit in a.criteria.prefetch_related('selected_indicators', 'ratings').select_related('competency'):
+            rated = {r.indicator_id for r in crit.ratings.all()}
+            for ind in crit.selected_indicators.all():
+                if ind.id not in rated:
+                    IndicatorRating.objects.create(criterion=crit, indicator=ind, level=None, no_basis=True)
+                    filled.append({'criterion': crit.competency.name, 'indicator': ind.text})
+        a.refresh_from_db()
+        return Response({'filled': filled,
+                         'assessment': AssessmentDetailSerializer(a, context={'request': request}).data})
+
     @action(detail=True)
     def history(self, request, pk=None):
         a = self.get_object()

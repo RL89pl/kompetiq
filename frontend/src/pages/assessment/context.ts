@@ -35,6 +35,14 @@ export function useDraft<K extends keyof Assessment>(a: Assessment, keys: K[]) {
   return { draft, set, bind, save, dirty, patch }
 }
 
-export function criterionDone(c: Assessment['criteria'][number]) {
-  return c.evidence.length > 0
+type Crit = Assessment['criteria'][number]
+
+/** Wybrane wskaźniki kryterium bez oceny poziomu i bez „brak podstaw”. */
+export function unratedIndicators(c: Crit) {
+  const rated = new Set(c.ratings.filter((r) => r.level !== null || r.no_basis).map((r) => r.indicator))
+  return c.selected_indicators.filter((id) => !rated.has(id))
+}
+
+export function criterionDone(c: Crit) {
+  return unratedIndicators(c).length === 0
 }

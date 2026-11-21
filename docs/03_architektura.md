@@ -64,7 +64,7 @@
 
 ## Testy
 
-`pytest` — 73 testy: przepisy (progi, warunki), terminy, import modelu, pełne ścieżki przez API, uprawnienia,
+`pytest` — 74 testy: przepisy (progi, warunki), terminy, import modelu, pełne ścieżki przez API, uprawnienia,
 izolacja instytucji, asystent (brak pól ocen, pseudonimizacja, odmowa bez źródeł na pełnej bazie wiedzy, cytowania), baza wiedzy
 urzędu (wgrywanie, izolacja, wyłączanie i zastępowanie źródeł), podgląd wysyłki do AI (brak zapisu, kontrola
 danych osobowych), dostawca zgodny

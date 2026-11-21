@@ -5,7 +5,8 @@ import { useAssistant, useInvalidateAssessment } from '../../api/hooks'
 import type { Criterion, JustificationDraft } from '../../api/types'
 import { AIList, AISuggestion } from '../../components/AISuggestion'
 import { Badge, Button, ErrorList, Field, Notice, Section, Select, Textarea } from '../../components/ui'
-import { useDraft, type StepProps } from './context'
+import { Link } from 'react-router-dom'
+import { unratedIndicators, useDraft, type StepProps } from './context'
 
 function CriterionScore({ crit, props }: { crit: Criterion; props: StepProps }) {
   const { a, form, editable } = props
@@ -22,7 +23,7 @@ function CriterionScore({ crit, props }: { crit: Criterion; props: StepProps }) 
     <article className="border-t border-rule pt-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-xl">{crit.competency_name}</h3>
-        <span className="text-sm text-ink-soft">{crit.evidence.length} przykładów, {crit.ratings.filter((r) => r.level).length} ocenionych wskaźników</span>
+        <span className="text-sm text-ink-soft">{crit.evidence.length} przykładów, {crit.selected_indicators.length - unratedIndicators(crit).length}/{crit.selected_indicators.length} ocenionych wskaźników</span>
       </div>
       <fieldset className="mt-3" disabled={!editable || patch.isPending}>
         <legend className="sr-only">Ocena cząstkowa: {crit.competency_name}</legend>
@@ -74,6 +75,15 @@ export function ScoresStep(props: StepProps) {
           : 'Skala: 1, 3, 5, 7 lub 9 punktów. Oceny ustalasz po rozmowie oceniającej, uwzględniając jej wnioski.'}>
         <span />
       </Section>
+      {editable && (() => {
+        const n = a.criteria.reduce((k, c) => k + unratedIndicators(c).length, 0)
+        return n > 0 && (
+          <Notice tone="warn" title={`W ocenie zachowań nie oceniono ${n} ${n === 1 ? 'wskaźnika' : 'wskaźników'}`}>
+            Sugerowany poziom kryterium powstaje tylko z ocenionych wskaźników.{' '}
+            <Link to={`/oceny/${a.id}/zachowania`} className="font-bold underline underline-offset-4">Wróć do oceny zachowań</Link>
+          </Notice>
+        )
+      })()}
       <div className="sticky top-2 z-10 rounded-md border border-rule-strong bg-white/95 p-4 backdrop-blur">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
             <p><span className="text-sm text-ink-soft">{form.is_first ? 'Ocena łączna' : 'Średnia'}</span><br /><span className="font-serif text-2xl">{s.average ?? '—'}</span></p>
