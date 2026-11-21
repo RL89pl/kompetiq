@@ -185,6 +185,7 @@ export interface Assessment extends AssessmentListItem {
     is_civil_servant: boolean
     service_grade: string
     is_managerial: boolean
+    form_of_address: '' | 'PANI' | 'PAN'
   }
   can_edit: boolean
 }

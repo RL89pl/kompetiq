@@ -17,13 +17,14 @@ function Remind({ id }: { id: number }) {
 }
 
 export function HRPage() {
-  const { data, isLoading } = useHROverview()
+  const { data, isLoading, error } = useHROverview()
   const qc = useQueryClient()
   const send = useMutation({
     mutationFn: () => api<{ sent: number }>('/hr/send-reminders/', { method: 'POST' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.hr }),
   })
   const [filter, setFilter] = useState<'all' | 'overdue' | 'open'>('all')
+  if (error) return <ErrorList error={error} />
   if (isLoading || !data) return <Loading />
   const max = Math.max(1, ...data.by_status.map((s) => s.count))
   const rows = data.assessments.filter((r) => filter === 'all' || (filter === 'overdue' ? r.next_deadline?.overdue : !['FINALIZED', 'APPROVED', 'ACKNOWLEDGED'].includes(r.status)))
@@ -93,7 +94,7 @@ export function HRPage() {
                     <td className="pr-3">{r.status_label}{r.result && <> <Badge tone={r.result === 'POSITIVE' ? 'ok' : 'bad'}>{r.result === 'POSITIVE' ? 'pozytywna' : 'negatywna'}</Badge></>}</td>
                     <td className="pr-3">{r.evaluator}</td>
                     <td className="pr-3">{r.next_deadline ? <><span className={r.next_deadline.overdue ? 'font-bold text-bad' : r.next_deadline.days_left <= 14 ? 'text-warn' : ''}>{r.next_deadline.label}</span><br /><span className="text-sm text-ink-soft">{fmtDate(r.next_deadline.date)}, {daysLabel(r.next_deadline.days_left)}</span></> : '—'}</td>
-                    <td><Remind id={r.id} /></td>
+                    <td>{['ACKNOWLEDGED', 'CANCELLED'].includes(r.status) ? null : <Remind id={r.id} />}</td>
                   </tr>
                 ))}
               </tbody>

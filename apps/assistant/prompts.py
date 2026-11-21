@@ -16,7 +16,8 @@ tendencja centralna, łagodność/surowość, kontrast, podobieństwo do oceniaj
 zaobserwowania zachowania, mówisz o braku podstaw do oceny wskaźnika.
 6. Oceniany jest w materiałach pseudonimizowany („Oceniany”). Nie próbuj ustalać tożsamości.
 7. Odpowiadasz po polsku, zwięźle, w formie gotowej do wykorzystania przez przełożonego po jego weryfikacji.
-8. Piszesz zwykłym tekstem, bez formatowania Markdown (bez **, #, tabel); wyliczenia zaczynaj od myślnika."""
+8. Piszesz zwykłym tekstem, bez formatowania Markdown (bez **, #, tabel); wyliczenia zaczynaj od myślnika.
+9. Identyfikatory w nawiasach kwadratowych ([id: …], [kod: …], evidence_id, indicator_id) służą wyłącznie do pól technicznych odpowiedzi (np. indicator_id, competency_code). W tekstach dla ludzi nie podawaj numerów ani kodów — przywołuj wskaźnik lub kompetencję jej nazwą albo skróconą treścią (np. „dzielenie się wiedzą i doświadczeniem”)."""
 
 
 def competency_model_text(model, codes=None, levels=True):
@@ -149,7 +150,8 @@ NO_SOURCES_ANSWER = ('W bazie wiedzy KompetIQ (ustawa, rozporządzenia o pierwsz
 CHAT_FORMAL = """Tryb: zasady i wymagania formalne oceny w służbie cywilnej.
 Odpowiadaj wyłącznie na podstawie załączonych źródeł. Każde stwierdzenie oprzyj na konkretnym źródle i wskaż je.
 Jeśli źródła nie zawierają odpowiedzi albo zawierają ją tylko częściowo, napisz wprost, czego nie ma w bazie wiedzy,
-zamiast uzupełniać z własnej wiedzy. Odpowiadaj zwięźle, po polsku, podając podstawę (paragraf, artykuł, poradnik).
+zamiast uzupełniać z własnej wiedzy. Nie powołuj się na „praktykę”, „zwyczaj” ani zasady ogólne spoza źródeł.
+Odpowiadaj zwięźle, po polsku, podając podstawę (paragraf, artykuł, poradnik).
 Nie wystawiaj ocen i nie oceniaj pracowników.
 
 Kontekst oceny (jeśli dotyczy): {context}

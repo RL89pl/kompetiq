@@ -11,7 +11,16 @@ from .models import LegalChunk, visible_chunks
 
 WORD = re.compile(r'[a-ząćęłńóśźż0-9]+', re.I)
 STOP = set('oraz jest który która które przez jeżeli jako także albo może można danego dnia tego tych '
-           'się dla nie ich jego jej lub czy jak ale już tym tak jaki jaka jakie kiedy co to być kto czym podaj'.split())
+           'się dla nie ich jego jej lub czy jak ale już tym tak jaki jaka jakie kiedy co to być kto czym podaj '
+           # słowa pytań potocznych — nie niosą treści merytorycznej, a obniżają pokrycie pytania
+           'zrobić robić jeśli gdy gdyby był była było były długo przed mam ma muszę musi trzeba powinienem powinnam '
+           'proszę mój moja moje mojego mojej ile jakim jakiej czego'.split())
+# Słownictwo potoczne → pojęcia z przepisów (rdzenie 6-literowe). Wyszukiwanie i pokrycie traktują je jak równoważne.
+SYNONYMS = {
+    'zwolni': {'nieobe'}, 'lekars': {'nieobe'}, 'chorob': {'nieobe'}, 'urlop': {'nieobe'}, 'l4': {'nieobe'},
+    'odwoła': {'sprzec'}, 'odwołu': {'sprzec'}, 'kierow': {'kieruj'}, 'szef': {'przeło'}, 'szefa': {'przeło'},
+    'podwła': {'ocenia'},
+}
 KIND_BOOST = {LegalChunk.Kind.FAQ: 1.25, LegalChunk.Kind.REGULATION: 1.1, LegalChunk.Kind.ACT: 1.1}
 
 
@@ -21,6 +30,13 @@ def stems(text):
         if len(w) < 3 or w in STOP:
             continue
         out.append(w[:6] if not w.isdigit() else w)
+    return out
+
+
+def _expand(terms):
+    out = set(terms)
+    for t in terms:
+        out |= SYNONYMS.get(t, set())
     return out
 
 
@@ -35,7 +51,7 @@ def search_scored(query, k=6, kinds=None, institution=None):
     docs = [Counter(stems(f'{c.title} {c.text}')) for c in chunks]
     n = len(docs)
     avg = sum(sum(d.values()) for d in docs) / n
-    q = set(stems(query))
+    q = _expand(stems(query))
     df = {t: sum(1 for d in docs if t in d) for t in q}
     scored = []
     for c, d in zip(chunks, docs):
@@ -61,7 +77,11 @@ def coverage(query, scored, top=3):
     q = set(stems(query))
     if not q:
         return 0.0
-    return max((len(q & set(stems(f'{c.title} {c.text}'))) / len(q) for _, c in scored[:top]), default=0.0)
+
+    def covered(chunk):
+        words = set(stems(f'{chunk.title} {chunk.text}'))
+        return sum(1 for t in q if t in words or SYNONYMS.get(t, set()) & words) / len(q)
+    return max((covered(c) for _, c in scored[:top]), default=0.0)
 
 
 def search(query, k=6, institution=None):

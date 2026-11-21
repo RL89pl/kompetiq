@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useCompetencyModel } from '../api/hooks'
-import { Loading, PageHeader } from '../components/ui'
+import { ErrorList, Loading, PageHeader } from '../components/ui'
 import { LevelScale } from '../components/LevelScale'
 
 export function CompetencyModelPage() {
-  const { data, isLoading } = useCompetencyModel()
+  const { data, isLoading, error } = useCompetencyModel()
   const [sel, setSel] = useState<number | null>(null)
+  if (error) return <ErrorList error={error} />
   if (isLoading || !data) return <Loading />
   const comp = data.competencies.find((c) => c.id === sel) ?? data.competencies[0]
   const nInd = data.competencies.reduce((n, c) => n + c.indicators.length, 0)

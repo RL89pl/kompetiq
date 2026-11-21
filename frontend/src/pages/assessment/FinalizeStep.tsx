@@ -75,7 +75,7 @@ export function FinalizeStep({ a, form, editable }: StepProps) {
                   <option value="">nie ustalono</option><option value="false">nie</option><option value="true" disabled={s.result !== 'POSITIVE'}>tak</option>
                 </Select>)}</Field>
               {d.draft.promotion_request === true && <>
-                <Field label="Wnioskowany stopień">{(id) => <Input id={id} {...d.bind('promotion_grade')} />}</Field>
+                <Field label="Wnioskowany stopień" hint="Wpisz w dopełniaczu, jak w arkuszu: „wnioskuję o przyznanie … stopnia służbowego”, np. „starszego radcy”.">{(id) => <Input id={id} {...d.bind('promotion_grade')} />}</Field>
                 <div className="md:col-span-2"><Field label="Umotywowanie wniosku">{(id) => <Textarea id={id} rows={3} {...d.bind('promotion_motivation')} />}</Field></div>
               </>}
             </div>

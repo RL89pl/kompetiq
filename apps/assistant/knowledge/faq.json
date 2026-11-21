@@ -143,5 +143,15 @@
   "q": "Czy asystent AI może wystawić ocenę?",
   "a": "Nie. Asystent pełni funkcję doradczą: porządkuje przykłady, wskazuje braki, proponuje sformułowania i pytania do rozmowy. Oceny cząstkowe i ostateczny poziom wybiera przełożony; wynik pozytywny lub negatywny wynika z przepisów i ocen przełożonego.",
   "basis": "Zasady aplikacji KompetIQ"
+ },
+ {
+  "q": "Kto podpisuje arkusz pierwszej oceny?",
+  "a": "Arkusz pierwszej oceny podpisują kolejno: w części II (rozmowa wstępna) – bezpośredni przełożony oraz oceniany, który potwierdza podpisem przeprowadzenie rozmowy wstępnej i zapoznanie się z terminem złożenia sprawozdania; w części III (rozmowa oceniająca) – bezpośredni przełożony i oceniany; w części „Potwierdzenie dokonania pierwszej oceny” – bezpośredni przełożony oraz kierujący komórką organizacyjną, w której oceniany jest zatrudniony; na końcu oceniany podpisuje oświadczenie o zapoznaniu się z pierwszą oceną. Oryginał arkusza wraz ze sprawozdaniem włącza się do akt osobowych, a kopię arkusza przekazuje się ocenianemu.",
+  "basis": "§ 4 ust. 3 i § 11 rozporządzenia PRM z 23.07.2015 (Dz.U. poz. 1144); wzór arkusza – załącznik nr 2"
+ },
+ {
+  "q": "Kto podpisuje arkusz oceny okresowej?",
+  "a": "Arkusz oceny okresowej podpisują oceniający i oceniany. W części I oceniany potwierdza podpisem przeprowadzenie rozmowy o obowiązkach, kryteriach i oczekiwaniach oraz zapoznanie się z kryteriami oceny i terminem sporządzenia oceny; kopię części I oceniający doręcza ocenianemu. W części II oceniający podpisuje sporządzoną ocenę, a oceniany potwierdza podpisem przeprowadzenie rozmowy oceniającej oraz zapoznanie się z oceną i wnioskami do indywidualnego programu rozwoju zawodowego. Wniosek o przyznanie kolejnego stopnia służbowego (część III, tylko dla urzędników służby cywilnej) podpisuje oceniający.",
+  "basis": "§ 6 ust. 2–3 i § 12 rozporządzenia PRM z 4.04.2016 (Dz.U. poz. 470); wzory arkuszy – załączniki nr 2–4"
  }
 ]

@@ -15,7 +15,7 @@ export function KnowledgePage() {
   const { data: me } = useMe()
   const isAdmin = me?.active_membership?.role === 'ADMIN'
   const qc = useQueryClient()
-  const { data, isLoading } = useQuery({ queryKey: KEY, queryFn: () => api<KnowledgeDocument[]>('/knowledge-documents/') })
+  const { data, isLoading, error } = useQuery({ queryKey: KEY, queryFn: () => api<KnowledgeDocument[]>('/knowledge-documents/') })
   const refresh = () => {
     qc.invalidateQueries({ queryKey: KEY })
     qc.invalidateQueries({ queryKey: qk.assistantStatus })
@@ -32,6 +32,7 @@ export function KnowledgePage() {
     onSuccess: refresh,
   })
 
+  if (error) return <ErrorList error={error} />
   if (isLoading || !data) return <Loading />
   const shared = data.filter((d) => d.shared)
   const own = data.filter((d) => !d.shared)

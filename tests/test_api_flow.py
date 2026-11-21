@@ -233,3 +233,18 @@ def test_fill_no_basis_marks_only_unrated_indicators(org, api):
     # ponowne wywołanie niczego nie zmienia; inny użytkownik nie może tego zrobić
     assert c.post(f"/api/v1/assessments/{a['id']}/fill-no-basis/").data['filled'] == []
     assert api(org.head).post(f"/api/v1/assessments/{a['id']}/fill-no-basis/").status_code in (403, 404)
+
+
+def test_first_assessment_checklist_warns_before_window(org, api):
+    from apps.assessments.checklist import build_checklist
+    from apps.assessments.models import Assessment
+    a = Assessment.objects.get(pk=create(api, org.sup, org.new, form='FIRST')['id'])
+    today = date.today()
+    a.window_from, a.window_to = today + timedelta(days=60), today + timedelta(days=120)
+    a.save()
+    row = next(i for i in build_checklist(a) if i['key'] == 'window_left')
+    assert not row['ok'] and row['severity'] == 'warning' and 'zaczyna się' in row['hint']
+    row = next(i for i in build_checklist(a, today=today + timedelta(days=70)) if i['key'] == 'window_left')
+    assert row['ok']
+    row = next(i for i in build_checklist(a, today=today + timedelta(days=130)) if i['key'] == 'window_left')
+    assert not row['ok'] and row['severity'] == 'error'

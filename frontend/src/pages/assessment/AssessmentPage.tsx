@@ -34,6 +34,7 @@ export function AssessmentPage() {
   const location = useLocation()
   const navigate = useNavigate()
   if (a.isLoading || forms.isLoading || model.isLoading) return <Loading />
+  if (forms.error || model.error) return <Notice tone="bad" title="Nie można wczytać konfiguracji oceny.">Odśwież stronę. Jeśli problem się powtarza, skontaktuj się z administratorem.</Notice>
   if (a.error || !a.data) return <Notice tone="bad" title="Nie można otworzyć oceny.">Ocena nie istnieje albo nie masz do niej dostępu.</Notice>
   const as = a.data
   const form = forms.data!.find((f) => f.form_type === as.form_type)!
@@ -68,7 +69,7 @@ export function AssessmentPage() {
           {' '}{first ? `Okres na dokonanie oceny: ${fmtDate(as.window_from)} – ${fmtDate(as.window_to)}` : `Termin sporządzenia oceny: ${fmtDate(as.due_date)}`}
         </p>
         {!as.can_edit && (me.data?.id === as.evaluator
-          ? <p className="mt-2 text-sm text-ink-soft">{as.status === 'ACKNOWLEDGED' ? 'Ocena zakończona: oceniany zapoznał się z oceną, dalsza edycja nie jest możliwa.' : 'Ocena jest tylko do odczytu na tym etapie.'}</p>
+          ? <p className="mt-2 text-sm text-ink-soft">{as.status === 'ACKNOWLEDGED' ? `Ocena zakończona: ${as.employee_detail.form_of_address === 'PANI' ? 'oceniana zapoznała' : as.employee_detail.form_of_address === 'PAN' ? 'oceniany zapoznał' : 'oceniany zapoznał(a)'} się z oceną, dalsza edycja nie jest możliwa.` : 'Ocena jest tylko do odczytu na tym etapie.'}</p>
           : <p className="mt-2 text-sm text-ink-soft">Tryb podglądu. Ocenę edytuje oceniający: {as.evaluator_name}.</p>)}
         </div>
         <div className="flex flex-col items-end gap-2">

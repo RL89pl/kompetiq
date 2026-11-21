@@ -90,8 +90,9 @@ export function CriteriaStep({ a, form, editable }: StepProps) {
         )}
         {!draft && (
           <Notice tone="ok" title="Kryteria ustalone">
-            Wydrukuj część I arkusza, aby oceniany potwierdził podpisem rozmowę i zapoznanie się z kryteriami i terminem.
-            Oryginał trafia do akt osobowych, kopia do ocenianego (§ 6 rozporządzenia z 2016 r.; § 4 rozporządzenia z 2015 r.).{' '}
+            {first
+              ? 'Wydrukuj części I i II arkusza, aby oceniany potwierdził podpisem przeprowadzenie rozmowy wstępnej i zapoznanie się z terminem złożenia sprawozdania. Kopię części I i II przekaż ocenianemu (§ 4 ust. 3–4 rozporządzenia z 2015 r.).'
+              : 'Wydrukuj część I arkusza, aby oceniany potwierdził podpisem rozmowę i zapoznanie się z kryteriami i terminem. Oryginał trafia do akt osobowych, kopia części I do ocenianego (§ 6 rozporządzenia z 2016 r.).'}{' '}
             <Download path={`/assessments/${a.id}/export/sheet/`} label="Pobierz arkusz" />
           </Notice>
         )}

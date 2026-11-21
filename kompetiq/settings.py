@@ -95,6 +95,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            # lokalnie: równoległe zapisy z przeglądarki czekają na blokadę zamiast kończyć się błędem „database is locked”
+            'OPTIONS': {'timeout': 20, 'transaction_mode': 'IMMEDIATE'},
         }
     }
 

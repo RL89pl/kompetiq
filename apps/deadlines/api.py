@@ -116,6 +116,8 @@ class AssessmentMessageView(APIView):
         if to == 'evaluator' and m.role not in (Role.HR, Role.ADMIN, Role.UNIT_HEAD):
             raise PermissionDenied()
         kind = Notification.Kind.REMINDER if request.data.get('reminder') else Notification.Kind.MESSAGE
+        if kind == Notification.Kind.REMINDER and a.status in (Status.ACKNOWLEDGED, Status.CANCELLED):
+            raise ValidationError('Ocena jest zakończona — przypomnienie o kontynuacji procesu nie jest potrzebne.')
         who = request.user.get_full_name() or request.user.username
         title = (f'Przypomnienie od {who}: ocena {a.employee.full_name}' if kind == Notification.Kind.REMINDER
                  else f'Wiadomość od {who}: ocena {a.employee.full_name}')

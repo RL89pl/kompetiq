@@ -12,6 +12,7 @@ from docx import Document
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Mm, Pt
+from django.utils import timezone
 
 from apps.assessments.forms_config import FormType
 from apps.assessments.models import ExamStatus, Result
@@ -25,6 +26,18 @@ _MARK = re.compile(r'\{(\d+)\}')
 
 def d(v, empty=DATE_HINT):
     return v.strftime('%d.%m.%Y') if v else empty
+
+
+_PDF_SAFE = str.maketrans({
+    '\u2010': '-', '\u2011': '-', '\u2012': '–', '\u2015': '—', '\u2212': '-',
+    '\u202f': ' ', '\u2007': ' ', '\u2009': ' ', '\u200a': ' ', '\u200b': '', '\u2060': '', '\ufeff': '',
+    '\u2610': '□', '\u2611': '■', '\u2612': '■', '\u2713': 'X', '\u2714': 'X',
+})
+
+
+def day(dt):
+    """Data potwierdzenia w aplikacji (DateTime) jako dd.mm.rrrr w strefie urzędu; pusta, gdy brak."""
+    return timezone.localtime(dt).strftime('%d.%m.%Y') if dt else None
 
 
 def num(v):
@@ -188,7 +201,8 @@ class PdfSheet:
     @staticmethod
     def _esc(text):
         from xml.sax.saxutils import escape
-        out = escape('' if text is None else str(text)).replace('\n', '<br/>')
+        # Znaki typograficzne z odpowiedzi AI, których brak w czcionkach PDF (Arial/DejaVu) — zamiana na odpowiedniki.
+        out = escape(('' if text is None else str(text)).translate(_PDF_SAFE)).replace('\n', '<br/>')
         return _MARK.sub(r'<super rise="3" size="6">\1)</super>', out)
 
     def p(self, text='', bold=False, align=None, size=None):
@@ -472,9 +486,9 @@ def _first(s, a):
     s.box('WNIOSKI DOTYCZĄCE ROZWOJU ZAWODOWEGO OCENIANEGO{8}', a.development_conclusions)
     s.heading('POTWIERDZENIE DOKONANIA PIERWSZEJ OCENY W SŁUŻBIE CYWILNEJ')
     s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'imię i nazwisko lub pieczątka bezpośredniego przełożonego',
-                 'podpis bezpośredniego przełożonego'], [None, None, full_name(a.evaluator), None])
+                 'podpis bezpośredniego przełożonego'], [None, day(a.finalized_at), full_name(a.evaluator), None])
     s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'imię i nazwisko lub pieczątka kierującego komórką organizacyjną',
-                 'podpis kierującego komórką organizacyjną'], [None, None, full_name(a.unit_head), None])
+                 'podpis kierującego komórką organizacyjną'], [None, day(a.approved_at), full_name(a.unit_head), None])
     s.p('Zapoznałam(-łem) się z pierwszą oceną w służbie cywilnej.')
     s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'imię i nazwisko lub pieczątka ocenianego', 'podpis ocenianego'],
                 [None, d(a.acknowledged_on, None), e.full_name, None])
@@ -596,7 +610,7 @@ def _periodic(s, a):
               'NIE DOTYCZY (oceniany jest pracownikiem służby cywilnej)', _x(not_applicable)]],
             widths=[0.1, 0.07, 0.1, 0.07, 0.56, 0.1], center_cols=(1, 3, 5))
     s.kv('DANE OCENIAJĄCEGO', _evaluator_rows(a, with_unit=not is_a))
-    s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'podpis oceniającego'])
+    s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'podpis oceniającego'], [None, day(a.finalized_at), None])
     s.p('Przeprowadzono ze mną rozmowę oceniającą oraz zapoznałem(-łam) się z oceną okresową i wnioskami dotyczącymi '
         'indywidualnego programu rozwoju zawodowego.')
     s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'imię i nazwisko lub pieczątka ocenianego', 'podpis ocenianego'],
@@ -630,7 +644,7 @@ def _periodic(s, a):
             f'{a.promotion_grade or "………."} stopnia służbowego.')
         s.box('Umotywowanie wniosku', a.promotion_motivation, height=60)
         s.signature(['miejscowość', 'data (dd.mm.rrrr)', 'imię i nazwisko lub pieczątka oceniającego',
-                     'podpis oceniającego'], [None, None, full_name(a.evaluator), None])
+                     'podpis oceniającego'], [None, day(a.finalized_at), full_name(a.evaluator), None])
         s.footnotes({n['part3']: notes[n['part3']]})
 
 
@@ -645,12 +659,14 @@ def development_plan_doc(plan, fmt='docx') -> bytes:
     a = plan.assessment
     s.p('PLAN ROZWOJU ZAWODOWEGO', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, size=12)
     s.table([['Oceniany', a.employee.full_name], ['Stanowisko', a.employee.position],
-             ['Ocena', a.get_form_type_display()], ['Wnioski', plan.summary]])
+             ['Ocena', a.get_form_type_display()],
+             # wnioski z arkusza oceny; podsumowanie planu, gdy wpisano je osobno
+             ['Wnioski', plan.summary or a.development_conclusions]], widths=[0.25, 0.75])
     rows = [['Kompetencja', 'Działanie', 'Forma', 'Miernik sukcesu', 'Termin', 'Status']]
     for act in plan.actions.select_related('competency'):
         rows.append([act.competency.name if act.competency else '', f'{act.title}\n{act.description}',
-                     act.get_type_display(), act.success_measure, d(act.due_date), act.get_status_display()])
-    s.table(rows, bold_rows=(0,))
+                     act.get_type_display(), act.success_measure, d(act.due_date, ''), act.get_status_display()])
+    s.table(rows, bold_rows=(0,), widths=[0.13, 0.31, 0.12, 0.19, 0.11, 0.14])
     return s.bytes()
 
 
@@ -663,7 +679,7 @@ def interview_plan_doc(a, script: dict, fmt='docx') -> bytes:
     for title, key in (('Przygotowanie', 'preparation_checklist'),):
         s.heading(title)
         for x in script.get(key, []):
-            s.p(f'☐ {x}')
+            s.p(f'□ {x}')
     s.heading('Otwarcie')
     s.p(script.get('opening', ''))
     for sec in script.get('sections', []):
@@ -685,7 +701,7 @@ def interview_plan_doc(a, script: dict, fmt='docx') -> bytes:
     s.p(script.get('closing', ''))
     s.heading('Elementy formalne')
     for x in script.get('formal_reminders', []):
-        s.p(f'☐ {x}')
+        s.p(f'□ {x}')
     s.heading('Trudne momenty')
     for x in script.get('difficult_moments_tips', []):
         s.p(f'• {x}')

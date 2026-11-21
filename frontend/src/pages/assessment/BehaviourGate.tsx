@@ -4,6 +4,7 @@ import { api } from '../../api/client'
 import { useInvalidateAssessment } from '../../api/hooks'
 import type { Assessment, CompetencyModel } from '../../api/types'
 import { Button, ErrorList, Notice } from '../../components/ui'
+import { plural } from '../../lib'
 import { unratedIndicators } from './context'
 
 export const NO_BASIS_LABEL = 'Brak okazji do zaobserwowania zachowania (brak podstaw do oceny wskaźnika)'
@@ -47,7 +48,7 @@ export function BehaviourGate({ a, model, onBack, onSkipped }: {
         <div className="px-6 pt-6">
         <h2 id="gate-title" className="text-2xl">Nie wszystkie wskaźniki zostały ocenione</h2>
         <p className="mt-2 text-[15px]">
-          W {pending.length === 1 ? 'jednym kryterium' : `${pending.length} kryteriach`} pozostało {count} {count === 1 ? 'wskaźnik' : 'wskaźników'} bez
+          W {pending.length === 1 ? 'jednym kryterium' : `${pending.length} kryteriach`} {plural(count, 'pozostał', 'pozostały', 'pozostało')} {count} {plural(count, 'wskaźnik', 'wskaźniki', 'wskaźników')} bez
           wybranego poziomu zachowania. Możesz wrócić i je uzupełnić albo przejść dalej.
         </p>
         </div>
@@ -55,7 +56,7 @@ export function BehaviourGate({ a, model, onBack, onSkipped }: {
         <ul className="mt-4 space-y-3">
           {pending.map((p) => (
             <li key={p.criterion} className="rounded-md border border-rule p-3">
-              <p className="font-bold">{p.criterion} <span className="font-normal text-ink-soft">({p.indicators.length} nieocenione)</span></p>
+              <p className="font-bold">{p.criterion} <span className="font-normal text-ink-soft">({p.indicators.length} {plural(p.indicators.length, 'nieoceniony', 'nieocenione', 'nieocenionych')})</span></p>
               <ul className="mt-1 list-disc pl-5 text-[15px] text-ink-soft">{p.indicators.map((t) => <li key={t}>{t}</li>)}</ul>
             </li>
           ))}
@@ -85,7 +86,7 @@ export function SkippedNotice({ filled, onClose }: { filled: Filled[]; onClose: 
   filled.forEach((f) => by.set(f.criterion, (by.get(f.criterion) ?? 0) + 1))
   return (
     <div className="mb-6">
-      <Notice tone="warn" title={`Oznaczono ${filled.length} ${filled.length === 1 ? 'wskaźnik' : 'wskaźników'} jako „brak okazji do zaobserwowania zachowania”`}>
+      <Notice tone="warn" title={`Oznaczono ${filled.length} ${plural(filled.length, 'wskaźnik', 'wskaźniki', 'wskaźników')} jako „brak okazji do zaobserwowania zachowania”`}>
         <p>{[...by].map(([c, n]) => `${c} (${n})`).join(', ')}.</p>
         <p className="mt-1">Zmienisz to w etapie „Ocena zachowań”.{' '}
           <button className="font-bold underline underline-offset-4" onClick={onClose}>Zamknij</button>

@@ -41,10 +41,17 @@ def build_checklist(a, today=None):
                               a.report_on_time is not None, '§ 10 ust. 1 pkt 2 rozp. z 23.07.2015'))
         if a.window_to and a.status not in (Status.FINALIZED, Status.APPROVED, Status.ACKNOWLEDGED):
             days = (a.window_to - today).days
-            items.append(item('window_left', 'Ocena dokonana w wyznaczonym okresie', days >= 0,
-                              'art. 38 ust. 1 ustawy o służbie cywilnej',
-                              f'Pozostało dni: {days}' if days >= 0 else 'Termin minął',
-                              severity='warning' if days >= 0 else 'error'))
+            early = bool(a.window_from and today < a.window_from)
+            if days < 0:
+                hint, severity = 'Termin minął', 'error'
+            elif early:
+                # Przed początkiem okresu ustalonego na rozmowie wstępnej — sygnał, nie blokada (np. przejście demonstracyjne).
+                hint, severity = (f'Okres na dokonanie oceny zaczyna się {a.window_from:%d.%m.%Y}; '
+                                  'ocena dokonana wcześniej odbiega od terminu przekazanego ocenianemu'), 'warning'
+            else:
+                hint, severity = f'Pozostało dni: {days}', 'error'
+            items.append(item('window_left', 'Ocena dokonana w wyznaczonym okresie', days >= 0 and not early,
+                              'art. 38 ust. 1 ustawy; § 4 ust. 2 pkt 3 rozp. z 23.07.2015', hint, severity=severity))
     else:
         suggested = suggest_periodic_form(emp)
         items.append(item('form', 'Arkusz właściwy dla stanowiska', a.form_type == suggested,

@@ -5,6 +5,7 @@ import pytest
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+from apps.assessments.models import Assessment
 from apps.deadlines.models import Notification
 from apps.deadlines.reminders import send_due_reminders
 from tests.test_api_flow import act, create
@@ -60,6 +61,10 @@ def test_first_assessment_notifies_unit_head_and_evaluator(org, api, django_capt
     nid = n[0]['id']
     api(org.head).post(f'/api/v1/notifications/{nid}/read/')
     assert api(org.head).get('/api/v1/notifications/?unread=1').data == []
+    # daty potwierdzeń z aplikacji trafiają do części „Potwierdzenie dokonania pierwszej oceny”
+    text = _docx_text(api(org.sup).get(f"/api/v1/assessments/{a['id']}/export/sheet/?fmt=docx").content)
+    confirm = text[text.index('POTWIERDZENIE DOKONANIA PIERWSZEJ OCENY'):]
+    assert confirm.count(today.strftime('%d.%m.%Y')) >= 2
 
 
 def test_hr_overview_and_reminders(org, api):
@@ -81,6 +86,11 @@ def test_hr_overview_and_reminders(org, api):
                              format='json').status_code == 201
     assert api(org.sup).post(f"/api/v1/assessments/{a['id']}/message/", {'to': 'evaluator', 'message': 'x'},
                              format='json').status_code == 403
+    # przypomnienie o kontynuacji nie dotyczy oceny zakończonej; zwykła wiadomość nadal tak
+    Assessment.objects.filter(pk=a['id']).update(status='ACKNOWLEDGED')
+    url = f"/api/v1/assessments/{a['id']}/message/"
+    assert api(org.hr).post(url, {'to': 'evaluator', 'reminder': True, 'message': 'x'}, format='json').status_code == 400
+    assert api(org.hr).post(url, {'to': 'evaluator', 'message': 'Pytanie o akta'}, format='json').status_code == 201
 
 
 def test_development_plan_list_shows_current_plan_per_employee(org, api):

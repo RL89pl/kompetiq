@@ -32,7 +32,8 @@ class InstitutionAdmin(admin.ModelAdmin):
             except Exception as e:  # noqa: BLE001 — pokazujemy przyczynę w panelu
                 messages.error(request, f'Nie udało się przywrócić danych demo: {e}')
             else:
-                messages.success(request, 'Przywrócono dane demonstracyjne. ' + out.getvalue().strip().splitlines()[-1])
+                messages.success(request, 'Przywrócono dane demonstracyjne. Konta: przelozony, kierownik, kadry, admin — '
+                                          'hasło z DEMO_PASSWORD w pliku .env.')
             return redirect('admin:institutions_institution_changelist')
         return TemplateResponse(request, 'admin/institutions/institution/reset_demo.html',
                                 {**self.admin_site.each_context(request), 'title': 'Przywróć dane demonstracyjne',

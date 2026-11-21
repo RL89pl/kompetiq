@@ -1,16 +1,13 @@
-import os
+from datetime import date, timedelta
 
+import pytest
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
 
-from datetime import date, timedelta  # noqa: E402
-
-import pytest  # noqa: E402
-from django.conf import settings  # noqa: E402
-from django.contrib.auth import get_user_model  # noqa: E402
-from rest_framework.test import APIClient  # noqa: E402
-
-from apps.competencies.importer import import_model  # noqa: E402
-from apps.employees.models import Employee, JobDescription  # noqa: E402
-from apps.institutions.models import Institution, Membership, OrgUnit, Role  # noqa: E402
+from apps.competencies.importer import import_model
+from apps.employees.models import Employee, JobDescription
+from apps.institutions.models import Institution, Membership, OrgUnit, Role
 
 PASSWORD = 'Test-haslo-2026!'
 

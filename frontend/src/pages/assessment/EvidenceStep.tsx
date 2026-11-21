@@ -111,6 +111,7 @@ function IndicatorBlock({ ind, crit, assessmentId, editable, questions, analysis
           <input type="checkbox" disabled={!editable} checked={!!rating?.no_basis} onChange={(e) => rate.mutate({ level: null, no_basis: e.target.checked })} />
           Brak okazji do zaobserwowania zachowania (brak podstaw do oceny wskaźnika)
         </label>
+        <ErrorList error={rate.error} />
       </details>
     </article>
   )

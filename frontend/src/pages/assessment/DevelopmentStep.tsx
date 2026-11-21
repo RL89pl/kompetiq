@@ -20,6 +20,7 @@ export function DevelopmentStep({ a, form, model, editable }: StepProps) {
   const d = useDraft(a, ['development_conclusions'])
   const [added, setAdded] = useState<Set<number>>(new Set())
   const muts = useActionMutations(plan.data ?? ({ id: 0, assessment: a.id } as never))
+  if (plan.error) return <ErrorList error={plan.error} />
   if (plan.isLoading || !plan.data) return <Loading />
 
   return (
