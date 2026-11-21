@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kompas Kompetencji — role i uprawnienia</title>
+<style>
+@font-face { font-family: "Atkinson"; font-weight: 400; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Atkinson"; font-weight: 400; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Atkinson"; font-weight: 700; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-ext-700-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Atkinson"; font-weight: 700; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Literata"; font-weight: 200 900; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource-variable/literata/files/literata-latin-ext-wght-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Literata"; font-weight: 200 900; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource-variable/literata/files/literata-latin-wght-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root { --ink:#17233B; --soft:#4A5670; --paper:#F7F8FB; --rule:#DDE2EA; --rule2:#C3CAD6; --first:#1E5FA8; --first-t:#E8F0FA; --per:#5B3FA6; --per-t:#EFEBF8; --ai:#0F6E66; --ai-t:#E6F4F2; --ok:#2E7D4F; --ok-t:#E7F4EC; --bad:#B3261E; --bad-t:#FBE9E7; --warn:#8F5600; --warn-t:#FDF2E1; }
+@page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+* { box-sizing: border-box; }
+html, body { margin: 0; color: var(--ink); font-family: "Atkinson", Verdana, sans-serif; font-size: 9.6pt; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+h1, h2, h3 { font-family: "Literata", Georgia, serif; font-weight: 600; letter-spacing: -0.01em; margin: 0; line-height: 1.15; }
+h1 { font-size: 26pt; }
+h2 { font-size: 15pt; }
+h3 { font-size: 10.5pt; font-family: "Atkinson", sans-serif; font-weight: 700; }
+p { margin: 0; }
+
+.head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); }
+.head svg { width: 40px; height: 40px; flex-shrink: 0; }
+.brand { font-family: "Literata", serif; font-weight: 600; font-size: 12pt; }
+.brand small { display: block; font-family: "Atkinson", sans-serif; font-weight: 400; font-size: 8.5pt; color: var(--soft); }
+.title { margin: 18px 0 6px; }
+.lead { color: var(--soft); font-size: 10.5pt; max-width: 165mm; }
+
+table { width: 100%; border-collapse: collapse; }
+.accounts { margin: 16px 0 4px; }
+.accounts th { text-align: left; font-size: 8.5pt; color: var(--soft); font-weight: 700; padding: 6px 8px; border-bottom: 1.5px solid var(--rule2); }
+.accounts td { padding: 7px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+code { font-family: "SF Mono", Menlo, monospace; font-size: 8.6pt; background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; }
+.note { margin-top: 8px; font-size: 8.5pt; color: var(--soft); }
+
+.role { margin-top: 16px; border: 1px solid var(--rule2); border-radius: 8px; overflow: hidden; break-inside: avoid; }
+.role-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 14px; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.role-head .who { font-size: 8.8pt; color: var(--soft); text-align: right; }
+.role-head .desc { font-size: 9pt; color: var(--soft); margin-top: 2px; }
+.role.sup  { border-left: 5px solid var(--first); }
+.role.head2 { border-left: 5px solid var(--per); }
+.role.hr   { border-left: 5px solid var(--ai); }
+.role.adm  { border-left: 5px solid var(--ink); }
+.cols { display: grid; grid-template-columns: 1fr 1fr; }
+.col { padding: 10px 14px 12px; }
+.col + .col { border-left: 1px solid var(--rule); }
+.col h3 { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.mark { display: inline-flex; width: 15px; height: 15px; border-radius: 8px; align-items: center; justify-content: center; font-size: 9pt; font-weight: 700; color: #fff; }
+.mark.yes { background: var(--ok); }
+.mark.no { background: var(--bad); }
+ul { margin: 0; padding-left: 15px; }
+li { margin: 0 0 3px; }
+li::marker { color: var(--rule2); }
+
+.page-break { break-before: page; }
+.matrix { margin-top: 12px; font-size: 9pt; }
+.matrix th { font-weight: 700; padding: 7px 6px; border-bottom: 1.5px solid var(--ink); text-align: center; vertical-align: bottom; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; }
+.matrix td { padding: 6px; border-bottom: 1px solid var(--rule); text-align: center; vertical-align: top; }
+.matrix tr:nth-child(even) td { background: #FBFCFE; }
+.y { color: var(--ok); font-weight: 700; }
+.n { color: #9AA3B5; }
+.lim { display: block; font-size: 7.8pt; color: var(--soft); font-weight: 400; }
+.legend { margin-top: 8px; font-size: 8.3pt; color: var(--soft); }
+.foot { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--rule); font-size: 8pt; color: var(--soft); display: flex; justify-content: space-between; }
+.callout { margin-top: 14px; padding: 10px 14px; border-radius: 6px; background: var(--warn-t); border-left: 4px solid var(--warn); font-size: 9pt; }
+.callout b { color: var(--warn); }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.5" fill="none" stroke="#17233B" stroke-width="1.5"/><path d="M16 4.5l3.6 11.5L16 27.5 12.4 16z" fill="#17233B"/><path d="M16 4.5l3.6 11.5h-7.2z" fill="#1E5FA8"/></svg>
+  <div class="brand">Kompas Kompetencji<small>Wsparcie przełożonych w pierwszej ocenie i ocenie okresowej w służbie cywilnej</small></div>
+</div>
+
+<h1 class="title">Role i uprawnienia</h1>
+<p class="lead">Kto co robi w procesie oceny i czego nie może. Każdy użytkownik widzi wyłącznie dane swojej instytucji, a wszystkie zmiany w ocenach są zapisywane w historii (kto i kiedy).</p>
+
+<table class="accounts">
+  <tr><th style="width:17%">Login (demo)</th><th style="width:24%">Osoba</th><th style="width:30%">Rola w aplikacji</th><th>Odpowiednik w urzędzie</th></tr>
+  <tr><td><code>przelozony</code></td><td>Tomasz Zieliński<br><span style="color:var(--soft)">kierownik oddziału</span></td><td><b>Bezpośredni przełożony</b></td><td>oceniający</td></tr>
+  <tr><td><code>kierownik</code></td><td>Maria Wójcik<br><span style="color:var(--soft)">dyrektor wydziału</span></td><td><b>Kierujący komórką organizacyjną</b></td><td>kierujący komórką (wydział i oddział)</td></tr>
+  <tr><td><code>kadry</code></td><td>Ewa Kaczmarek<br><span style="color:var(--soft)">specjalista ds. kadr</span></td><td><b>Kadry (HR)</b></td><td>komórka kadr</td></tr>
+  <tr><td><code>admin</code></td><td>Adam Mazur</td><td><b>Administrator instytucji</b></td><td>administrator systemu w urzędzie</td></tr>
+</table>
+<p class="note">Hasło do kont demonstracyjnych jest wspólne i przekazywane osobno (plik konfiguracyjny instalacji). Dane osób są fikcyjne.</p>
+
+<section class="role sup">
+  <div class="role-head"><div><h2>Bezpośredni przełożony</h2><p class="desc">Główny użytkownik. Przeprowadza ocenę od początku do końca.</p></div><div class="who"><code>przelozony</code></div></div>
+  <div class="cols">
+    <div class="col"><h3><span class="mark yes">✓</span>Robi</h3><ul>
+      <li>Widzi swoich pracowników i rozpoczyna ich pierwszą ocenę lub ocenę okresową.</li>
+      <li>Wczytuje lub uzupełnia opis stanowiska, także z pliku OSP (.docx).</li>
+      <li>Dobiera kryteria dodatkowe i wskaźniki, ustala terminy, oczekiwania i cele.</li>
+      <li>Dokumentuje przykłady zachowań, ocenia wskaźniki, <b>przyznaje oceny cząstkowe</b> i pisze uzasadnienia.</li>
+      <li>Korzysta z asystenta AI przy swoich ocenach i z asystenta formalnego.</li>
+      <li>Prowadzi etapy: kryteria, rozmowa oceniająca, sporządzenie oceny, zapoznanie ocenianego. Może otworzyć ocenę ponownie do czasu zapoznania.</li>
+      <li>Prowadzi plan rozwoju, także po zakończeniu oceny.</li>
+      <li>Pobiera arkusze, plan rozwoju i scenariusz rozmowy (PDF, DOCX); pisze do kierującego i kadr.</li>
+    </ul></div>
+    <div class="col"><h3><span class="mark no">✕</span>Nie może</h3><ul>
+      <li>Widzieć ani oceniać pracowników innych przełożonych.</li>
+      <li>Potwierdzić pierwszej oceny (robi to kierujący komórką).</li>
+      <li>Zmieniać danych kadrowych: stanowiska, komórki, formy zwracania się, statusu urzędnika.</li>
+      <li>Edytować oceny po jej sporządzeniu bez ponownego otwarcia, a po zapoznaniu ocenianego wcale.</li>
+      <li>Wejść do panelu HR ani wysyłać przypomnień innym oceniającym.</li>
+      <li>Widzieć rozmów z asystentem innych użytkowników.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="role head2">
+  <div class="role-head"><div><h2>Kierujący komórką organizacyjną</h2><p class="desc">Nadzoruje oceny w komórce i potwierdza pierwszą ocenę.</p></div><div class="who"><code>kierownik</code></div></div>
+  <div class="cols">
+    <div class="col"><h3><span class="mark yes">✓</span>Robi</h3><ul>
+      <li>Widzi pracowników i oceny w komórkach, którymi kieruje.</li>
+      <li><b>Potwierdza dokonanie pierwszej oceny</b>; dostaje o to powiadomienie.</li>
+      <li>Przegląda arkusze, listy kontrolne, terminy i plany rozwoju; pobiera dokumenty.</li>
+      <li>Wysyła przypomnienia i wiadomości oceniającemu oraz kadrom.</li>
+      <li>Korzysta z asystenta formalnego. Swoich bezpośrednich podwładnych ocenia jak przełożony.</li>
+    </ul></div>
+    <div class="col"><h3><span class="mark no">✕</span>Nie może</h3><ul>
+      <li>Edytować cudzej oceny: kryteriów, przykładów, ocen cząstkowych, uzasadnień.</li>
+      <li>Korzystać z asystenta AI w ocenie, której nie prowadzi.</li>
+      <li>Potwierdzać oceny okresowej (przepisy tego nie przewidują).</li>
+      <li>Zmieniać danych kadrowych ani wejść do panelu HR.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="role hr">
+  <div class="role-head"><div><h2>Kadry (HR)</h2><p class="desc">Organizuje i monitoruje proces w całym urzędzie.</p></div><div class="who"><code>kadry</code></div></div>
+  <div class="cols">
+    <div class="col"><h3><span class="mark yes">✓</span>Robi</h3><ul>
+      <li>Widzi <b>wszystkich</b> pracowników i wszystkie oceny w instytucji (podgląd).</li>
+      <li><b>Panel HR</b>: etapy procesów, komórki, oceny po terminie i negatywne.</li>
+      <li>Wysyła przypomnienia: przy wybranej ocenie i zbiorczo o terminach.</li>
+      <li>Zmienia dane kadrowe, m.in. <b>formę zwracania się</b> (Pani / Pan); dodaje opisy stanowisk.</li>
+      <li>Pobiera dokumenty, dostaje powiadomienia o sporządzeniu i zapoznaniu z oceną.</li>
+      <li>Wysyła wiadomości oceniającym i kierującym; korzysta z asystenta formalnego.</li>
+    </ul></div>
+    <div class="col"><h3><span class="mark no">✕</span>Nie może</h3><ul>
+      <li>Prowadzić ani edytować oceny.</li>
+      <li>Rozpocząć oceny za przełożonego.</li>
+      <li>Edytować planów rozwoju.</li>
+      <li>Korzystać z asystenta AI w konkretnej ocenie.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="role adm">
+  <div class="role-head"><div><h2>Administrator instytucji</h2><p class="desc">Konfiguracja i sytuacje wyjątkowe w urzędzie.</p></div><div class="who"><code>admin</code></div></div>
+  <div class="cols">
+    <div class="col"><h3><span class="mark yes">✓</span>Robi</h3><ul>
+      <li>Wszystko, co kadry: podgląd instytucji, panel HR, przypomnienia, dane kadrowe.</li>
+      <li>W sytuacjach wyjątkowych (np. długa nieobecność oceniającego) może wykonać każdą czynność w ocenie, łącznie z potwierdzeniem pierwszej oceny. Każda zmiana trafia do historii.</li>
+      <li>Korzysta ze wszystkich funkcji asystenta AI.</li>
+    </ul></div>
+    <div class="col"><h3><span class="mark no">✕</span>Nie może</h3><ul>
+      <li>Widzieć danych innych instytucji.</li>
+      <li>Edytować oceny po zapoznaniu się z nią ocenianego (blokada dotyczy wszystkich ról).</li>
+      <li>Czytać rozmów z asystentem innych użytkowników.</li>
+    </ul></div>
+  </div>
+</section>
+
+<div class="page-break"></div>
+<h2 style="font-size:17pt">Zestawienie uprawnień</h2>
+<table class="matrix">
+  <tr><th style="width:38%">Czynność</th><th>Przełożony</th><th>Kierujący komórką</th><th>Kadry</th><th>Administrator</th></tr>
+  <tr><td>Widok pracowników i ocen</td><td class="y">✓<span class="lim">swoi</span></td><td class="y">✓<span class="lim">swoja komórka</span></td><td class="y">✓<span class="lim">cała instytucja</span></td><td class="y">✓<span class="lim">cała instytucja</span></td></tr>
+  <tr><td>Rozpoczęcie oceny</td><td class="y">✓<span class="lim">swoi</span></td><td class="y">✓<span class="lim">swoi bezpośredni</span></td><td class="n">—</td><td class="y">✓</td></tr>
+  <tr><td>Edycja oceny, przykłady, oceny cząstkowe</td><td class="y">✓<span class="lim">swoje</span></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+  <tr><td>Sporządzenie oceny, zapoznanie ocenianego</td><td class="y">✓<span class="lim">swoje</span></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+  <tr><td>Potwierdzenie pierwszej oceny</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td></tr>
+  <tr><td>Asystent AI w ocenie</td><td class="y">✓<span class="lim">swoje</span></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+  <tr><td>Asystent formalny</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Plan rozwoju: edycja</td><td class="y">✓<span class="lim">swoje</span></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+  <tr><td>Pobieranie dokumentów (PDF, DOCX)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Dane kadrowe pracownika</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Opis stanowiska (dodanie, import OSP)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Panel HR, przypomnienia zbiorcze</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Przypomnienie lub wiadomość do oceniającego</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Wiadomość do kierującego i kadr</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓<span class="lim">do kierującego</span></td><td class="y">✓</td></tr>
+  <tr><td>Edycja oceny po zapoznaniu ocenianego</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+</table>
+<p class="legend">✓ — dozwolone (z zakresem pod znakiem), — niedostępne.</p>
+
+<div class="callout"><b>Panel techniczny.</b> Zakładanie kont, przypisywanie ról, import modelu kompetencji i konfiguracja instytucji odbywają się w panelu technicznym (<code>/admin/</code>), do którego potrzebne jest osobne konto superużytkownika. Konto demonstracyjne <code>admin</code> to administrator w aplikacji i nie ma dostępu do panelu technicznego.</div>
+
+<div class="foot"><span>Kompas Kompetencji · role i uprawnienia</span><span>Stan na 21.11.2026</span></div>
+</body>
+</html>
