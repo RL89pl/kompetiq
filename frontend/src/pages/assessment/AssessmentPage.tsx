@@ -52,7 +52,9 @@ export function AssessmentPage() {
           {as.employee_detail.position}{as.employee_detail.org_unit && `, ${as.employee_detail.org_unit}`}.
           {' '}{first ? `Okres na dokonanie oceny: ${fmtDate(as.window_from)} – ${fmtDate(as.window_to)}` : `Termin sporządzenia oceny: ${fmtDate(as.due_date)}`}
         </p>
-        {!as.can_edit && <p className="mt-2 text-sm text-ink-soft">Tryb podglądu. Ocenę edytuje oceniający: {as.evaluator_name}.</p>}
+        {!as.can_edit && (me.data?.id === as.evaluator
+          ? <p className="mt-2 text-sm text-ink-soft">{as.status === 'ACKNOWLEDGED' ? 'Ocena zakończona: oceniany zapoznał się z oceną, dalsza edycja nie jest możliwa.' : 'Ocena jest tylko do odczytu na tym etapie.'}</p>
+          : <p className="mt-2 text-sm text-ink-soft">Tryb podglądu. Ocenę edytuje oceniający: {as.evaluator_name}.</p>)}
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex gap-2">

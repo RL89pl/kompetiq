@@ -32,4 +32,4 @@
 | Wyłącznie darmowe narzędzia AI (hackathon) | Dostawca konfigurowalny; rekomendacja Groq (plan darmowy), docelowo PLLuM na serwerze MC |
 | Wskazanie elementów do zabezpieczenia przed produkcją | `04_bezpieczenstwo_i_wdrozenie.md` |
 | Opis projektu, opis AI, technologie i architektura | `01_opis_projektu.md`, `02_wykorzystanie_ai.md`, `03_architektura.md` |
-| Prezentacja (maks. 10 slajdów) | 10 slajdów (Claude Slides, eksport do PPTX/PDF): https://claude.ai/artifact/U2VJjL5QVRgoNTvdCPDjDw |
+| Prezentacja (maks. 10 slajdów) | `docs/KompetIQ_prezentacja.pdf`: 10 slajdów, zrzuty z aplikacji na danych demo (źródło: `docs/prezentacja/deck.html`); pełna dokumentacja: `/o-projekcie` |

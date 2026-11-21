@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>KompetIQ — prezentacja projektu</title>
+<style>
+@font-face { font-family: Atk; font-weight: 400; src: url(fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF, U+2212; }
+@font-face { font-family: Atk; font-weight: 400; src: url(fonts/atkinson-hyperlegible-next-latin-ext-400-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: Atk; font-weight: 700; src: url(fonts/atkinson-hyperlegible-next-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF, U+2212; }
+@font-face { font-family: Atk; font-weight: 700; src: url(fonts/atkinson-hyperlegible-next-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: Lit; font-weight: 100 900; src: url(fonts/literata-latin-wght-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2190-21FF, U+2212; }
+@font-face { font-family: Lit; font-weight: 100 900; src: url(fonts/literata-latin-ext-wght-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+:root {
+  --ink: #17233b; --soft: #4a5670; --paper: #f7f8fb; --rule: #dde2ea; --rule2: #c3cad6;
+  --first: #1e5fa8; --first-t: #e8f0fa; --per: #5b3fa6; --per-t: #efebf8;
+  --ok: #2e7d4f; --ok-t: #e7f4ec; --warn: #8f5600; --warn-t: #fdf2e1; --bad: #b3261e; --bad-t: #fbe9e7;
+  --ai: #0f6e66; --ai-t: #e6f4f2;
+}
+@page { size: 1920px 1080px; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #888; }
+body { font-family: Atk, system-ui, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.slide { width: 1920px; height: 1080px; position: relative; overflow: hidden; background: var(--paper); padding: 84px 110px 0; break-after: page; display: flex; flex-direction: column; }
+@media screen { .slide { margin: 0 auto 24px; } }
+.kick { font-size: 22px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--first); }
+h1, h2, h3 { font-family: Lit, Georgia, serif; font-weight: 600; letter-spacing: -0.01em; line-height: 1.12; }
+h2 { font-size: 66px; margin-top: 12px; max-width: 1500px; }
+.lead { font-size: 29px; line-height: 1.45; color: var(--soft); margin-top: 18px; max-width: 1450px; }
+.body { flex: 1; display: flex; gap: 56px; margin-top: 46px; min-height: 0; }
+.foot { position: absolute; left: 110px; right: 110px; bottom: 34px; display: flex; justify-content: space-between; font-size: 19px; color: var(--soft); }
+.foot b { color: var(--ink); font-family: Lit, serif; font-weight: 600; }
+.card { border: 2px solid var(--rule); background: #fff; border-radius: 14px; padding: 30px 32px; }
+.card h3 { font-family: Atk, sans-serif; font-weight: 700; font-size: 30px; display: flex; align-items: center; gap: 14px; }
+.card p { font-size: 25px; line-height: 1.45; color: var(--soft); margin-top: 12px; }
+.dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; flex: none; }
+.t-first { background: var(--first-t); border-color: #1e5fa84d; }
+.t-per { background: var(--per-t); border-color: #5b3fa64d; }
+.t-ai { background: var(--ai-t); border: 2px dashed var(--ai); }
+.t-ok { background: var(--ok-t); border-color: #2e7d4f4d; }
+.t-warn { background: var(--warn-t); border-color: #8f56004d; }
+.shot { border-radius: 12px; border: 2px solid var(--rule2); box-shadow: 0 18px 40px rgba(23,35,59,.14); background: #fff; display: block; }
+.pts { list-style: none; display: grid; gap: 22px; }
+.pts li { font-size: 27px; line-height: 1.38; display: flex; gap: 16px; }
+.pts li::before { content: ""; flex: none; width: 26px; height: 26px; margin-top: 5px; border-radius: 50%; background: var(--ok-t) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10.5 3.2 3.2L15 6.5' fill='none' stroke='%232e7d4f' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; }
+.pts b { color: var(--ink); }
+.pts span { color: var(--soft); }
+.flow { display: flex; align-items: stretch; gap: 14px; }
+.node { flex: 1; border: 2.5px solid var(--rule2); background: #fff; border-radius: 12px; padding: 18px 16px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+.node b { font-size: 25px; line-height: 1.2; }
+.node small { display: block; font-size: 19px; color: var(--soft); margin-top: 6px; line-height: 1.3; }
+.node.ink { background: var(--ink); border-color: var(--ink); color: #fff; } .node.ink small { color: #ffffffbf; }
+.node.first { background: var(--first-t); border-color: #1e5fa866; color: var(--first); }
+.node.ok { background: var(--ok-t); border-color: #2e7d4f66; color: var(--ok); }
+.node.bad { background: var(--bad-t); border-color: #b3261e66; color: var(--bad); }
+.node.ai { background: var(--ai-t); border: 2.5px dashed var(--ai); color: var(--ai); }
+.arr { align-self: center; color: var(--rule2); font-size: 34px; font-weight: 700; }
+.tag { display: inline-block; font-size: 19px; font-weight: 700; padding: 4px 12px; border-radius: 6px; border: 1.5px dashed var(--ai); color: var(--ai); background: var(--ai-t); }
+.label { white-space: nowrap; position: absolute; font-size: 20px; font-weight: 700; padding: 8px 14px; border-radius: 8px; background: var(--ink); color: #fff; box-shadow: 0 8px 20px rgba(23,35,59,.25); }
+.label::before { content: attr(data-n); display: inline-flex; width: 30px; height: 30px; margin-right: 10px; border-radius: 50%; background: #fff; color: var(--ink); align-items: center; justify-content: center; font-size: 18px; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide" style="background: var(--ink); color: #fff; padding-top: 110px;">
+  <svg viewBox="0 0 32 32" width="88" height="88" aria-hidden="true"><circle cx="16" cy="16" r="14.5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M16 4.5l3.6 11.5L16 27.5 12.4 16z" fill="#fff"/><path d="M16 4.5l3.6 11.5h-7.2z" fill="#6aa5e6"/></svg>
+  <p class="kick" style="color:#8fbaf0; margin-top: 46px;">KompetIQ · Kompas Kompetencji</p>
+  <h1 style="font-size: 88px; margin-top: 18px; max-width: 1500px;">Rzetelna ocena kompetencji w służbie cywilnej, krok po kroku.</h1>
+  <p style="font-size: 34px; line-height: 1.45; color: #ffffffcc; margin-top: 34px; max-width: 1380px;">
+    Prowadzi przełożonego przez pierwszą ocenę i ocenę okresową — od opisu stanowiska po arkusz gotowy do podpisu.
+    Asystent AI porządkuje i podpowiada. <b style="color:#fff">Ocenę wystawia przełożony.</b></p>
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px; margin-top: auto; margin-bottom: 110px;">
+    <div style="border:1.5px solid #ffffff40;border-radius:14px;padding:22px 26px"><div style="font-family:Lit;font-size:56px;font-weight:600">2</div><div style="font-size:22px;color:#ffffffb3">ścieżki oceny</div></div>
+    <div style="border:1.5px solid #ffffff40;border-radius:14px;padding:22px 26px"><div style="font-family:Lit;font-size:56px;font-weight:600">7</div><div style="font-size:22px;color:#ffffffb3">etapów kreatora</div></div>
+    <div style="border:1.5px solid #ffffff40;border-radius:14px;padding:22px 26px"><div style="font-family:Lit;font-size:56px;font-weight:600">49</div><div style="font-size:22px;color:#ffffffb3">wskaźników zachowań</div></div>
+    <div style="border:1.5px solid #ffffff40;border-radius:14px;padding:22px 26px"><div style="font-family:Lit;font-size:56px;font-weight:600">4</div><div style="font-size:22px;color:#ffffffb3">arkusze 1:1 ze wzorami</div></div>
+    <div style="border:1.5px solid #ffffff40;border-radius:14px;padding:22px 26px"><div style="font-family:Lit;font-size:56px;font-weight:600">0</div><div style="font-size:22px;color:#ffffffb3">ocen wystawionych przez AI</div></div>
+  </div>
+  <div class="foot" style="color:#ffffffb3"><span>Dokumentacja: <b style="color:#fff">kompetiq.devcage.pl/o-projekcie</b></span><span>1 / 10</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <p class="kick">Koncepcja</p>
+  <h2>AI doradza, przełożony decyduje</h2>
+  <p class="lead">Ocena opiera się na obserwowalnych zachowaniach. Każda decyzja o ocenie należy do człowieka — wymusza to kod, nie deklaracja.</p>
+  <div class="body" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-items: start; margin-bottom: 40px;">
+    <div class="card t-first"><h3><span class="dot" style="background:var(--first)"></span>Przełożony</h3>
+      <p>Wybiera opisy zachowań, dokumentuje przykłady, <b style="color:var(--ink)">przyznaje oceny cząstkowe</b> i prowadzi rozmowę. Każdą sugestię AI przyjmuje, edytuje albo odrzuca.</p></div>
+    <div class="card"><h3><span class="dot" style="background:var(--ink)"></span>System (bez AI)</h3>
+      <p>Liczy sugerowany poziom, średnią i <b style="color:var(--ink)">wynik pozytywny / negatywny</b> wprost z przepisów. Pilnuje terminów i wymogów, generuje arkusze.</p></div>
+    <div class="card t-ai"><h3><span class="dot" style="background:var(--ai)"></span>Asystent AI</h3>
+      <p>Wyjaśnia przepisy ze źródłem, analizuje przykłady, przygotowuje rozmowę. <b style="color:var(--ink)">Nie proponuje ocen</b> — jego odpowiedzi nie mają takich pól (test automatyczny).</p></div>
+  </div>
+  <p style="font-size: 24px; font-weight: 700; color: var(--soft); margin: 0 0 16px;">Każda sugestia AI przechodzi tę samą drogę</p>
+  <div class="flow" style="margin-bottom: 120px;">
+    <div class="node ai"><b>Sugestia AI</b><small>oznaczona „do weryfikacji”</small></div><span class="arr">→</span>
+    <div class="node ink"><b>Przełożony</b><small>przyjmuje, edytuje albo odrzuca</small></div><span class="arr">→</span>
+    <div class="node"><b>Rejestr wywołań</b><small>funkcja, model, decyzja</small></div><span class="arr">→</span>
+    <div class="node ok"><b>Wynik oceny</b><small>liczony kodem z ocen przełożonego</small></div>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>2 / 10</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <p class="kick">Dwie ścieżki</p>
+  <h2>Pierwsza ocena i ocena okresowa — każda według własnych przepisów</h2>
+  <div class="body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 36px;">
+    <div class="card t-first" style="padding: 36px 40px;">
+      <h3 style="font-family: Lit, serif; font-weight: 600; font-size: 40px; color: var(--first);">Pierwsza ocena</h3>
+      <p style="margin-top: 4px; font-size: 22px;">rozporządzenie PRM z 23 lipca 2015 r.</p>
+      <ul class="pts" style="margin-top: 28px;">
+        <li><span><b>Rozmowa wstępna w 21 dni</b>, sprawozdanie po 8 miesiącach</span></li>
+        <li><span><b>5 elementów oceny</b>, skala 3 / 5 / 7 pkt</span></li>
+        <li><span>Egzamin ze służby przygotowawczej i sprawozdanie</span></li>
+        <li><span><b>Potwierdzenie przez kierującego</b> komórką</span></li>
+      </ul>
+    </div>
+    <div class="card t-per" style="padding: 36px 40px;">
+      <h3 style="font-family: Lit, serif; font-weight: 600; font-size: 40px; color: var(--per);">Ocena okresowa · arkusze A, B, C</h3>
+      <p style="margin-top: 4px; font-size: 22px;">rozporządzenie PRM z 4 kwietnia 2016 r.</p>
+      <ul class="pts" style="margin-top: 28px;">
+        <li><span><b>Arkusz podpowiadany z opisu stanowiska</b> (§ 3), import OSP z .docx</span></li>
+        <li><span>Kryteria obowiązkowe i <b>do 3 dodatkowych</b></span></li>
+        <li><span>Skala <b>1 / 3 / 5 / 7 / 9 pkt</b>, średnia i poziom ogólny</span></li>
+        <li><span>Program rozwoju (IPRZ), pouczenie o sprzeciwie</span></li>
+      </ul>
+    </div>
+  </div>
+  <p style="font-size: 25px; color: var(--soft); margin: 30px 0 110px;">Kreator sam dobiera kroki, skalę, terminy i formularz do rodzaju oceny.</p>
+  <div class="foot"><span><b>KompetIQ</b></span><span>3 / 10</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <p class="kick">Kreator</p>
+  <h2>Siedem etapów i lista kontrolna z podstawą prawną</h2>
+  <div class="body" style="align-items: flex-start;">
+    <div style="position: relative; flex: none;">
+      <img class="shot" src="img/kreator.jpg" style="height: 640px;">
+      <span class="label" data-n="1" style="left: -24px; top: 60px;">Trasa etapów</span>
+      <span class="label" data-n="2" style="left: 470px; top: 165px;">Wymogi z paragrafem</span>
+    </div>
+    <ul class="pts" style="padding-top: 20px;">
+      <li><span><b>1 · Trasa postępu</b> — etap uznaje się za ukończony automatycznie, na podstawie danych.</span></li>
+      <li><span><b>2 · Lista kontrolna</b> sprawdza terminy, właściwy arkusz, obowiązkowe uzasadnienie — przy każdym punkcie przepis.</span></li>
+      <li><span><b>Wynik liczy system</b> z ocen przełożonego. AI nie uczestniczy w wyliczeniu.</span></li>
+      <li><span>Nieaktywne przyciski wyjaśniają, czego brakuje.</span></li>
+    </ul>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>4 / 10</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <p class="kick">Ocena zachowań</p>
+  <h2>Ocena wynika z obserwacji, nie z intuicji</h2>
+  <div class="flow" style="margin-top: 36px;">
+    <div class="node"><b>Przykład zachowania</b><small>sytuacja · działanie · rezultat</small></div><span class="arr">→</span>
+    <div class="node"><b>Wybór opisu zachowania</b><small>przy każdym wskaźniku</small></div><span class="arr">→</span>
+    <div class="node first"><b>Sugerowany poziom</b><small>liczony z wyborów</small></div><span class="arr">→</span>
+    <div class="node ink"><b>Decyzja przełożonego</b><small>może być inna niż sugerowana</small></div>
+  </div>
+  <div class="body" style="margin-top: 36px; gap: 36px;">
+    <div style="position: relative;"><img class="shot" src="img/zach_ex.jpg" style="height: 560px;">
+      <span class="label" data-n="1" style="left: 20px; top: -18px;">Przykład SDR</span>
+      <span class="label" data-n="2" style="left: 470px; top: 270px;">Wybrany opis</span></div>
+    <div style="position: relative;"><img class="shot" src="img/zach_lvl.jpg" style="width: 760px;">
+      <span class="label" data-n="3" style="left: 20px; top: -18px;">Sugestia i Twoja decyzja</span>
+      <p style="font-size: 24px; line-height: 1.45; color: var(--soft); margin-top: 26px; max-width: 760px;">14 kompetencji, 49 wskaźników, 5 poziomów z modelu kompetencji. AI może przeanalizować przykłady (braki, ryzyko błędów oceniania), ale nie ocenia.</p></div>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>5 / 10</span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <p class="kick">Asystent AI</p>
+  <h2>Odpowiada ze źródeł — albo mówi wprost, że nie wie</h2>
+  <div class="body" style="gap: 48px;">
+    <div style="position: relative; flex: none;"><img class="shot" src="img/chat_ans.jpg" style="height: 640px;">
+      <span class="label" data-n="1" style="left: 370px; top: 60px;">Cytowania [1]–[4]</span>
+      <span class="label" data-n="2" style="left: 340px; top: 330px;">Fragmenty źródeł</span></div>
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+      <div style="position: relative;"><img class="shot" src="img/chat_no.jpg" style="width: 760px;">
+        <span class="label" data-n="3" style="left: 460px; top: -20px;">Brak źródeł</span></div>
+      <ul class="pts">
+        <li><span><b>Dwa tryby:</b> zasady formalne oraz przygotowanie do rozmowy z konkretnym pracownikiem.</span></li>
+        <li><span><b>Baza wiedzy:</b> ustawa (t.j. 2026), rozporządzenia, poradniki KPRM, model, 29 pytań i odpowiedzi.</span></li>
+        <li><span><b>Bez źródeł model nie jest wywoływany</b> — pytanie o pogodę dostaje uczciwe „brak informacji”.</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>6 / 10</span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <p class="kick">Ochrona danych</p>
+  <h2>Dane osobowe nie trafiają do modelu — i można to sprawdzić</h2>
+  <div class="flow" style="margin-top: 36px;">
+    <div class="node"><b>Dane z oceny</b><small>tylko to, czego wymaga funkcja</small></div><span class="arr">→</span>
+    <div class="node first"><b>Pseudonimizacja</b><small>imię i nazwisko → „Oceniany”</small></div><span class="arr">→</span>
+    <div class="node first"><b>Kontrola danych</b><small>nazwiska z urzędu, e-mail, PESEL</small></div><span class="arr">→</span>
+    <div class="node ai"><b>Model językowy</b><small>Groq · docelowo PLLuM w MC</small></div>
+  </div>
+  <div class="body" style="margin-top: 36px; gap: 44px;">
+    <div style="position: relative; flex: none;"><img class="shot" src="img/transp.jpg" style="width: 900px;">
+      <span class="label" data-n="1" style="left: 520px; top: 80px;">Automatyczna kontrola</span></div>
+    <ul class="pts">
+      <li><span><b>Widok „Przejrzystość AI”</b> pokazuje dokładnie to, co zostałoby wysłane — bez wysyłania i zapisu.</span></li>
+      <li><span><b>Rejestr wywołań</b> z decyzją przełożonego: przyjęta, edytowana, odrzucona.</span></li>
+      <li><span>Model wymienny konfiguracją — PLLuM na serwerze MC: dane nie opuszczają urzędu.</span></li>
+    </ul>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>7 / 10</span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <p class="kick">Dokumenty</p>
+  <h2>Arkusze PDF 1:1 ze wzorami z rozporządzeń</h2>
+  <div class="body" style="gap: 40px;">
+    <img class="shot" src="img/arkusz1.jpg" style="height: 660px; transform: rotate(-1.5deg); margin-top: 6px;">
+    <img class="shot" src="img/arkusz2.jpg" style="height: 660px; transform: rotate(1deg); margin-left: -150px; margin-top: 26px;">
+    <ul class="pts" style="padding-top: 20px;">
+      <li><span><b>Arkusz pierwszej oceny, A, B, C</b> — układ, brzmienie pól, przypisy i pola podpisów jak w załącznikach.</span></li>
+      <li><span><b>Dane wypełnione z oceny</b>; miejsce na podpisy oceniającego, ocenianego i kierującego.</span></li>
+      <li><span>Plan rozwoju (IPRZ) i scenariusz rozmowy do druku.</span></li>
+      <li><span><b>PDF</b> do podpisu i EZD, <b>DOCX</b> do edycji.</span></li>
+    </ul>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>8 / 10</span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <p class="kick">Kadry i komunikacja</p>
+  <h2>Kadry widzą cały proces, terminy i zaległości</h2>
+  <div class="body" style="gap: 48px;">
+    <div style="position: relative; flex: none;"><img class="shot" src="img/hr.jpg" style="width: 900px;">
+      <span class="label" data-n="1" style="left: 30px; top: 70px;">Statusy</span>
+      <span class="label" data-n="2" style="left: 700px; top: 540px;">Przypomnij ↑</span></div>
+    <ul class="pts" style="padding-top: 10px;">
+      <li><span><b>1 · Panel HR:</b> etapy, komórki, oceny po terminie i negatywne.</span></li>
+      <li><span><b>2 · Przypomnienia</b> ręczne i automatyczne (codziennie), e-mail bez danych oceny.</span></li>
+      <li><span><b>Powiadomienia i wiadomości:</b> oceniający ↔ kierujący ↔ kadry, np. prośba o potwierdzenie pierwszej oceny.</span></li>
+      <li><span><b>4 role</b> z izolacją urzędów: przełożony, kierujący, kadry, administrator.</span></li>
+    </ul>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>9 / 10</span></div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kick">Architektura i wdrożenie</p>
+  <h2>Gotowe do wdrożenia i rozwoju w administracji</h2>
+  <div class="body" style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 44px; align-items: start;">
+    <div class="card" style="padding: 30px;">
+      <div class="node" style="flex: none;"><b>Przeglądarka · React 19</b><small>komputer i tablet, HTTPS</small></div>
+      <div style="text-align:center; color: var(--rule2); font-size: 30px; line-height: 1.2;">↓</div>
+      <div style="border: 2.5px solid var(--ink); border-radius: 12px; padding: 18px;">
+        <b style="font-size: 24px;">Django 6 + REST API (OpenAPI 3)</b>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; font-size: 18px;">
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">oceny i wynik</span>
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">model kompetencji</span>
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">terminy, powiadomienia</span>
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">PDF / DOCX</span>
+          <span style="border:1.5px dashed var(--ai);border-radius:8px;padding:8px;background:var(--ai-t)">asystent, baza wiedzy</span>
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">role, instytucje</span>
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">IPRZ</span>
+          <span style="border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)">PostgreSQL + audyt</span>
+        </div>
+      </div>
+      <div class="flow" style="margin-top: 16px;">
+        <div class="node ai"><b>Model LLM</b><small>Groq / PLLuM</small></div>
+        <div class="node"><b>System kadrowy</b><small>np. QNT</small></div>
+        <div class="node"><b>EZD</b><small>eksport PDF</small></div>
+      </div>
+    </div>
+    <div style="display: grid; gap: 22px;">
+      <ul class="pts">
+        <li><span><b>66 testów automatycznych</b> przy każdej zmianie: przepisy, terminy, uprawnienia, AI.</span></li>
+        <li><span><b>Zmiany przepisów:</b> urząd sam dodaje nowe akty do bazy wiedzy asystenta.</span></li>
+        <li><span><b>Przed produkcją:</b> PLLuM w MC, DPIA, SSO urzędu, kopie zapasowe, podpis kwalifikowany.</span></li>
+      </ul>
+      <div class="card t-ok" style="padding: 24px 28px;">
+        <p style="margin: 0; font-size: 22px; color: var(--soft);">Pełna dokumentacja</p>
+        <p style="margin: 4px 0 0; font-size: 32px; font-weight: 700; color: var(--ink);">kompetiq.devcage.pl/o-projekcie</p>
+        <p style="margin: 14px 0 0; font-size: 22px; color: var(--soft);">Aplikacja demo</p>
+        <p style="margin: 4px 0 0; font-size: 32px; font-weight: 700; color: var(--ink);">kompetiq.devcage.pl</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span><b>KompetIQ</b></span><span>10 / 10</span></div>
+</section>
+
+</body>
+</html>

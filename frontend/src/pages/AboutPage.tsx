@@ -462,7 +462,7 @@ export function AboutPage() {
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Card title="Skalowanie">Bezstanowy backend, kolejne repliki za nginx; wiele instytucji w jednej instalacji.</Card>
             <Card title="Integracje">Udokumentowane API REST — <a className="font-bold text-first underline" href="/api/v1/docs/">podgląd Swagger</a> dostępny bez logowania.</Card>
-            <Card title="Jakość" tone="ok">66 testów automatycznych: przepisy, terminy, uprawnienia, izolacja instytucji, AI, dokumenty. CI na GitHub Actions.</Card>
+            <Card title="Jakość" tone="ok">66 testów automatycznych: przepisy, terminy, uprawnienia, izolacja instytucji, AI, dokumenty. Uruchamiane automatycznie przy każdej zmianie kodu.</Card>
           </div>
         </Section>
 
@@ -491,7 +491,7 @@ export function AboutPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card title="Administrator urzędu" tone="first">Panel „Baza wiedzy”: nowy tekst ustawy, rozporządzenie, zarządzenie wewnętrzne. Pole „zastępuje źródło” wyłącza starą wersję. Asystent od razu cytuje nowe źródło.</Card>
             <Card title="Operator systemu">Wspólne akty dla wszystkich urzędów, zestaw pytań i odpowiedzi, nowa wersja modelu kompetencji (trwające oceny zostają przy swojej).</Card>
-            <Card title="Programista" tone="warn">Skale, progi wyniku, kryteria obowiązkowe, terminy. Każda reguła ma odwołanie do paragrafu i test; CI wykaże pomyłkę.</Card>
+            <Card title="Programista" tone="warn">Skale, progi wyniku, kryteria obowiązkowe, terminy. Każda reguła ma odwołanie do paragrafu i własny test automatyczny. Przy każdej zmianie testy uruchamiają się same i wskazują regułę, która przestała się zgadzać z przepisami.</Card>
           </div>
         </Section>
 
