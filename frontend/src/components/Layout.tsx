@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useMe, useNotifications } from '../api/hooks'
 
@@ -44,13 +44,13 @@ export function Layout() {
     <div className="min-h-screen md:grid md:grid-cols-[15rem_1fr]">
       <a href="#tresc" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:bg-white focus:p-2">Przejdź do treści</a>
       <aside className="border-b border-rule bg-white md:sticky md:top-0 md:h-screen md:border-b-0 md:border-r">
-        <div className="flex items-center gap-3 px-5 py-5">
+        <Link to="/" className="flex items-center gap-3 px-5 py-5" aria-label="KompetIQ — strona główna">
           <CompassMark />
           <div>
             <p className="font-serif text-lg font-semibold leading-tight">KompetIQ</p>
             <p className="text-[13px] text-ink-soft">{m?.institution_name}</p>
           </div>
-        </div>
+        </Link>
         <nav aria-label="Główna nawigacja" className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible">
           {NAV.filter((n) => !n.roles || (m && n.roles.includes(m.role))).map((n) => (
             <NavLink key={n.to} to={n.to} end={n.end}

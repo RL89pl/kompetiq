@@ -155,7 +155,7 @@ export function AboutPage() {
 
       <header className="sticky top-0 z-30 border-b border-rule bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3">
-          <a href="#top" className="flex items-center gap-2.5"><CompassMark className="size-7" /><span className="font-serif text-lg font-semibold">KompetIQ</span></a>
+          <Link to="/" className="flex items-center gap-2.5" aria-label="KompetIQ — strona główna"><CompassMark className="size-7" /><span className="font-serif text-lg font-semibold">KompetIQ</span></Link>
           <nav aria-label="Sekcje" className="hidden flex-1 xl:block">
             <ul className="flex gap-1 text-sm">
               {NAV.map(([id, label]) => <li key={id}><a href={`#${id}`} className="whitespace-nowrap rounded px-2 py-1 hover:bg-paper">{label}</a></li>)}
