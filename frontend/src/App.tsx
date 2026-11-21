@@ -1,4 +1,6 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { api } from './api/client'
 import { useMe } from './api/hooks'
 import { Layout } from './components/Layout'
 import { Loading } from './components/ui'
@@ -20,9 +22,24 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   const loc = useLocation()
   if (isLoading) return <Loading />
   if (isError || !data) return <Navigate to="/logowanie" state={{ from: loc.pathname }} replace />
-  if (!data.active_membership)
-    return <p className="p-10">Twoje konto nie jest przypisane do żadnej instytucji. Skontaktuj się z administratorem.</p>
+  if (!data.active_membership) return <NoInstitution />
   return <>{children}</>
+}
+
+function NoInstitution() {
+  const qc = useQueryClient()
+  const nav = useNavigate()
+  async function logout() {
+    await api('/auth/logout/', { method: 'POST' })
+    qc.clear()
+    nav('/logowanie')
+  }
+  return (
+    <div className="p-10">
+      <p>Twoje konto nie jest przypisane do żadnej instytucji. Skontaktuj się z administratorem.</p>
+      <button onClick={logout} className="mt-4 underline underline-offset-2">Wyloguj</button>
+    </div>
+  )
 }
 
 export function App() {
