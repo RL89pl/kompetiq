@@ -1,7 +1,8 @@
-# Przykładowy vhost dla nginx na hoście (poza kontenerami).
-# Katalog wdrożenia: /srv/services/kompetiq, port z .env: WEB_PORT=8650
+# vhost dla nginx na hoście (poza kontenerami): /etc/nginx/sites-available/kompetiq.devcage.pl
+# Katalog wdrożenia: /srv/services/kompetiq, port z .env: WEB_PORT=8435
+# Po włączeniu: sudo certbot --nginx -d kompetiq.devcage.pl  (dopisze blok 443 ssl i przekierowanie z 80)
 server {
-    server_name kompas.example.gov.pl;
+    server_name kompetiq.devcage.pl;
 
     location /static/ {
         alias /srv/services/kompetiq/public/static/;
@@ -11,20 +12,20 @@ server {
     }
 
     location /media/ {
-        # opisy stanowisk itp. — tylko dla zalogowanych; nie wystawiamy publicznie
+        # opisy stanowisk itp. (dane osobowe) — nie wystawiamy publicznie
         internal;
         alias /srv/services/kompetiq/public/media/;
     }
 
     location / {
-        proxy_pass         http://127.0.0.1:8650;
+        proxy_pass         http://127.0.0.1:8435;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
 
         proxy_connect_timeout  10s;
-        # asystent AI: odpowiedzi do ~2 min
+        # asystent AI: odpowiedzi do ~2 min (gunicorn --timeout 180)
         proxy_read_timeout     180s;
         proxy_send_timeout     60s;
 

@@ -77,7 +77,7 @@ Testy: `.venv/bin/pytest -q`. Test z prawdziwym Claude API: `pytest -m live_clau
 
 Aplikacja działa w Docker Compose (`db` – PostgreSQL, `web` – gunicorn na `127.0.0.1:${WEB_PORT}`).
 nginx działa na hoście poza kontenerami: serwuje `/static/` z `./public/static`, a resztę przekazuje do
-kontenera (przykład w `kompetiq.nginx`). Frontend budowany jest w wieloetapowym `Dockerfile` i trafia do
+kontenera (vhost w `kompetiq.devcage.pl.nginx`). Frontend budowany jest w wieloetapowym `Dockerfile` i trafia do
 `public/static/spa/` przez `collectstatic`.
 
 ```bash

@@ -18,7 +18,7 @@ jobs:
           script: |
             set -e
             cd /srv/services/kompetiq
-            grep -q '^WEB_PORT=' .env || { echo "Brak WEB_PORT w .env – zły katalog?"; exit 1; }
+            grep -qx 'WEB_PORT=8435' .env || { echo "Brak WEB_PORT=8435 w .env – zły katalog?"; exit 1; }
 
             git fetch origin main
             git reset --hard origin/main
