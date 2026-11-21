@@ -36,11 +36,12 @@ class CompetencyModelSerializer(serializers.ModelSerializer):
         model = CompetencyModel
         fields = ['id', 'name', 'version', 'guidance', 'competencies', 'level_labels']
 
-    def get_level_labels(self, obj):
+    def get_level_labels(self, obj) -> list[dict]:
         return [{'level': lv, 'label': label} for lv, label in LEVELS]
 
 
 class CompetencyModelViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CompetencyModel.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
     serializer_class = CompetencyModelSerializer
     pagination_class = None
 

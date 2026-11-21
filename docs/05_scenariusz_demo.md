@@ -35,6 +35,19 @@ Po dokonaniu oceny `kierownik` dostaje powiadomienie z prośbą o potwierdzenie.
 - Kiedy po negatywnej ocenie przeprowadza się kolejną? (art. 81 ust. 9 — po 6 miesiącach)
 - Pytanie spoza zakresu (np. o pogodę): asystent odpowiada, że w bazie wiedzy brak informacji.
 
+## Przejrzystość AI: co wysyłamy do modelu
+
+`przelozony`, menu **Przejrzystość AI**:
+1. Funkcja „Scenariusz rozmowy oceniającej”, ocena Katarzyny Nowickiej (arkusz C) → **Pokaż, co zostałoby wysłane**.
+2. Wynik kontroli: adresat (host i model), brak imienia i nazwiska ocenianej (w treści „Oceniana”), brak nazwisk osób
+   z urzędu, nazwy urzędu, e-maili, PESEL, daty zatrudnienia.
+3. Treść zapytania z podświetlonymi słowami „Oceniana”; pola odpowiedzi bez oceny punktowej i poziomu.
+4. Pokaz kontroli: w przykładzie zachowania dopisz nazwisko innej osoby z urzędu (np. „z Tomaszem Zielińskim”),
+   ponów podgląd: kontrola wskazuje nazwisko i miejsce wystąpienia.
+5. „Rozmowa: zasady i wymagania formalne” z pytaniem o pogodę: model nie zostałby wywołany (brak źródeł).
+
+Podgląd nie wywołuje modelu i nic nie zapisuje — działa także bez dostępu do sieci.
+
 ## Panel HR
 
 `kadry`: statusy, etapy, komórki, oceny po terminie, „Przypomnij” przy ocenie, „Wyślij przypomnienia o terminach”.

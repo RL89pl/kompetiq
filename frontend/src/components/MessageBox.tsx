@@ -33,7 +33,7 @@ export function MessageBox({ assessmentId, role, isEvaluator }: { assessmentId: 
         <p className="mt-1 text-[13px] text-ink-soft">Adresat zobaczy wiadomość w powiadomieniach; e-mail zawiera tylko informację o nowej wiadomości.</p>
       </div>
       <ErrorList error={m.error} />
-      {sent ? <p className="font-bold text-ok" role="status">Wiadomość wysłana.</p> : <Button type="submit" variant="secondary" busy={m.isPending} disabled={!text.trim()}>Wyślij</Button>}
+      {sent ? <p className="font-bold text-ok" role="status">Wiadomość wysłana.</p> : <Button type="submit" variant="secondary" busy={m.isPending} disabled={!text.trim()} disabledReason="Wpisz treść wiadomości.">Wyślij</Button>}
     </form>
   )
 }

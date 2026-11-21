@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -80,7 +81,7 @@ class CriterionSerializer(serializers.ModelSerializer):
         fields = ['id', 'competency', 'competency_code', 'competency_name', 'is_mandatory', 'order',
                   'selected_indicators', 'score', 'justification', 'evidence', 'ratings', 'suggested_points']
 
-    def get_suggested_points(self, obj):
+    def get_suggested_points(self, obj) -> int | None:
         levels = [r.level for r in obj.ratings.all() if not r.no_basis]
         return suggest_points_from_indicator_levels(levels, obj.assessment.form)
 
@@ -119,7 +120,7 @@ class AssessmentListSerializer(serializers.ModelSerializer):
                   'form_type', 'form_label', 'status', 'status_label', 'due_date', 'window_to', 'result',
                   'average', 'created_at', 'updated_at']
 
-    def get_evaluator_name(self, obj):
+    def get_evaluator_name(self, obj) -> str:
         return obj.evaluator.get_full_name() or obj.evaluator.username
 
 
@@ -146,26 +147,27 @@ class AssessmentDetailSerializer(AssessmentListSerializer):
         read_only_fields = ['employee', 'evaluator', 'form_type', 'status', 'competency_model', 'average', 'level',
                             'result', 'finalized_at', 'approved_at', 'acknowledged_on']
 
+    @extend_schema_field(CriterionSerializer(many=True))
     def get_criteria(self, obj):
         qs = obj.criteria.select_related('competency', 'assessment').prefetch_related(
             'selected_indicators', 'evidence', 'ratings')
         return CriterionSerializer(qs, many=True).data
 
-    def get_summary(self, obj):
+    def get_summary(self, obj) -> dict:
         return obj.summary().as_dict()
 
-    def get_available_actions(self, obj):
+    def get_available_actions(self, obj) -> list[str]:
         req = self.context['request']
         return workflow.available_actions(obj, req.user, membership(req))
 
-    def get_employee_detail(self, obj):
+    def get_employee_detail(self, obj) -> dict:
         e = obj.employee
         return {'id': e.id, 'full_name': e.full_name, 'position': e.position, 'form_of_address': e.form_of_address,
                 'org_unit': e.org_unit.name if e.org_unit else '', 'employment_date': e.employment_date,
                 'is_civil_servant': e.is_civil_servant, 'service_grade': e.service_grade,
                 'is_managerial': e.is_managerial}
 
-    def get_can_edit(self, obj):
+    def get_can_edit(self, obj) -> bool:
         req = self.context['request']
         m = membership(req)
         return (m.role == Role.ADMIN or obj.evaluator_id == req.user.id) and not obj.is_locked
@@ -279,6 +281,7 @@ class AssessmentViewSet(InstitutionScopedMixin, mixins.ListModelMixin, mixins.Re
 
 
 class CriterionViewSet(mixins.UpdateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = AssessmentCriterion.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
     serializer_class = CriterionUpdateSerializer
 
     def get_queryset(self):
@@ -316,6 +319,7 @@ class CriterionViewSet(mixins.UpdateModelMixin, mixins.RetrieveModelMixin, views
 
 
 class EvidenceViewSet(viewsets.ModelViewSet):
+    queryset = BehavioralEvidence.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
     serializer_class = EvidenceSerializer
     pagination_class = None
 

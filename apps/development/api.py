@@ -20,7 +20,7 @@ class NoteSerializer(serializers.ModelSerializer):
         model = ProgressNote
         fields = ['id', 'text', 'author_name', 'created_at']
 
-    def get_author_name(self, obj):
+    def get_author_name(self, obj) -> str:
         return obj.author.get_full_name() if obj.author else ''
 
 
@@ -69,7 +69,7 @@ class PlanEmployeeMixin(serializers.Serializer):
     assessment_result = serializers.CharField(source='assessment.result', read_only=True)
     assessment_date = serializers.DateTimeField(source='assessment.finalized_at', read_only=True)
 
-    def get_evaluator_name(self, obj):
+    def get_evaluator_name(self, obj) -> str:
         e = obj.assessment.evaluator
         return e.get_full_name() or e.username
 
@@ -82,7 +82,7 @@ class PlanListSerializer(PlanEmployeeMixin, serializers.ModelSerializer):
         fields = ['id', 'assessment', 'employee_id', 'employee_name', 'position', 'org_unit', 'evaluator_name',
                   'assessment_label', 'assessment_result', 'assessment_date', 'stats', 'updated_at']
 
-    def get_stats(self, obj):
+    def get_stats(self, obj) -> dict:
         return plan_stats(obj)
 
 
@@ -100,13 +100,13 @@ class PlanSerializer(PlanEmployeeMixin, serializers.ModelSerializer):
                   'stats', 'history', 'can_edit', 'updated_at']
         read_only_fields = ['assessment']
 
-    def get_progress(self, obj):
+    def get_progress(self, obj) -> dict:
         return obj.progress()
 
-    def get_stats(self, obj):
+    def get_stats(self, obj) -> dict:
         return plan_stats(obj)
 
-    def get_history(self, obj):
+    def get_history(self, obj) -> list[dict]:
         """Wcześniejsze plany tego samego pracownika."""
         req = self.context.get('request')
         if req is None:
@@ -117,7 +117,7 @@ class PlanSerializer(PlanEmployeeMixin, serializers.ModelSerializer):
         return [{'id': p.id, 'label': p.assessment.get_form_type_display(), 'date': p.assessment.finalized_at or p.created_at,
                  'progress': p.progress()} for p in older]
 
-    def get_can_edit(self, obj):
+    def get_can_edit(self, obj) -> bool:
         req = self.context.get('request')
         if req is None:
             return False
@@ -140,6 +140,7 @@ class PlanViewSet(viewsets.ModelViewSet):
     """Lista: domyślnie aktualny plan każdego pracownika (z najnowszej oceny), lekkie podsumowania.
     ?all=1 — wszystkie plany (także wcześniejsze); ?assessment=<id> — plan danej oceny."""
 
+    queryset = DevelopmentPlan.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
     pagination_class = None
     http_method_names = ['get', 'patch', 'post']
 
@@ -178,6 +179,7 @@ class PlanViewSet(viewsets.ModelViewSet):
 
 
 class ActionViewSet(viewsets.ModelViewSet):
+    queryset = DevelopmentAction.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
     serializer_class = ActionSerializer
     pagination_class = None
 

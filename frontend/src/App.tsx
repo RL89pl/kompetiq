@@ -4,6 +4,7 @@ import { api } from './api/client'
 import { useMe } from './api/hooks'
 import { Layout } from './components/Layout'
 import { Loading } from './components/ui'
+import { AITransparencyPage } from './pages/AITransparencyPage'
 import { AssessmentPage } from './pages/assessment/AssessmentPage'
 import { AssessmentsPage } from './pages/AssessmentsPage'
 import { CompetencyModelPage } from './pages/CompetencyModelPage'
@@ -14,6 +15,7 @@ import { DevelopmentPlanPage } from './pages/DevelopmentPlanPage'
 import { EmployeesPage } from './pages/EmployeesPage'
 import { FormalAssistantPage } from './pages/FormalAssistantPage'
 import { HRPage } from './pages/HRPage'
+import { KnowledgePage } from './pages/KnowledgePage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { LoginPage } from './pages/LoginPage'
 
@@ -58,6 +60,8 @@ export function App() {
         <Route path="asystent-formalny" element={<FormalAssistantPage />} />
         <Route path="panel-hr" element={<HRPage />} />
         <Route path="powiadomienia" element={<NotificationsPage />} />
+        <Route path="baza-wiedzy" element={<KnowledgePage />} />
+        <Route path="przejrzystosc-ai" element={<AITransparencyPage />} />
         <Route path="*" element={<p>Nie znaleziono strony.</p>} />
       </Route>
     </Routes>

@@ -46,7 +46,7 @@ function CriterionScore({ crit, props }: { crit: Criterion; props: StepProps }) 
         </Field>
         {editable && (
           <Button variant="ai" className="mt-2" disabled={crit.score === null} busy={ai.isPending} onClick={() => ai.mutate({ criterion: crit.id })}
-            title={crit.score === null ? 'Najpierw ustal ocenę cząstkową' : undefined}>Projekt uzasadnienia</Button>
+            disabledReason="Najpierw wybierz ocenę cząstkową dla tego kryterium (przyciski z punktami powyżej).">Projekt uzasadnienia</Button>
         )}
         <div className="mt-2"><ErrorList error={ai.error || patch.error} /></div>
         {ai.data && (
@@ -98,7 +98,7 @@ export function ScoresStep(props: StepProps) {
             <div className="md:col-span-2"><Field label="Sprawozdanie ocenianego (treść lub najważniejsze punkty)" hint="Zadania, problemy i sposób ich rozwiązania, nowa wiedza i umiejętności, wnioski (§ 6).">{(id) => <Textarea id={id} rows={6} {...d.bind('report_text')} />}</Field></div>
           </fieldset>
           <ErrorList error={d.patch.error} />
-          {editable && <Button className="mt-3" variant="secondary" disabled={!d.dirty} busy={d.patch.isPending} onClick={() => d.save()}>Zapisz</Button>}
+          {editable && <Button className="mt-3" variant="secondary" disabled={!d.dirty} disabledReason="Brak zmian do zapisania." busy={d.patch.isPending} onClick={() => d.save()}>Zapisz</Button>}
         </Section>
       )}
 

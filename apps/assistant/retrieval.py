@@ -7,11 +7,11 @@ import math
 import re
 from collections import Counter
 
-from .models import LegalChunk
+from .models import LegalChunk, visible_chunks
 
 WORD = re.compile(r'[a-ząćęłńóśźż0-9]+', re.I)
 STOP = set('oraz jest który która które przez jeżeli jako także albo może można danego dnia tego tych '
-           'się dla nie ich jego jej lub czy jak ale już tym tak jaki jaka jakie kiedy co to być'.split())
+           'się dla nie ich jego jej lub czy jak ale już tym tak jaki jaka jakie kiedy co to być kto czym podaj'.split())
 KIND_BOOST = {LegalChunk.Kind.FAQ: 1.25, LegalChunk.Kind.REGULATION: 1.1, LegalChunk.Kind.ACT: 1.1}
 
 
@@ -24,8 +24,9 @@ def stems(text):
     return out
 
 
-def search_scored(query, k=6, kinds=None):
-    qs = LegalChunk.objects.all()
+def search_scored(query, k=6, kinds=None, institution=None):
+    """institution — urząd użytkownika: wspólne źródła (bez wyłączonych w urzędzie) i źródła własne urzędu."""
+    qs = visible_chunks(institution)
     if kinds:
         qs = qs.filter(kind__in=kinds)
     chunks = list(qs)
@@ -51,8 +52,20 @@ def search_scored(query, k=6, kinds=None):
     return scored[:k]
 
 
-def search(query, k=6):
-    return [c for _, c in search_scored(query, k)]
+def coverage(query, scored, top=3):
+    """Największy udział rdzeni pytania obecnych w jednym z najlepszych fragmentów (0–1).
+
+    Sam wynik BM25 nie odróżnia pytań spoza tematu: jedno rzadkie słowo (np. „Warszawa” ze stopki poradnika)
+    daje wysoki wynik. Pytanie merytoryczne pokrywa większość swoich słów w jednym fragmencie.
+    """
+    q = set(stems(query))
+    if not q:
+        return 0.0
+    return max((len(q & set(stems(f'{c.title} {c.text}'))) / len(q) for _, c in scored[:top]), default=0.0)
+
+
+def search(query, k=6, institution=None):
+    return [c for _, c in search_scored(query, k, institution=institution)]
 
 
 def excerpt(text, query, size=2200):

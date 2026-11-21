@@ -23,6 +23,8 @@ Główny użytkownik. Przeprowadza ocenę od początku do końca.
 - dokumentuje przykłady zachowań, ocenia wskaźniki, **przyznaje oceny cząstkowe**, pisze uzasadnienia;
 - korzysta z asystenta AI przy swoich ocenach (analiza opisu stanowiska, przykładów, uzasadnienia, scenariusz
   i rozmowa o rozmowie oceniającej, plan rozwoju) oraz z asystenta formalnego;
+- w widoku „Przejrzystość AI” sprawdza, co asystent wysłałby do modelu przy jego ocenie i czy nie ma tam
+  danych osobowych (podgląd nie wywołuje modelu i niczego nie zapisuje);
 - przeprowadza etapy: ustalenie kryteriów → rozmowa oceniająca → sporządzenie oceny → zapoznanie ocenianego;
   może otworzyć ponownie sporządzoną ocenę, dopóki oceniany się z nią nie zapoznał;
 - prowadzi plan rozwoju (działania, statusy, notatki o postępie), także po zakończeniu oceny;
@@ -65,13 +67,15 @@ Organizuje i monitoruje proces w całym urzędzie.
 - wysyła przypomnienia: ręcznie przy wybranej ocenie oraz zbiorczo („Wyślij przypomnienia o terminach”);
 - zmienia dane kadrowe pracowników (np. **forma zwracania się**: Pani / Pan), dodaje opisy stanowisk;
 - pobiera arkusze i dokumenty; otrzymuje powiadomienia o sporządzeniu i zapoznaniu z oceną;
-- wysyła wiadomości oceniającym i kierującym; korzysta z asystenta formalnego.
+- wysyła wiadomości oceniającym i kierującym; korzysta z asystenta formalnego;
+- przegląda bazę wiedzy asystenta (źródła wspólne i źródła urzędu).
 
 **Nie może:**
 - prowadzić ani edytować oceny (kryteria, przykłady, oceny cząstkowe, uzasadnienia, etapy);
 - rozpocząć oceny za przełożonego;
 - edytować planów rozwoju;
-- korzystać z asystenta AI w trybie konkretnej oceny.
+- korzystać z asystenta AI w trybie konkretnej oceny;
+- dodawać, wyłączać ani usuwać źródeł bazy wiedzy.
 
 ## Administrator instytucji (`admin`)
 
@@ -82,10 +86,13 @@ Konfiguracja i obsługa wyjątkowych sytuacji w urzędzie.
 - w sytuacjach wyjątkowych (np. nieobecność oceniającego) może wykonać każdą czynność w ocenie, w tym
   rozpocząć ocenę, edytować ją, zmienić etap i potwierdzić pierwszą ocenę — wszystkie zmiany trafiają do historii
   (audyt: kto i kiedy);
-- korzysta ze wszystkich funkcji asystenta AI.
+- korzysta ze wszystkich funkcji asystenta AI;
+- zarządza bazą wiedzy asystenta w urzędzie (panel „Baza wiedzy”): dodaje źródła, wskazuje źródło zastępowane,
+  wyłącza nieaktualne źródła wspólne.
 
 **Nie może:**
 - widzieć danych innych instytucji;
+- usunąć źródła wspólnego z bazy wiedzy (może je tylko wyłączyć w swoim urzędzie);
 - edytować oceny po zapoznaniu się z nią ocenianego (blokada dotyczy wszystkich ról);
 - czytać rozmów z asystentem innych użytkowników.
 
@@ -103,11 +110,14 @@ osobnego konta superużytkownika (`manage.py createsuperuser`); konto demo `admi
 | Potwierdzenie pierwszej oceny | — | tak | — | tak |
 | Asystent AI w ocenie | tak (swoje) | — | — | tak |
 | Asystent formalny | tak | tak | tak | tak |
+| Przejrzystość AI (podgląd wysyłki do modelu) | swoje oceny | asystent formalny | asystent formalny | tak |
 | Plan rozwoju — edycja | tak (swoje) | — | — | tak |
 | Pobieranie dokumentów | tak | tak | tak | tak |
 | Dane kadrowe pracownika | — | — | tak | tak |
 | Opis stanowiska (dodanie, import OSP) | tak | tak | tak | tak |
 | Panel HR, przypomnienia zbiorcze | — | — | tak | tak |
+| Baza wiedzy — podgląd źródeł | — | — | tak | tak |
+| Baza wiedzy — dodawanie, wyłączanie, usuwanie źródeł | — | — | — | tak |
 | Przypomnienie / wiadomość do oceniającego | — | tak | tak | tak |
 | Wiadomość do kierującego i kadr | tak | tak | tak (do kierującego) | tak |
 | Edycja po zapoznaniu ocenianego | — | — | — | — |

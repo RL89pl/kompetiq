@@ -12,6 +12,8 @@ const NAV: { to: string; label: string; end?: boolean; roles?: string[] }[] = [
   { to: '/terminy', label: 'Terminy' },
   { to: '/model', label: 'Model kompetencji' },
   { to: '/asystent-formalny', label: 'Asystent formalny' },
+  { to: '/przejrzystosc-ai', label: 'Przejrzystość AI' },
+  { to: '/baza-wiedzy', label: 'Baza wiedzy', roles: ['HR', 'ADMIN'] },
 ]
 
 export function CompassMark({ className = 'size-8' }: { className?: string }) {

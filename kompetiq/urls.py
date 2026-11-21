@@ -6,7 +6,8 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
 
 from apps.assessments.api import AssessmentViewSet, CriterionViewSet, EvidenceViewSet
-from apps.assistant.api import AssistantFeatureView, AssistantStatusView, ConversationViewSet, InteractionOutcomeView
+from apps.assistant.api import (AssistantFeatureView, AssistantStatusView, ConversationViewSet, InteractionOutcomeView,
+                                KnowledgeDocumentViewSet, PreviewView)
 from apps.competencies.api import CompetencyModelViewSet
 from apps.deadlines.api import (AssessmentMessageView, HROverviewView, NotificationViewSet, SendRemindersView,
                                 UpcomingDeadlinesView)
@@ -30,6 +31,7 @@ router.register('development-plans', PlanViewSet, basename='development-plan')
 router.register('development-actions', ActionViewSet, basename='development-action')
 router.register('notifications', NotificationViewSet, basename='notification')
 router.register('assistant/conversations', ConversationViewSet, basename='conversation')
+router.register('knowledge-documents', KnowledgeDocumentViewSet, basename='knowledge-document')
 
 api = [
     path('auth/csrf/', CsrfView.as_view()),
@@ -45,6 +47,7 @@ api = [
     path('assessments/<int:pk>/assistant/<slug:feature>/', AssistantFeatureView.as_view()),
     path('assessments/<int:pk>/export/<slug:kind>/', ExportView.as_view()),
     path('assistant/status/', AssistantStatusView.as_view()),
+    path('assistant/preview/', PreviewView.as_view()),
     path('assistant/interactions/<int:pk>/outcome/', InteractionOutcomeView.as_view()),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('docs/', SpectacularSwaggerView.as_view(url_name='schema')),

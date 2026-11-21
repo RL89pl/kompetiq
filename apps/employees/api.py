@@ -1,4 +1,5 @@
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -40,20 +41,21 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ['id', 'first_name', 'last_name', 'full_name', 'position', 'form_of_address', 'org_unit', 'org_unit_name',
                   'supervisor', 'supervisor_name', 'employment_date', 'contract_end_date', 'is_civil_servant',
-                  'service_grade', 'is_managerial', 'is_office_head', 'is_active', 'suggested_form',
+                  'service_grade', 'appointment_year', 'service_grade_date', 'is_managerial', 'is_office_head', 'is_active', 'suggested_form',
                   'latest_job_description', 'active_assessment']
 
-    def get_supervisor_name(self, obj):
+    def get_supervisor_name(self, obj) -> str:
         return obj.supervisor.get_full_name() if obj.supervisor else ''
 
-    def get_suggested_form(self, obj):
+    def get_suggested_form(self, obj) -> str:
         return suggest_periodic_form(obj)
 
+    @extend_schema_field(JobDescriptionSerializer(allow_null=True))
     def get_latest_job_description(self, obj):
         jd = obj.job_descriptions.first()
         return JobDescriptionSerializer(jd).data if jd else None
 
-    def get_active_assessment(self, obj):
+    def get_active_assessment(self, obj) -> dict | None:
         a = obj.assessments.exclude(status__in=['ACKNOWLEDGED', 'CANCELLED']).first()
         return {'id': a.id, 'status': a.status, 'form_type': a.form_type} if a else None
 

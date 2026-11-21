@@ -146,7 +146,8 @@ export function EvidenceStep({ a, form, model, editable }: StepProps) {
           {editable && (
             <div className="flex flex-wrap gap-2">
               <Button variant="ai" busy={qs.isPending} onClick={() => qs.mutate({ criterion: crit.id })}>Pytania pomocnicze</Button>
-              <Button variant="ai" busy={an.isPending} disabled={!crit.evidence.length} onClick={() => an.mutate({ criterion: crit.id })}>Przeanalizuj przykłady</Button>
+              <Button variant="ai" busy={an.isPending} disabled={!crit.evidence.length}
+                disabledReason="Dodaj co najmniej jeden przykład zachowania dla tego kryterium." onClick={() => an.mutate({ criterion: crit.id })}>Przeanalizuj przykłady</Button>
             </div>
           )}
         </div>

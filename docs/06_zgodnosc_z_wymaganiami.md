@@ -16,17 +16,19 @@
 | Wyjaśnianie zasad formalnych | Odpowiedzi z bazy wiedzy z podaniem źródła |
 | Przygotowanie do rozmowy (pytania, kwestie, argumenty) | Scenariusz rozmowy, rozmowa z asystentem, projekty uzasadnień |
 | Odpowiedzi ze źródeł, identyfikacja źródła | Cytowania przy każdej odpowiedzi (tytuł, strona) |
-| Brak informacji → jasny komunikat | Próg dopasowania: bez źródeł nie ma wywołania modelu, jest komunikat o braku informacji |
+| Brak informacji → jasny komunikat | Dwa progi: wynik dopasowania i udział słów pytania w jednym źródle (≥ 60%); bez źródeł nie ma wywołania modelu, jest komunikat o braku informacji (test na pełnej bazie wiedzy) |
 | Baza wiedzy: ustawa, rozporządzenia, model, poradniki, pytania i odpowiedzi | Ustawa (t.j. Dz.U. 2026 poz. 590, z ISAP/ELI), rozporządzenia + załącznik, poradniki KPRM, model, 29 pytań i odpowiedzi |
+| Aktualizacja bazy wiedzy przy zmianie przepisów | Panel „Baza wiedzy” (administrator instytucji): wgranie PDF/DOCX/TXT/MD, „zastępuje źródło”, „obowiązuje od”, wyłączanie źródeł wspólnych; `docs/08_zmiany_przepisow_i_modyfikowalnosc.md` |
 | AI nie decyduje o poziomie oceny | Schematy bez pól ocen (test), wynik liczony kodem z ocen przełożonego |
 | Perspektywa HR/administratora | Panel HR: statusy, terminy, komórki, przekroczenia |
 | Przypomnienia | Ręczne (HR) i automatyczne (`send_reminders`, codziennie, bez duplikatów), e-mail bez danych oceny |
 | Brak dostępności na smartfonach | Ekran blokady poniżej 768 px; interfejs dla komputera i tabletu |
 | Czytelny i responsywny interfejs w przeglądarce | Układ od tabletu po monitor, WCAG (kontrast, fokus, etykiety) |
 | Architektura do rozwoju i skalowania | Moduły Django, bezstanowy backend, wielu dzierżawców, wymienny dostawca AI |
-| Integracja z EZD / systemami kadrowymi (możliwość) | Udokumentowane API REST (OpenAPI), import OSP, eksport PDF |
+| Integracja z EZD / systemami kadrowymi (możliwość) | Udokumentowane API REST: OpenAPI 3 z opisem żądań i odpowiedzi wszystkich widoków, publiczny podgląd `/api/v1/docs/`; import OSP, eksport PDF |
 | Uwierzytelnianie, autoryzacja, role | Logowanie, 4 role, izolacja instytucji, blokada edycji po sporządzeniu |
-| Ochrona danych, minimalizacja | Pseudonimizacja przed AI, e-mail bez treści oceny, audyt, brak danych w adresach URL |
+| Ochrona danych, minimalizacja | Pseudonimizacja przed AI, e-mail bez treści oceny, audyt, brak danych w adresach URL; widok „Przejrzystość AI”: dokładna treść wysyłki do modelu z automatyczną kontrolą danych osobowych |
+| Jakość, wiarygodność i bezpieczeństwo AI (kryterium walidacji) | Źródła z cytowaniem, dwa progi „brak informacji”, schematy bez pól ocen, rejestr wywołań z decyzją przełożonego, podgląd wysyłki bez wywołania modelu (`02_wykorzystanie_ai.md`) |
 | Wyłącznie darmowe narzędzia AI (hackathon) | Dostawca konfigurowalny; rekomendacja Groq (plan darmowy), docelowo PLLuM na serwerze MC |
 | Wskazanie elementów do zabezpieczenia przed produkcją | `04_bezpieczenstwo_i_wdrozenie.md` |
 | Opis projektu, opis AI, technologie i architektura | `01_opis_projektu.md`, `02_wykorzystanie_ai.md`, `03_architektura.md` |

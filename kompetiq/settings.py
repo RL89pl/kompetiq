@@ -149,6 +149,15 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'KompetIQ API',
+    'DESCRIPTION': (
+        'API KompetIQ (Kompas Kompetencji) — to samo, z którego korzysta interfejs. Przeznaczone do integracji '
+        'z systemami kadrowymi (np. QNT: pracownicy, komórki, opisy stanowisk) i EZD (eksport arkuszy PDF).\n\n'
+        '**Uwierzytelnianie:** sesja Django. `GET /api/v1/auth/csrf/` → `POST /api/v1/auth/login/`; '
+        'żądania zmieniające dane wymagają nagłówka `X-CSRFToken`. Wszystkie dane są ograniczone do aktywnej '
+        'instytucji użytkownika i jego roli. Integracje systemowe: token/OAuth2 do dodania przed wdrożeniem '
+        '(docs/04_bezpieczenstwo_i_wdrozenie.md).\n\n'
+        '**AI:** odpowiedzi funkcji asystenta są sugestiami — nie zawierają ocen ani poziomów; ocenę ustala przełożony.'
+    ),
     'VERSION': '1.0.0',
     'COMPONENT_SPLIT_REQUEST': True,
     'ENUM_NAME_OVERRIDES': {
@@ -176,6 +185,8 @@ ASSISTANT_CONTEXT_CHARS = int(os.environ.get('ASSISTANT_CONTEXT_CHARS', '9000'))
 LLM_MAX_TOKENS = int(os.environ.get('LLM_MAX_TOKENS', '4096'))
 LLM_TIMEOUT = float(os.environ.get('LLM_TIMEOUT', '120'))
 ASSISTANT_MIN_RETRIEVAL_SCORE = float(os.environ.get('ASSISTANT_MIN_RETRIEVAL_SCORE', '2.0'))
+# Minimalny udział słów pytania obecnych w jednym źródle (odrzuca pytania spoza tematu z jednym przypadkowym słowem)
+ASSISTANT_MIN_COVERAGE = float(os.environ.get('ASSISTANT_MIN_COVERAGE', '0.6'))
 
 LEGAL_DOCS_DIR = BASE_DIR / 'docs_assets'
 

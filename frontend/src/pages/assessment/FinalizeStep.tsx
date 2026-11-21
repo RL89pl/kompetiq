@@ -53,7 +53,8 @@ export function FinalizeStep({ a, form, editable }: StepProps) {
       </Section>
 
       <Section title="Uzasadnienie przyznanej oceny" description={negative ? 'Przy ocenie negatywnej uzasadnienie jest obowiązkowe.' : 'Przy ocenie pozytywnej uzasadnienie jest opcjonalne.'}
-        actions={editable && !locked && <Button variant="ai" busy={ai.isPending} disabled={!s.complete} onClick={() => ai.mutate({})}>Projekt uzasadnienia</Button>}>
+        actions={editable && !locked && <Button variant="ai" busy={ai.isPending} disabled={!s.complete} onClick={() => ai.mutate({})}
+          disabledReason={`Projekt uzasadnienia będzie dostępny po uzupełnieniu oceny. ${s.reasons.join(' ') || 'Przyznaj oceny cząstkowe za wszystkie kryteria.'}`}>Projekt uzasadnienia</Button>}>
         <ErrorList error={ai.error} />
         {ai.data && (
           <div className="mb-4">
@@ -79,7 +80,7 @@ export function FinalizeStep({ a, form, editable }: StepProps) {
               </>}
             </div>
           )}
-          {editable && !locked && <Button variant="secondary" disabled={!d.dirty} busy={d.patch.isPending} onClick={() => d.save()}>Zapisz</Button>}
+          {editable && !locked && <Button variant="secondary" disabled={!d.dirty} disabledReason="Brak zmian do zapisania." busy={d.patch.isPending} onClick={() => d.save()}>Zapisz</Button>}
         </fieldset>
         <ErrorList error={d.patch.error} />
       </Section>

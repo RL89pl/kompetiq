@@ -2,6 +2,7 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from django.utils import timezone
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -12,6 +13,8 @@ from apps.assessments.api import assessments_visible_to, get_visible_assessment
 from apps.assessments.models import Assessment, Status
 from apps.institutions.models import Role
 from apps.institutions.permissions import IsHROrAdmin, membership
+
+from kompetiq import openapi as o
 
 from .models import Notification
 from .notify import hr_users, notify, unit_head_for
@@ -28,6 +31,8 @@ def _visible(request):
 class UpcomingDeadlinesView(APIView):
     """Nadchodzące i przekroczone terminy w ocenach widocznych dla użytkownika."""
 
+    @extend_schema(parameters=[OpenApiParameter('days', int, description='Horyzont w dniach (domyślnie 60, maks. 730)')],
+                   responses=o.DeadlineOut(many=True), tags=['Terminy'])
     def get(self, request):
         horizon = min(int(request.query_params.get('days', 60)), 730)
         return Response(deadlines_for(list(_visible(request)), horizon_days=horizon))
@@ -38,6 +43,7 @@ class HROverviewView(APIView):
 
     permission_classes = [IsHROrAdmin]
 
+    @extend_schema(responses=o.HROverviewOut, tags=['Panel HR'])
     def get(self, request):
         items = list(_visible(request))
         today = date.today()
@@ -87,6 +93,7 @@ class SendRemindersView(APIView):
 
     permission_classes = [IsHROrAdmin]
 
+    @extend_schema(request=None, responses=o.SentOut, tags=['Panel HR'])
     def post(self, request):
         n = send_due_reminders(institution=membership(request).institution)
         return Response({'sent': n})
@@ -95,6 +102,7 @@ class SendRemindersView(APIView):
 class AssessmentMessageView(APIView):
     """Komunikacja w procesie: wiadomość / przypomnienie do oceniającego, kierującego komórką lub kadr."""
 
+    @extend_schema(request=o.MessageIn, responses={201: o.SentOut, 400: o.Detail}, tags=['Komunikacja'])
     def post(self, request, pk):
         a = get_visible_assessment(request, pk)
         m = membership(request)
@@ -129,11 +137,12 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ['id', 'kind', 'kind_label', 'title', 'body', 'assessment', 'sender_name', 'read_at', 'created_at']
 
-    def get_sender_name(self, obj):
+    def get_sender_name(self, obj) -> str:
         return obj.sender.get_full_name() if obj.sender else 'KompetIQ'
 
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Notification.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
     serializer_class = NotificationSerializer
     pagination_class = None
 

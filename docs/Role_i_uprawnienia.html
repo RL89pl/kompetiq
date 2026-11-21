@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<title>Kompas Kompetencji — role i uprawnienia</title>
+<title>KompetIQ — role i uprawnienia</title>
 <style>
 @font-face { font-family: "Atkinson"; font-weight: 400; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-ext-400-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: "Atkinson"; font-weight: 400; src: url("file:///Users/robertlewandowski/Developer/kompetiq/frontend/node_modules/@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
@@ -58,6 +58,7 @@ li::marker { color: var(--rule2); }
 .matrix { margin-top: 12px; font-size: 9pt; }
 .matrix th { font-weight: 700; padding: 7px 6px; border-bottom: 1.5px solid var(--ink); text-align: center; vertical-align: bottom; }
 .matrix th:first-child, .matrix td:first-child { text-align: left; }
+.matrix tr { break-inside: avoid; }
 .matrix td { padding: 6px; border-bottom: 1px solid var(--rule); text-align: center; vertical-align: top; }
 .matrix tr:nth-child(even) td { background: #FBFCFE; }
 .y { color: var(--ok); font-weight: 700; }
@@ -73,7 +74,7 @@ li::marker { color: var(--rule2); }
 
 <div class="head">
   <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.5" fill="none" stroke="#17233B" stroke-width="1.5"/><path d="M16 4.5l3.6 11.5L16 27.5 12.4 16z" fill="#17233B"/><path d="M16 4.5l3.6 11.5h-7.2z" fill="#1E5FA8"/></svg>
-  <div class="brand">Kompas Kompetencji<small>Wsparcie przełożonych w pierwszej ocenie i ocenie okresowej w służbie cywilnej</small></div>
+  <div class="brand">KompetIQ<small>Wsparcie przełożonych w pierwszej ocenie i ocenie okresowej w służbie cywilnej</small></div>
 </div>
 
 <h1 class="title">Role i uprawnienia</h1>
@@ -97,6 +98,7 @@ li::marker { color: var(--rule2); }
       <li>Dobiera kryteria dodatkowe i wskaźniki, ustala terminy, oczekiwania i cele.</li>
       <li>Dokumentuje przykłady zachowań, ocenia wskaźniki, <b>przyznaje oceny cząstkowe</b> i pisze uzasadnienia.</li>
       <li>Korzysta z asystenta AI przy swoich ocenach i z asystenta formalnego.</li>
+      <li>W widoku <b>Przejrzystość AI</b> sprawdza, co asystent wysłałby do modelu przy jego ocenie, i czy nie ma tam danych osobowych.</li>
       <li>Prowadzi etapy: kryteria, rozmowa oceniająca, sporządzenie oceny, zapoznanie ocenianego. Może otworzyć ocenę ponownie do czasu zapoznania.</li>
       <li>Prowadzi plan rozwoju, także po zakończeniu oceny.</li>
       <li>Pobiera arkusze, plan rozwoju i scenariusz rozmowy (PDF, DOCX); pisze do kierującego i kadr.</li>
@@ -141,12 +143,14 @@ li::marker { color: var(--rule2); }
       <li>Zmienia dane kadrowe, m.in. <b>formę zwracania się</b> (Pani / Pan); dodaje opisy stanowisk.</li>
       <li>Pobiera dokumenty, dostaje powiadomienia o sporządzeniu i zapoznaniu z oceną.</li>
       <li>Wysyła wiadomości oceniającym i kierującym; korzysta z asystenta formalnego.</li>
+      <li>Przegląda <b>bazę wiedzy</b> asystenta: źródła wspólne i źródła urzędu.</li>
     </ul></div>
     <div class="col"><h3><span class="mark no">✕</span>Nie może</h3><ul>
       <li>Prowadzić ani edytować oceny.</li>
       <li>Rozpocząć oceny za przełożonego.</li>
       <li>Edytować planów rozwoju.</li>
       <li>Korzystać z asystenta AI w konkretnej ocenie.</li>
+      <li>Dodawać, wyłączać ani usuwać źródeł bazy wiedzy.</li>
     </ul></div>
   </div>
 </section>
@@ -158,17 +162,18 @@ li::marker { color: var(--rule2); }
       <li>Wszystko, co kadry: podgląd instytucji, panel HR, przypomnienia, dane kadrowe.</li>
       <li>W sytuacjach wyjątkowych (np. długa nieobecność oceniającego) może wykonać każdą czynność w ocenie, łącznie z potwierdzeniem pierwszej oceny. Każda zmiana trafia do historii.</li>
       <li>Korzysta ze wszystkich funkcji asystenta AI.</li>
+      <li>Zarządza <b>bazą wiedzy</b> asystenta w urzędzie: dodaje źródła (np. nową wersję przepisu, zarządzenie), wskazuje źródło zastępowane, wyłącza nieaktualne.</li>
     </ul></div>
     <div class="col"><h3><span class="mark no">✕</span>Nie może</h3><ul>
       <li>Widzieć danych innych instytucji.</li>
       <li>Edytować oceny po zapoznaniu się z nią ocenianego (blokada dotyczy wszystkich ról).</li>
       <li>Czytać rozmów z asystentem innych użytkowników.</li>
+      <li>Usunąć źródła wspólnego z bazy wiedzy (może je tylko wyłączyć w swoim urzędzie).</li>
     </ul></div>
   </div>
 </section>
 
-<div class="page-break"></div>
-<h2 style="font-size:17pt">Zestawienie uprawnień</h2>
+<h2 style="font-size:17pt; margin-top:22px">Zestawienie uprawnień</h2>
 <table class="matrix">
   <tr><th style="width:38%">Czynność</th><th>Przełożony</th><th>Kierujący komórką</th><th>Kadry</th><th>Administrator</th></tr>
   <tr><td>Widok pracowników i ocen</td><td class="y">✓<span class="lim">swoi</span></td><td class="y">✓<span class="lim">swoja komórka</span></td><td class="y">✓<span class="lim">cała instytucja</span></td><td class="y">✓<span class="lim">cała instytucja</span></td></tr>
@@ -178,19 +183,22 @@ li::marker { color: var(--rule2); }
   <tr><td>Potwierdzenie pierwszej oceny</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td></tr>
   <tr><td>Asystent AI w ocenie</td><td class="y">✓<span class="lim">swoje</span></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
   <tr><td>Asystent formalny</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Przejrzystość AI: podgląd wysyłki do modelu</td><td class="y">✓<span class="lim">swoje oceny</span></td><td class="y">✓<span class="lim">asystent formalny</span></td><td class="y">✓<span class="lim">asystent formalny</span></td><td class="y">✓</td></tr>
   <tr><td>Plan rozwoju: edycja</td><td class="y">✓<span class="lim">swoje</span></td><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
   <tr><td>Pobieranie dokumentów (PDF, DOCX)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
   <tr><td>Dane kadrowe pracownika</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
   <tr><td>Opis stanowiska (dodanie, import OSP)</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
   <tr><td>Panel HR, przypomnienia zbiorcze</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Baza wiedzy: podgląd źródeł</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+  <tr><td>Baza wiedzy: dodawanie, wyłączanie, usuwanie źródeł</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">✓<span class="lim">źródła wspólne: tylko wyłączenie</span></td></tr>
   <tr><td>Przypomnienie lub wiadomość do oceniającego</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
   <tr><td>Wiadomość do kierującego i kadr</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓<span class="lim">do kierującego</span></td><td class="y">✓</td></tr>
   <tr><td>Edycja oceny po zapoznaniu ocenianego</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
 </table>
 <p class="legend">✓ — dozwolone (z zakresem pod znakiem), — niedostępne.</p>
 
-<div class="callout"><b>Panel techniczny.</b> Zakładanie kont, przypisywanie ról, import modelu kompetencji i konfiguracja instytucji odbywają się w panelu technicznym (<code>/admin/</code>), do którego potrzebne jest osobne konto superużytkownika. Konto demonstracyjne <code>admin</code> to administrator w aplikacji i nie ma dostępu do panelu technicznego.</div>
+<div class="callout"><b>Panel techniczny.</b> Zakładanie kont, przypisywanie ról, import modelu kompetencji, źródła wspólne bazy wiedzy i konfiguracja instytucji odbywają się w panelu technicznym (<code>/admin/</code>), do którego potrzebne jest osobne konto superużytkownika. Konto demonstracyjne <code>admin</code> to administrator w aplikacji i nie ma dostępu do panelu technicznego.</div>
 
-<div class="foot"><span>Kompas Kompetencji · role i uprawnienia</span><span>Stan na 21.11.2026</span></div>
+<div class="foot"><span>KompetIQ · role i uprawnienia</span><span>Stan na 21.11.2026</span></div>
 </body>
 </html>

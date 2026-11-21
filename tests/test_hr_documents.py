@@ -104,3 +104,33 @@ def test_development_plan_list_shows_current_plan_per_employee(org, api):
     detail = c.get(f"/api/v1/development-plans/{p2['id']}/").data
     assert detail['can_edit'] and [h['id'] for h in detail['history']] == [p1['id']]
     assert api(org.hr).get(f"/api/v1/development-plans/{p2['id']}/").data['can_edit'] is False
+
+
+def _docx_text(content):
+    import io
+
+    import docx
+    d = docx.Document(io.BytesIO(content))
+    parts = [p.text for p in d.paragraphs]
+    parts += [c.text for t in d.tables for row in t.rows for c in row.cells]
+    return '\n'.join(parts)
+
+
+def test_sheet_export_follows_official_template(org, api):
+    """Arkusz jak wzór z rozporządzenia: bez napisu „WZÓR”, z przypisami, pełnymi polami podpisów i części III."""
+    c = api(org.sup)
+    first = _docx_text(c.get(f"/api/v1/assessments/{create(api, org.sup, org.new, form='FIRST')['id']}/export/sheet/?fmt=docx").content)
+    assert 'WZÓR' not in first
+    assert 'Ocena łączna jest średnią arytmetyczną ze wszystkich ocen cząstkowych.' in first
+    assert 'imię i nazwisko lub pieczątka kierującego komórką organizacyjną' in first
+
+    org.emp.is_civil_servant, org.emp.appointment_year = True, 2015
+    org.emp.save()
+    a = create(api, org.sup, org.emp)
+    c.patch(f"/api/v1/assessments/{a['id']}/", {'promotion_request': True}, format='json')
+    text = _docx_text(c.get(f"/api/v1/assessments/{a['id']}/export/sheet/?fmt=docx").content)
+    assert 'WZÓR' not in text
+    assert 'CZĘŚĆ III' in text and 'Rok mianowania' in text and '2015' in text
+    assert 'Data przyznania stopnia służbowego' in text
+    assert 'Data „od” oznacza datę zapoznania ocenianego z kryteriami oceny' in text
+    assert text.count('DANE OCENIAJĄCEGO') == 2

@@ -72,6 +72,7 @@ Testy: `.venv/bin/pytest -q`. Test z prawdziwym Claude API: `pytest -m live_clau
 - [Scenariusz demonstracji](docs/05_scenariusz_demo.md)
 - [Zgodność z wymaganiami wyzwania](docs/06_zgodnosc_z_wymaganiami.md)
 - [Role i uprawnienia](docs/07_role_i_uprawnienia.md)
+- [Zmiany przepisów i modyfikowalność](docs/08_zmiany_przepisow_i_modyfikowalnosc.md)
 
 ## Wdrożenie (Docker + nginx na hoście)
 
@@ -82,9 +83,7 @@ kontenera (vhost w `kompetiq.devcage.pl.nginx`). Frontend budowany jest w wieloe
 
 ```bash
 cp .env.example .env    # uzupełnij hasła, SECRET_KEY, hosty, ANTHROPIC_API_KEY
-docker compose up --build -d   # migrate i collectstatic wykonuje entrypoint.sh przy każdym starcie
-docker compose exec -T web python manage.py import_competency_model --if-missing
-docker compose exec -T web python manage.py ingest_legal_docs
+docker compose up --build -d   # entrypoint.sh: migrate, collectstatic, model kompetencji, baza wiedzy
 docker compose exec web python manage.py createsuperuser
 ```
 

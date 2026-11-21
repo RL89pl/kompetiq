@@ -10,11 +10,37 @@ const VARIANTS: Record<Variant, string> = {
   ai: 'bg-ai-tint text-ai border border-dashed border-ai hover:bg-[#d5ece8]',
 }
 
-export function Button({ variant = 'primary', busy, children, className = '', ...rest }:
-  ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; busy?: boolean }) {
+/**
+ * Przycisk. Gdy jest nieaktywny i podano `disabledReason`, zostaje osiągalny z klawiatury (aria-disabled zamiast
+ * disabled), a po najechaniu lub fokusie pokazuje podpowiedź, co trzeba zrobić, żeby się aktywował.
+ */
+export function Button({ variant = 'primary', busy, disabledReason, children, className = '', onClick, ...rest }:
+  ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; busy?: boolean; disabledReason?: string | false | null }) {
+  const tipId = useId()
+  if (rest.disabled && disabledReason && !busy) {
+    return (
+      <span className={`group relative inline-flex ${className}`}>
+        <button
+          {...rest}
+          disabled={undefined}
+          aria-disabled="true"
+          aria-describedby={tipId}
+          onClick={(e) => e.preventDefault()}
+          className={`inline-flex cursor-not-allowed items-center gap-2 rounded-md px-3.5 py-2 text-[15px] font-bold opacity-60 ${VARIANTS[variant].replace(/\S*hover:\S+/g, '')} ${variant === 'primary' ? 'bg-ink-soft' : ''}`}
+        >
+          {children}
+        </button>
+        <span role="tooltip" id={tipId}
+          className="pointer-events-none absolute bottom-full left-1/2 z-40 mb-2 w-max max-w-xs -translate-x-1/2 rounded-md bg-ink px-3 py-2 text-sm font-normal leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+          {disabledReason}
+        </span>
+      </span>
+    )
+  }
   return (
     <button
       {...rest}
+      onClick={onClick}
       disabled={rest.disabled || busy}
       aria-busy={busy || undefined}
       className={`inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-[15px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${VARIANTS[variant]} ${className}`}

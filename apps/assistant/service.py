@@ -9,7 +9,7 @@ from apps.competencies.models import LEVEL_LABELS
 from . import prompts, schemas
 from .client import AssistantError, AssistantInputError, get_provider
 from .models import AIInteraction, Conversation, GuidingQuestionCache, Message
-from .retrieval import build_context, search_scored
+from .retrieval import build_context, coverage, search_scored
 
 
 class Pseudonymizer:
@@ -234,6 +234,13 @@ def _history(conv, limit=10):
     return [{'role': m.role, 'content': m.content} for m in msgs]
 
 
+def _cite_title(c):
+    """Tytuł źródła do cytowania: PDF — numer strony, DOCX/TXT — numer fragmentu, FAQ i model — sam tytuł."""
+    if c.kind in ('FAQ', 'MODEL'):
+        return c.title
+    return f'{c.title}, s. {c.page}' if c.source.lower().endswith('.pdf') else f'{c.title}, fragm. {c.page}'
+
+
 def chat(request, conv: Conversation, text: str):
     """Kolejna wymiana w rozmowie z asystentem. Zwraca zapisaną wiadomość asystenta."""
     a = conv.assessment
@@ -250,19 +257,23 @@ def chat(request, conv: Conversation, text: str):
     # tematu nie może „pożyczyć” źródeł od poprzedniego.
     from django.conf import settings
     threshold = settings.ASSISTANT_MIN_RETRIEVAL_SCORE
-    scored = search_scored(question, k=6)
+    min_cov = settings.ASSISTANT_MIN_COVERAGE
+    query = question
+    scored = search_scored(query, k=6, institution=conv.institution)
     best = scored[0][0] if scored else 0.0
     prev_q = next((h['content'] for h in reversed(history) if h['role'] == 'user'), '')
     if prev_q and 0 < best < threshold:
-        scored = search_scored(f'{question} {anon(prev_q)}', k=6)
+        query = f'{question} {anon(prev_q)}'
+        scored = search_scored(query, k=6, institution=conv.institution)
         best = scored[0][0] if scored else 0.0
+    relevant = best >= threshold and coverage(query, scored) >= min_cov
     picked = build_context(scored, question, settings.ASSISTANT_CONTEXT_CHARS)
     scored = [(sc, c) for sc, c, _ in picked]
-    docs = [{'title': f'{c.title}' + (f', s. {c.page}' if c.kind not in ('FAQ', 'MODEL') else ''), 'text': text}
+    docs = [{'title': _cite_title(c), 'text': text}
             for _, c, text in picked]
 
     if conv.mode == Conversation.Mode.FORMAL:
-        if best < threshold:
+        if not relevant:
             return Message.objects.create(conversation=conv, role=Message.Role.ASSISTANT,
                                           content=prompts.NO_SOURCES_ANSWER, grounded=False)
         prompt = prompts.CHAT_FORMAL.format(context=_formal_context(a), question=question)
@@ -295,3 +306,20 @@ def chat(request, conv: Conversation, text: str):
     return Message.objects.create(
         conversation=conv, role=Message.Role.ASSISTANT, content=result.text, citations=result.citations,
         sources=[{'title': d['title']} for d in docs], grounded=grounded, interaction=log)
+
+
+def run_feature(request, a: Assessment, feature: str, crit: AssessmentCriterion | None = None):
+    """Wywołanie funkcji asystenta po nazwie z API (np. 'interview-script'). Zwraca (log, wynik)."""
+    if feature == 'analyze-job-description':
+        return analyze_job_description(request, a)
+    if feature == 'guiding-questions':
+        return guiding_questions(request, crit)
+    if feature == 'analyze-evidence':
+        return analyze_evidence(request, crit)
+    if feature == 'draft-justification':
+        return draft_justification(request, a, crit)
+    if feature == 'interview-script':
+        return interview_script(request, a)
+    if feature == 'development-suggestions':
+        return development_suggestions(request, a)
+    raise AssistantInputError('Nieznana funkcja asystenta.')

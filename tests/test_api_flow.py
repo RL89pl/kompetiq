@@ -198,3 +198,18 @@ def test_deadlines_and_development_plan(org, api):
 def test_spa_fallback(client, db):
     r = client.get('/oceny/1')
     assert r.status_code in (200, 503)
+
+
+def test_openapi_docs_are_public_and_complete(db):
+    """Jury i integratorzy otwierają dokumentację API bez konta; każdy widok ma opisane żądania i odpowiedzi."""
+    from rest_framework.test import APIClient
+    c = APIClient()
+    assert c.get('/api/v1/docs/').status_code == 200
+    r = c.get('/api/v1/schema/', HTTP_ACCEPT='application/vnd.oai.openapi+json')
+    assert r.status_code == 200
+    import json
+    paths = json.loads(r.content)['paths']
+    for path in ('/api/v1/auth/login/', '/api/v1/hr/overview/', '/api/v1/deadlines/upcoming/',
+                 '/api/v1/assessments/{id}/export/{kind}/', '/api/v1/knowledge-documents/'):
+        assert path in paths, path
+    assert paths['/api/v1/hr/overview/']['get']['responses']['200']['content']

@@ -13,6 +13,37 @@
 4. **Rozliczalność.** Każde wywołanie jest rejestrowane (funkcja, model, tokeny, czas, skrót treści), wraz z decyzją
    przełożonego: sugestia przyjęta, przyjęta po edycji albo odrzucona.
 5. **Treść AI jest zawsze oznaczona** („Sugestia AI, do weryfikacji”) i wymaga świadomego wstawienia.
+6. **Przejrzystość wysyłki.** Widok **Przejrzystość AI** pokazuje dokładnie to, co trafiłoby do modelu
+   (instrukcje systemowe, treść zapytania, przekazane źródła, historia rozmowy, schemat odpowiedzi), wraz z adresatem
+   (host i model) i automatyczną kontrolą danych osobowych. Szczegóły niżej.
+
+## Przejrzystość AI: co trafia do modelu
+
+Widok `/przejrzystosc-ai` (API: `POST /api/v1/assistant/preview/`) uruchamia wybraną funkcję asystenta tak jak
+naprawdę (te same prompty, ta sama pseudonimizacja i wyszukiwanie źródeł), ale:
+- zamiast dostawcy modelu działa `CaptureProvider`: zapytanie jest zapisywane w odpowiedzi, **nic nie jest wysyłane**,
+- całość działa w transakcji wycofywanej na końcu: podgląd **niczego nie zapisuje** (rozmowy, rejestru wywołań),
+- działa także bez skonfigurowanego klucza API (np. na prezentacji bez dostępu do sieci).
+
+Kontrola wysyłki (`apps/assistant/preview.py`) sprawdza w całej treści:
+
+| Kontrola | Jak |
+|---|---|
+| imię i nazwisko ocenianego | nazwisko w odmianie (rdzeń + końcówka) i pełne imię; podaje, ile razy użyto słowa „Oceniany/Oceniana” |
+| nazwiska innych osób z urzędu | nazwiska wszystkich pracowników i użytkowników instytucji, w odmianie |
+| nazwa urzędu i komórek | pełne nazwy jako frazy |
+| adresy e-mail, numery PESEL | wzorce |
+| data zatrudnienia ocenianego | formaty RRRR-MM-DD i DD.MM.RRRR |
+
+Gdy kontrola coś znajdzie, pokazuje fragment z miejscem wystąpienia. Najczęstszy przypadek to nazwisko innej osoby
+wpisane przez przełożonego w opisie zachowania: pseudonimizacja obejmuje dane ocenianego, a kontrola wykrywa
+pozostałe osoby z urzędu (test `tests/test_preview.py`). Przed wdrożeniem warto tę samą kontrolę uruchamiać
+przed każdą rzeczywistą wysyłką i blokować ją przy wykryciu (patrz `04_bezpieczenstwo_i_wdrozenie.md`).
+
+Do modelu **trafia**: stanowisko i opis stanowiska, kryteria i wskaźniki, przykłady zachowań z datą, cele,
+oczekiwania i notatki (po pseudonimizacji), oceny cząstkowe i uzasadnienia przełożonego (tylko w funkcjach, które ich
+potrzebują), fragmenty bazy wiedzy. **Nie trafia**: imię i nazwisko ocenianego, dane oceniającego i innych osób,
+nazwa urzędu i komórki, daty zatrudnienia i umowy, stopień służbowy, loginy i adresy e-mail.
 
 ## Gdzie działa AI
 
@@ -30,7 +61,7 @@ przypomnienia i dokumenty.
 
 ## Baza wiedzy
 
-Budowana komendą `manage.py ingest_legal_docs` z `docs_assets/`:
+Część wspólna budowana komendą `manage.py ingest_legal_docs` z `docs_assets/` (uruchamiana przy każdym starcie kontenera):
 - ustawa o służbie cywilnej, tekst jednolity Dz.U. 2026 poz. 590 (stan prawny na 14.04.2026, pobrany z ISAP/ELI); przy kolejnym tekście jednolitym wystarczy podmienić PDF i ponownie zbudować bazę,
 - rozporządzenie o pierwszej ocenie (2015) i o ocenach okresowych (2016) wraz z załącznikiem — wykazem kryteriów,
 - poradniki KPRM (pierwsza ocena, oceny okresowe),
@@ -39,6 +70,14 @@ Budowana komendą `manage.py ingest_legal_docs` z `docs_assets/`:
 
 Wyszukiwanie jest deterministyczne (BM25 na rdzeniach wyrazów, bez zewnętrznych usług). Każda odpowiedź podaje
 tytuł źródła i stronę; zestaw pytań i odpowiedzi ma pierwszeństwo przy typowych pytaniach.
+
+Pytanie trafia do modelu tylko wtedy, gdy spełnione są dwa warunki: wynik dopasowania jest powyżej progu
+(`ASSISTANT_MIN_RETRIEVAL_SCORE`) i jedno ze źródeł zawiera co najmniej 60% słów pytania
+(`ASSISTANT_MIN_COVERAGE`). Drugi warunek odrzuca pytania spoza tematu z jednym przypadkowym słowem obecnym
+w bazie (np. „Warszawa” ze stopki poradnika w pytaniu o pogodę).
+
+Administrator instytucji dodaje w panelu **Baza wiedzy** własne źródła (zarządzenia, nowe wersje przepisów)
+i wyłącza nieaktualne; opis: `08_zmiany_przepisow_i_modyfikowalnosc.md`.
 
 ## Model językowy — wybór bez zmian w kodzie
 

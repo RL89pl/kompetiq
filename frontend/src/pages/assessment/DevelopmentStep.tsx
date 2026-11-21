@@ -62,7 +62,7 @@ export function DevelopmentStep({ a, form, model, editable }: StepProps) {
         <fieldset disabled={!editable || a.status === 'FINALIZED' || a.status === 'ACKNOWLEDGED' || a.status === 'APPROVED'}>
           <Field label="Wnioski (pole arkusza)">{(id) => <Textarea id={id} rows={5} {...d.bind('development_conclusions')} />}</Field>
           <ErrorList error={d.patch.error} />
-          {editable && <Button className="mt-3" variant="secondary" disabled={!d.dirty} busy={d.patch.isPending} onClick={() => d.save()}>Zapisz wnioski</Button>}
+          {editable && <Button className="mt-3" variant="secondary" disabled={!d.dirty} disabledReason="Brak zmian do zapisania." busy={d.patch.isPending} onClick={() => d.save()}>Zapisz wnioski</Button>}
         </fieldset>
       </Section>
       <Section title="Plan działań rozwojowych" description="Plan żyje po ocenie: aktualizuj statusy i notuj postępy. Widać go też w zakładce Plany rozwoju.">

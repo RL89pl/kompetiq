@@ -54,6 +54,8 @@ export interface Employee {
   contract_end_date: string | null
   is_civil_servant: boolean
   service_grade: string
+  appointment_year: number | null
+  service_grade_date: string | null
   is_managerial: boolean
   is_office_head: boolean
   suggested_form: FormType
@@ -386,3 +388,25 @@ export interface HROverview {
 }
 
 export interface AssistantStatus { enabled: boolean; provider: string; model: string; knowledge: Record<string, number> }
+
+export type SourceKind = 'ACT' | 'REGULATION' | 'GUIDE' | 'MODEL' | 'FAQ' | 'OTHER'
+
+export interface KnowledgeDocument {
+  id: number
+  title: string
+  kind: SourceKind
+  kind_label: string
+  source: string
+  valid_from: string | null
+  note: string
+  is_active: boolean
+  builtin: boolean
+  shared: boolean
+  disabled_here: boolean
+  chunk_count: number
+  replaces: number | null
+  replaces_title: string
+  uploaded_by_name: string
+  created_at: string
+  updated_at: string
+}

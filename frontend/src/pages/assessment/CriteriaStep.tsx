@@ -83,7 +83,7 @@ export function CriteriaStep({ a, form, editable }: StepProps) {
         <ErrorList error={tr.error} />
         {editable && (
           <div className="flex flex-wrap gap-2">
-            {(can || !first) && <Button variant="secondary" onClick={() => d.save()} busy={d.patch.isPending} disabled={!d.dirty}>Zapisz</Button>}
+            {(can || !first) && <Button variant="secondary" onClick={() => d.save()} busy={d.patch.isPending} disabled={!d.dirty} disabledReason="Brak zmian do zapisania.">Zapisz</Button>}
             {can && <Button onClick={confirm} busy={tr.isPending}>Potwierdź: kryteria ustalone, rozmowa przeprowadzona</Button>}
             {a.available_actions.includes('reopen_criteria') && <Button variant="ghost" onClick={() => tr.mutate({ action: 'reopen_criteria' })}>Wróć do edycji kryteriów</Button>}
           </div>

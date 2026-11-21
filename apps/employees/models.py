@@ -28,6 +28,8 @@ class Employee(models.Model):
     contract_end_date = models.DateField('data zakończenia umowy (czas określony)', null=True, blank=True)
     is_civil_servant = models.BooleanField('urzędnik służby cywilnej (mianowany)', default=False)
     service_grade = models.CharField('stopień służbowy', max_length=50, blank=True)
+    appointment_year = models.PositiveSmallIntegerField('rok mianowania', null=True, blank=True)
+    service_grade_date = models.DateField('data przyznania stopnia służbowego', null=True, blank=True)
     is_managerial = models.BooleanField('stanowisko kierownicze (kieruje pracownikami)', default=False)
     is_office_head = models.BooleanField('kierownik urzędu', default=False)
     is_active = models.BooleanField(default=True)
@@ -42,7 +44,7 @@ class Employee(models.Model):
         return f'{self.first_name} {self.last_name}'
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         return str(self)
 
 

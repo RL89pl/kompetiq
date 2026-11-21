@@ -58,7 +58,7 @@ function JobDescriptionBox({ a, editable, model }: { a: Assessment; editable: bo
         <Field label="…albo wpisz główne zadania na stanowisku">{(id) => <Textarea id={id} rows={6} value={text} onChange={(e) => setText(e.target.value)} />}</Field>
         <ErrorList error={save.error} />
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => save.mutate(text)} busy={save.isPending} disabled={!text.trim()}>Zapisz opis</Button>
+          <Button variant="secondary" onClick={() => save.mutate(text)} busy={save.isPending} disabled={!text.trim()} disabledReason="Wpisz lub wczytaj z pliku opis stanowiska.">Zapisz opis</Button>
           {current && <Button variant="ghost" onClick={() => setEditing(false)}>Anuluj</Button>}
         </div>
       </div>
@@ -178,7 +178,8 @@ export function JobStep({ a, form, model, editable }: StepProps) {
                 const suggested = res?.additional_criteria.some((s) => s.competency_code === c.code)
                 return (
                   <li key={c.id}>
-                    <label className={`flex items-center gap-3 rounded-md px-2 py-1.5 ${isMand ? '' : 'hover:bg-white'}`}>
+                    <label className={`flex items-center gap-3 rounded-md px-2 py-1.5 ${isMand ? '' : 'hover:bg-white'}`}
+                      title={isMand ? 'Kryterium obowiązkowe dla tego arkusza — nie można go odznaczyć.' : !checked && additional.length >= form.max_additional ? `Wybrano już maksymalną liczbę kryteriów dodatkowych (${form.max_additional}). Odznacz inne, aby wybrać to.` : undefined}>
                       <input type="checkbox" className="size-4 accent-[var(--color-periodic)]" checked={checked} disabled={isMand || (!checked && additional.length >= form.max_additional)}
                         onChange={() => toggleAdditional(c.code)} />
                       <span>{c.name}</span>

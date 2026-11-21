@@ -265,3 +265,23 @@ def test_live_analyze_evidence(org, api, settings):
     r = c.post(f"/api/v1/assessments/{a['id']}/assistant/analyze-evidence/", {'criterion': crit['id']}, format='json')
     assert r.status_code == 200, r.data
     assert r.data['result']['mappings']
+
+
+def test_formal_gate_on_real_knowledge_base(org, api, fake):
+    """Na pełnej bazie wiedzy: pytania merytoryczne idą do modelu, pytania spoza tematu — nie."""
+    from django.core.management import call_command
+    call_command('ingest_legal_docs', stdout=open(os.devnull, 'w'))
+    p = fake()
+    c = api(org.sup)
+    conv = c.post('/api/v1/assistant/conversations/', {'mode': 'FORMAL'}, format='json').data
+    url = f"/api/v1/assistant/conversations/{conv['id']}/messages/"
+    for q in ('Jaka jest jutro pogoda w Warszawie?', 'Kto wygrał mundial w 2022?', 'Jak upiec sernik?'):
+        r = c.post(url, {'content': q}, format='json')
+        assert r.data['grounded'] is False, q
+    assert p.calls == []
+    for q in ('Ile kryteriów dodatkowych można wybrać i kiedy?', 'Kiedy pierwsza ocena jest negatywna?',
+              'Jaki jest termin na sprzeciw od oceny okresowej?', 'Kiedy po negatywnej ocenie przeprowadza się kolejną?',
+              'Co z terminem oceny przy nieobecności pracownika dłuższej niż miesiąc?'):
+        n = len(p.calls)
+        c.post(url, {'content': q}, format='json')
+        assert len(p.calls) == n + 1, q

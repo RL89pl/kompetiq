@@ -25,6 +25,4 @@ jobs:
 
             docker compose up --build -d
 
-            # migrate i collectstatic wykonuje entrypoint.sh przy starcie kontenera
-            docker compose exec -T web python manage.py import_competency_model --if-missing
-            docker compose exec -T web python manage.py ingest_legal_docs
+            # migrate, collectstatic, import modelu kompetencji i przebudowę bazy wiedzy wykonuje entrypoint.sh

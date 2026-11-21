@@ -106,7 +106,7 @@ export function InterviewStep({ a, form, editable }: StepProps) {
           <ErrorList error={d.patch.error || tr.error} />
           {editable && (
             <div className="flex flex-wrap gap-2">
-              <Button variant="secondary" disabled={!d.dirty} busy={d.patch.isPending} onClick={() => d.save()}>Zapisz</Button>
+              <Button variant="secondary" disabled={!d.dirty} disabledReason="Brak zmian do zapisania." busy={d.patch.isPending} onClick={() => d.save()}>Zapisz</Button>
               {canComplete && <Button busy={tr.isPending} onClick={async () => { if (d.dirty) await d.save(); tr.mutate({ action: 'complete_interview' }) }}>Potwierdź przeprowadzenie rozmowy</Button>}
             </div>
           )}

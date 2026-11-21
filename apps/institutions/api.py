@@ -2,11 +2,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
+
+from kompetiq import openapi as o
 
 from .middleware import SESSION_KEY
 from .models import Membership, OrgUnit
@@ -47,6 +50,7 @@ class CsrfView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
+    @extend_schema(responses=o.CsrfOut, tags=['Uwierzytelnianie'], summary='Token CSRF (ustawia też ciasteczko csrftoken)')
     def get(self, request):
         return Response({'csrfToken': get_token(request)})
 
@@ -56,6 +60,8 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [LoginThrottle]
 
+    @extend_schema(request=o.LoginIn, responses={200: o.MeOut, 400: o.Detail}, tags=['Uwierzytelnianie'],
+                   summary='Logowanie (sesja w ciasteczku sessionid)')
     def post(self, request):
         user = authenticate(request, username=request.data.get('username'), password=request.data.get('password'))
         if user is None:
@@ -72,6 +78,7 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     skip_institution_check = True
 
+    @extend_schema(request=None, responses={204: None}, tags=['Uwierzytelnianie'], summary='Wylogowanie')
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -81,6 +88,7 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
     skip_institution_check = True
 
+    @extend_schema(responses=o.MeOut, tags=['Uwierzytelnianie'], summary='Zalogowany użytkownik i jego członkostwa w instytucjach')
     def get(self, request):
         return Response(me_payload(request._request))
 
@@ -89,6 +97,8 @@ class SwitchInstitutionView(APIView):
     permission_classes = [IsAuthenticated]
     skip_institution_check = True
 
+    @extend_schema(request=o.SwitchInstitutionIn, responses={200: o.MeOut, 403: o.Detail}, tags=['Uwierzytelnianie'],
+                   summary='Przełączenie aktywnej instytucji')
     def post(self, request):
         m = request.user.memberships.filter(institution_id=request.data.get('institution')).first()
         if m is None:
@@ -105,7 +115,7 @@ class OrgUnitSerializer(serializers.ModelSerializer):
         model = OrgUnit
         fields = ['id', 'name', 'parent', 'head', 'head_name']
 
-    def get_head_name(self, obj):
+    def get_head_name(self, obj) -> str:
         return obj.head.get_full_name() if obj.head else ''
 
 
@@ -118,6 +128,7 @@ class OrgUnitViewSet(InstitutionScopedMixin, viewsets.ReadOnlyModelViewSet):
 class InstitutionUsersView(APIView):
     """Lista osób w instytucji (np. wybór kierującego komórką)."""
 
+    @extend_schema(responses=o.InstitutionUserOut(many=True), tags=['Instytucja'])
     def get(self, request):
         m = membership(request)
         rows = Membership.objects.filter(institution=m.institution).select_related('user', 'org_unit')

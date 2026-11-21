@@ -9,6 +9,7 @@ Dostawcę wybiera konfiguracja (ASSISTANT_PROVIDER):
 Każdy dostawca udostępnia dwie operacje: odpowiedź ustrukturyzowaną (walidowaną schematem Pydantic)
 oraz odpowiedź na podstawie dokumentów z identyfikacją źródeł.
 """
+import contextvars
 import json
 import logging
 import re
@@ -270,6 +271,50 @@ class OpenAICompatibleProvider(LLMProvider):
         return result
 
 
+# --- podgląd wysyłki (bez wywołania modelu) ----------------------------------------------------------------
+
+class PreviewCaptured(Exception):
+    """Przerywa funkcję asystenta tuż przed wysłaniem zapytania do modelu (nie jest błędem asystenta)."""
+
+
+class CaptureProvider(LLMProvider):
+    """Zapisuje dokładnie to, co zostałoby wysłane do modelu, i nic nie wysyła."""
+
+    name = 'preview'
+
+    def __init__(self):
+        self.calls = []
+
+    def structured(self, *, system, prompt, schema, effort='medium', max_tokens=16000):
+        self.calls.append({'method': 'structured', 'system': list(system), 'prompt': prompt, 'documents': [],
+                           'history': [], 'response_schema': schema.model_json_schema()})
+        raise PreviewCaptured()
+
+    def answer_with_citations(self, *, system, prompt, documents, history=None, effort='medium', max_tokens=8000):
+        self.calls.append({'method': 'answer_with_citations', 'system': list(system), 'prompt': prompt,
+                           'documents': [dict(d) for d in documents], 'history': list(history or []),
+                           'response_schema': None})
+        raise PreviewCaptured()
+
+
+_capture: contextvars.ContextVar = contextvars.ContextVar('assistant_capture', default=None)
+
+
+def capture_calls():
+    """Kontekst podglądu: get_provider() zwraca CaptureProvider dla bieżącego żądania (bezpieczne przy wątkach)."""
+    from contextlib import contextmanager
+
+    @contextmanager
+    def _ctx():
+        cap = CaptureProvider()
+        token = _capture.set(cap)
+        try:
+            yield cap
+        finally:
+            _capture.reset(token)
+    return _ctx()
+
+
 # --- wybór dostawcy ------------------------------------------------------------------------------------------
 
 _override = None
@@ -301,6 +346,8 @@ def provider_info():
 
 
 def get_provider() -> LLMProvider:
+    if (cap := _capture.get()) is not None:
+        return cap
     if _override is not None:
         return _override
     info = provider_info()

@@ -1,4 +1,6 @@
 from django.http import HttpResponse
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 
@@ -23,6 +25,12 @@ def _file(content, name, fmt):
 class ExportView(APIView):
     """Eksport dokumentów. ?fmt=pdf (domyślnie) albo ?fmt=docx (wersja edytowalna)."""
 
+    @extend_schema(
+        parameters=[OpenApiParameter('kind', str, OpenApiParameter.PATH, enum=['sheet', 'development-plan', 'interview']),
+                    OpenApiParameter('fmt', str, enum=['pdf', 'docx'], description='Domyślnie pdf')],
+        responses={(200, 'application/pdf'): OpenApiTypes.BINARY,
+                   (200, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'): OpenApiTypes.BINARY},
+        tags=['Dokumenty'], summary='Arkusz oceny, plan rozwoju lub scenariusz rozmowy jako PDF/DOCX')
     def get(self, request, pk, kind):
         fmt = request.query_params.get('fmt', 'pdf')
         if fmt not in CONTENT_TYPES:

@@ -106,7 +106,7 @@ export function AssistantChat({ mode, assessmentId, compact }: { mode: Conversat
           </div>
         )}
         <ErrorList error={send.error} />
-        <Button type="submit" variant="ai" busy={send.isPending} disabled={!q.trim()}>Wyślij</Button>
+        <Button type="submit" variant="ai" busy={send.isPending} disabled={!q.trim()} disabledReason="Wpisz pytanie.">Wyślij</Button>
         <p className="text-[13px] text-ink-soft">
           {mode === 'FORMAL' ? 'Asystent odpowiada na podstawie ustawy, rozporządzeń, poradników KPRM, modelu kompetencji i zestawu pytań i odpowiedzi. Gdy źródła nie wystarczają, mówi o tym wprost.'
             : 'Asystent korzysta z Twoich przykładów i ocen w tej ocenie (dane ocenianego są pseudonimizowane). Nie zmienia ocen.'}
