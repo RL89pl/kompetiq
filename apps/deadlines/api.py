@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 from datetime import date
 
 from django.utils import timezone
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -16,7 +16,7 @@ from apps.institutions.permissions import IsHROrAdmin, membership
 
 from kompetiq import openapi as o
 
-from .models import Notification
+from .models import Notification, OutgoingEmail
 from .notify import hr_users, notify, unit_head_for
 from .reminders import send_due_reminders
 from .service import deadlines_for
@@ -162,3 +162,28 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     def read_all(self, request):
         Notification.objects.filter(recipient=request.user, read_at__isnull=True).update(read_at=timezone.now())
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OutgoingEmailSerializer(serializers.ModelSerializer):
+    status_label = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = OutgoingEmail
+        fields = ['id', 'to', 'delivered_to', 'subject', 'body_text', 'body_html', 'status', 'status_label', 'created_at']
+
+
+@extend_schema_view(list=extend_schema(tags=['Komunikacja'], summary='Skrzynka testowa: wysłane e-maile'),
+                    retrieve=extend_schema(tags=['Komunikacja']))
+class TestMailboxViewSet(viewsets.ReadOnlyModelViewSet):
+    """Skrzynka testowa: e-maile wysłane przez system. Użytkownik widzi wiadomości do siebie, administrator
+    instytucji — całą pocztę instytucji. Poczta kont demo (domena .test) nie wychodzi poza aplikację."""
+    queryset = OutgoingEmail.objects.none()  # tylko dla schematu OpenAPI; dane z get_queryset()
+    serializer_class = OutgoingEmailSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        m = membership(self.request)
+        qs = OutgoingEmail.objects.filter(institution=m.institution)
+        if m.role != Role.ADMIN:
+            qs = qs.filter(recipient=self.request.user)
+        return qs[:200]

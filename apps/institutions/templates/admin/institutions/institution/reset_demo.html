@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Start</a> › <a href="{% url 'admin:institutions_institution_changelist' %}">Instytucje</a> › Przywróć dane demonstracyjne</div>{% endblock %}
+{% block content %}
+<div style="max-width:720px">
+  <h1>Przywróć dane demonstracyjne</h1>
+  <p>Instytucja <strong>„Urząd Demonstracyjny”</strong> zostanie usunięta i utworzona od nowa, tak jak po pierwszym uruchomieniu:</p>
+  <ul>
+    <li>wszystkie oceny, przykłady zachowań, plany rozwoju, rozmowy z asystentem, powiadomienia i e-maile ze skrzynki testowej zostaną usunięte,</li>
+    <li>pracownicy i oceny demo wrócą do stanu początkowego (w tym gotowe oceny w różnych etapach),</li>
+    <li>konta <code>przelozony</code>, <code>kierownik</code>, <code>kadry</code>, <code>admin</code> dostaną hasło z <code>DEMO_PASSWORD</code>.</li>
+  </ul>
+  <p>Inne instytucje, model kompetencji i wspólna baza wiedzy pozostają bez zmian.</p>
+  {% if not password_set %}
+    <p class="errornote">Brak zmiennej środowiskowej <code>DEMO_PASSWORD</code> — ustaw ją w <code>.env</code> i uruchom ponownie kontener.</p>
+  {% else %}
+    <form method="post">{% csrf_token %}
+      <input type="submit" value="Tak, przywróć dane demonstracyjne" class="default" style="float:none">
+      <a href="{% url 'admin:institutions_institution_changelist' %}" style="margin-left:12px">Anuluj</a>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

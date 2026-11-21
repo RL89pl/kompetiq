@@ -64,3 +64,40 @@ class Membership(models.Model):
     @property
     def sees_all_employees(self):
         return self.role in (Role.HR, Role.ADMIN)
+
+
+class SystemSettings(models.Model):
+    """Ustawienia całej instalacji, edytowane w panelu /admin/ (jeden rekord)."""
+
+    email_test_mode = models.BooleanField(
+        'tryb testowy poczty', default=False,
+        help_text='Włączony: każdy e-mail z systemu (także do kont demo) trafia na adres testowy poniżej zamiast do '
+                  'adresata. W treści widać, do kogo był skierowany.')
+    email_test_address = models.EmailField(
+        'adres testowy', blank=True, help_text='Skrzynka, na którą trafiają wszystkie e-maile w trybie testowym.')
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'ustawienia systemu'
+        verbose_name_plural = 'ustawienia systemu'
+
+    def __str__(self):
+        return 'Ustawienia systemu'
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.email_test_mode and not self.email_test_address:
+            raise ValidationError({'email_test_address': 'Podaj adres testowy albo wyłącz tryb testowy poczty.'})
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        return cls.objects.get_or_create(pk=1)[0]
+
+    @property
+    def test_recipient(self):
+        """Adres testowy, gdy tryb testowy jest włączony; w przeciwnym razie pusty."""
+        return self.email_test_address if self.email_test_mode and self.email_test_address else ''

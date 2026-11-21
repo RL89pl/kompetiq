@@ -50,6 +50,8 @@ export DJANGO_DEBUG=1
 .venv/bin/python manage.py import_competency_model
 .venv/bin/python manage.py ingest_legal_docs
 DEMO_PASSWORD='…' .venv/bin/python manage.py seed_demo     # konta: przelozony, kierownik, kadry, admin
+DEMO_PASSWORD='…' .venv/bin/python manage.py seed_demo --reset   # przywraca dane demo do stanu początkowego
+# to samo z panelu: /admin/ → Instytucje → „Przywróć dane demonstracyjne” (tylko superużytkownik)
 .venv/bin/python manage.py runserver
 
 cd frontend && npm install && npm run dev                  # http://localhost:5173 (proxy /api -> :8000)

@@ -3,6 +3,19 @@
 Dane fikcyjne z `manage.py seed_demo`; opisy stanowisk pochodzą ze wzorów OSP (`docs_assets/OSP_word`).
 Konta: `przelozony` (bezpośredni przełożony), `kierownik` (kierujący komórką), `kadry` (HR), `admin`.
 
+## Przed pokazem: dane od nowa
+
+Żeby kilka razy przejść całą ścieżkę: **/admin/ → Instytucje → „Przywróć dane demonstracyjne”** (konto
+superużytkownika) albo `manage.py seed_demo --reset`. Oceny, przykłady, plany rozwoju, rozmowy z asystentem,
+powiadomienia i skrzynka testowa wracają do stanu początkowego; konta demo dostają hasło z `DEMO_PASSWORD`.
+
+## Skrzynka testowa (e-maile)
+
+Konta demo mają adresy `@urzad-demo.test`: ich e-maile nie wychodzą na zewnątrz, tylko trafiają do
+**Skrzynki testowej** w menu (każdy widzi swoje, administrator — całą pocztę urzędu). Przykład: po dokonaniu
+pierwszej oceny przez `przelozony` zaloguj się jako `kierownik` → Skrzynka testowa → e-mail „Potwierdź ocenę”.
+E-maile mają wersję HTML i tekstową, link do oceny i nie zawierają treści oceny.
+
 ## Ścieżka 1: ocena okresowa (arkusz C), od początku do dokumentu
 
 1. **Kompas** jako `przelozony`: dwie ścieżki, oceny w toku, najbliższe terminy.

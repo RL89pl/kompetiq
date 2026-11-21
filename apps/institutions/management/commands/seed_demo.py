@@ -34,6 +34,8 @@ def jd_from_osp(employee, filename):
 from apps.institutions.models import Institution, Membership, OrgUnit, Role
 
 User = get_user_model()
+# Domena testowa (RFC 2606): poczta kont demo trafia tylko do skrzynki testowej w aplikacji.
+DEMO_EMAIL_DOMAIN = 'urzad-demo.test'
 
 JD_SPECIALIST = """Prowadzenie postępowań administracyjnych w sprawach zezwoleń, przygotowywanie projektów decyzji
 i pism, udzielanie informacji interesantom telefonicznie i w punkcie obsługi, prowadzenie rejestru spraw,
@@ -50,20 +52,35 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--password', default=os.environ.get('DEMO_PASSWORD', ''))
+        parser.add_argument('--reset', action='store_true',
+                            help='Usuwa instytucję demo (oceny, pracowników, powiadomienia, skrzynkę testową) i tworzy ją od nowa.')
 
     @transaction.atomic
-    def handle(self, password, **opts):
+    def handle(self, password, reset=False, **opts):
         if not password:
             raise CommandError('Podaj hasło dla kont demo: --password lub DEMO_PASSWORD.')
         if not CompetencyModel.objects.exists():
             raise CommandError('Najpierw uruchom import_competency_model.')
+        if reset:
+            from apps.deadlines.models import OutgoingEmail
+            OutgoingEmail.objects.filter(to__icontains=DEMO_EMAIL_DOMAIN).delete()
+            from apps.assessments.models import Assessment
+            # Oceny najpierw: chronią pracowników i oceniających (PROTECT), więc nie znikają kaskadowo z instytucją.
+            deleted = Assessment.objects.filter(institution__slug='urzad-demo').delete()[0]
+            deleted += Institution.objects.filter(slug='urzad-demo').delete()[0]
+            self.stdout.write(f'Usunięto dane demo ({deleted} rekordów).')
         inst, created = Institution.objects.get_or_create(slug='urzad-demo', defaults={'name': 'Urząd Demonstracyjny'})
         if not created:
             self.stdout.write('Instytucja demo już istnieje — pomijam.')
             return
 
         def user(username, first, last, role, unit=None, position=''):
-            u = User.objects.create_user(username, password=password, first_name=first, last_name=last)
+            # Konto może już istnieć (poprzedni reset) — odtwarzamy dane i hasło. Konta superużytkownika nie ruszamy.
+            u, _ = User.objects.get_or_create(username=username)
+            if not u.is_superuser:
+                u.first_name, u.last_name, u.email = first, last, f'{username}@{DEMO_EMAIL_DOMAIN}'
+                u.set_password(password)
+                u.save()
             Membership.objects.create(user=u, institution=inst, role=role, org_unit=unit, position=position)
             return u
 

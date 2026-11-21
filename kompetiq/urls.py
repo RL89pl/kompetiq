@@ -10,7 +10,7 @@ from apps.assistant.api import (AssistantFeatureView, AssistantStatusView, Conve
                                 KnowledgeDocumentViewSet, PreviewView)
 from apps.competencies.api import CompetencyModelViewSet
 from apps.deadlines.api import (AssessmentMessageView, HROverviewView, NotificationViewSet, SendRemindersView,
-                                UpcomingDeadlinesView)
+                                TestMailboxViewSet, UpcomingDeadlinesView)
 from apps.development.api import ActionViewSet, PlanViewSet
 from apps.documents.api import ExportView
 from apps.employees.api import EmployeeViewSet, JobDescriptionViewSet
@@ -30,6 +30,7 @@ router.register('evidence', EvidenceViewSet, basename='evidence')
 router.register('development-plans', PlanViewSet, basename='development-plan')
 router.register('development-actions', ActionViewSet, basename='development-action')
 router.register('notifications', NotificationViewSet, basename='notification')
+router.register('test-mailbox', TestMailboxViewSet, basename='test-mailbox')
 router.register('assistant/conversations', ConversationViewSet, basename='conversation')
 router.register('knowledge-documents', KnowledgeDocumentViewSet, basename='knowledge-document')
 

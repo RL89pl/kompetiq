@@ -1,6 +1,6 @@
 import logging
 
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
 
 from apps.institutions.models import Membership, Role
@@ -21,8 +21,14 @@ def notify(recipient, *, institution, kind, title, body='', assessment=None, sen
     if email and recipient.email:
         try:
             # Bez danych oceny w treści e-maila — tylko informacja i odesłanie do aplikacji (minimalizacja danych).
-            send_mail(f'KompetIQ: {title}', f'{title}\n\nSzczegóły w aplikacji KompetIQ.',
-                      None, [recipient.email])
+            from .emails import render
+            subject, text, html = render(n)
+            name = recipient.get_full_name()
+            msg = EmailMultiAlternatives(subject, text, None, [f'{name} <{recipient.email}>' if name else recipient.email],
+                                         headers={'X-KompetIQ-Institution': str(institution.pk),
+                                                  'X-KompetIQ-Recipient': str(recipient.pk)})
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
             n.email_sent = True
             n.save(update_fields=['email_sent'])
         except Exception as e:  # noqa: BLE001 — poczta nie może blokować procesu

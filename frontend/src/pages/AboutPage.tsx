@@ -323,9 +323,9 @@ export function AboutPage() {
             <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center">
               <Node sub="w trybie formalnym">Pytanie</Node>
               <Arrow />
-              <Node tone="first" sub="BM25 na rdzeniach wyrazów, bez usług zewnętrznych">Wyszukiwanie w bazie wiedzy</Node>
+              <Node tone="first" sub="na serwerze aplikacji, odporne na odmianę słów (kryteria, kryteriów)">Wyszukiwanie w bazie wiedzy</Node>
               <Arrow />
-              <Node sub="wynik ≥ próg i ≥ 60% słów pytania w jednym źródle">Dwa progi</Node>
+              <Node sub="fragment dobrze pasuje do pytania i zawiera większość jego słów">Dwa warunki</Node>
               <Arrow />
             </div>
             <div className="grid gap-2 md:w-64">
@@ -462,7 +462,7 @@ export function AboutPage() {
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Card title="Skalowanie">Bezstanowy backend, kolejne repliki za nginx; wiele instytucji w jednej instalacji.</Card>
             <Card title="Integracje">Udokumentowane API REST — <a className="font-bold text-first underline" href="/api/v1/docs/">podgląd Swagger</a> dostępny bez logowania.</Card>
-            <Card title="Jakość" tone="ok">66 testów automatycznych: przepisy, terminy, uprawnienia, izolacja instytucji, AI, dokumenty. Uruchamiane automatycznie przy każdej zmianie kodu.</Card>
+            <Card title="Jakość" tone="ok">73 testy automatyczne: przepisy, terminy, uprawnienia, izolacja instytucji, AI, dokumenty. Uruchamiane automatycznie przy każdej zmianie kodu.</Card>
           </div>
         </Section>
 

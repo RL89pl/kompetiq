@@ -410,3 +410,15 @@ export interface KnowledgeDocument {
   created_at: string
   updated_at: string
 }
+
+export interface OutgoingEmail {
+  id: number
+  to: string
+  delivered_to: string
+  subject: string
+  body_text: string
+  body_html: string
+  status: 'CAPTURED' | 'SENT' | 'REDIRECTED' | 'FAILED'
+  status_label: string
+  created_at: string
+}

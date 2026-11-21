@@ -63,6 +63,10 @@ export function Layout() {
             Powiadomienia
             {unread > 0 && <span className="ml-2 rounded-full bg-bad px-2 text-[12px] font-bold text-white" aria-label={`${unread} nieprzeczytanych`}>{unread}</span>}
           </NavLink>
+          <NavLink to="/skrzynka-testowa"
+            className={({ isActive }) => `whitespace-nowrap rounded-md px-3 py-2 text-[15px] ${isActive ? 'bg-ink text-white font-bold' : 'hover:bg-paper'}`}>
+            Skrzynka testowa
+          </NavLink>
         </nav>
         <div className="hidden border-t border-rule px-5 py-4 text-sm md:absolute md:bottom-0 md:block md:w-full">
           <p className="font-bold">{me?.full_name}</p>

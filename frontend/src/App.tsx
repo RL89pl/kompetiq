@@ -19,6 +19,7 @@ import { KnowledgePage } from './pages/KnowledgePage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { LoginPage } from './pages/LoginPage'
 import { AboutPage } from './pages/AboutPage'
+import { TestMailboxPage } from './pages/TestMailboxPage'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { data, isLoading, isError } = useMe()
@@ -62,6 +63,7 @@ export function App() {
         <Route path="asystent-formalny" element={<FormalAssistantPage />} />
         <Route path="panel-hr" element={<HRPage />} />
         <Route path="powiadomienia" element={<NotificationsPage />} />
+        <Route path="skrzynka-testowa" element={<TestMailboxPage />} />
         <Route path="baza-wiedzy" element={<KnowledgePage />} />
         <Route path="przejrzystosc-ai" element={<AITransparencyPage />} />
         <Route path="*" element={<p>Nie znaleziono strony.</p>} />

@@ -208,7 +208,15 @@ elif 'smtp' in EMAIL_BACKEND_PATH:
                      'port': int(os.environ.get('EMAIL_PORT', '25'))}
 else:
     _mail_options = {}
-MAILERS = {'default': {'BACKEND': EMAIL_BACKEND_PATH, 'OPTIONS': _mail_options}}
+# „default” zapisuje każdy e-mail w skrzynce testowej (kompetiq/mail.py) i przekazuje adresy spoza domen testowych
+# do właściwego dostawcy („delivery”). Konta demo mają adresy w domenie .test — ich poczta nigdy nie wychodzi.
+MAILERS = {
+    'default': {'BACKEND': 'kompetiq.mail.OutboxBackend'},
+    'delivery': {'BACKEND': EMAIL_BACKEND_PATH, 'OPTIONS': _mail_options},
+}
+EMAIL_CAPTURE_DOMAINS = env_list('EMAIL_CAPTURE_DOMAINS', '.test')
+# Publiczny adres aplikacji — do linków w e-mailach.
+APP_URL = os.environ.get('APP_URL', 'https://kompetiq.devcage.pl').rstrip('/')
 
 LOGGING = {
     'version': 1,
