@@ -27,7 +27,7 @@ export function DesktopOnly({ children }: { children: ReactNode }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
       <CompassMark className="size-12" />
-      <h1 className="text-2xl">Otwórz Kompas Kompetencji na komputerze lub tablecie</h1>
+      <h1 className="text-2xl">Otwórz KompetIQ na komputerze lub tablecie</h1>
       <p className="max-w-sm text-ink-soft">Ocena pracownika wymaga pracy z arkuszem i modelem kompetencji, dlatego aplikacja nie jest dostępna na smartfonach.</p>
     </main>
   )

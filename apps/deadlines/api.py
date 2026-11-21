@@ -130,7 +130,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = ['id', 'kind', 'kind_label', 'title', 'body', 'assessment', 'sender_name', 'read_at', 'created_at']
 
     def get_sender_name(self, obj):
-        return obj.sender.get_full_name() if obj.sender else 'Kompas Kompetencji'
+        return obj.sender.get_full_name() if obj.sender else 'KompetIQ'
 
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):

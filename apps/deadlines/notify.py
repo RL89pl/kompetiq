@@ -21,7 +21,7 @@ def notify(recipient, *, institution, kind, title, body='', assessment=None, sen
     if email and recipient.email:
         try:
             # Bez danych oceny w treści e-maila — tylko informacja i odesłanie do aplikacji (minimalizacja danych).
-            send_mail(f'Kompas Kompetencji: {title}', f'{title}\n\nSzczegóły w aplikacji Kompas Kompetencji.',
+            send_mail(f'KompetIQ: {title}', f'{title}\n\nSzczegóły w aplikacji KompetIQ.',
                       None, [recipient.email])
             n.email_sent = True
             n.save(update_fields=['email_sent'])

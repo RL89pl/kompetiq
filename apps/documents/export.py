@@ -200,12 +200,12 @@ class PdfSheet:
         def footer(canvas, doc):
             canvas.saveState()
             canvas.setFont('Kompas', 7.5)
-            canvas.drawString(15 * mm, 10 * mm, 'Wygenerowano w Kompasie Kompetencji')
+            canvas.drawString(15 * mm, 10 * mm, 'Wygenerowano w aplikacji KompetIQ')
             canvas.drawRightString(195 * mm, 10 * mm, f'str. {doc.page}')
             canvas.restoreState()
 
         doc = SimpleDocTemplate(buf, pagesize=A4, leftMargin=15 * mm, rightMargin=15 * mm, topMargin=15 * mm,
-                                bottomMargin=18 * mm, title='Kompas Kompetencji', author='Kompas Kompetencji')
+                                bottomMargin=18 * mm, title='KompetIQ', author='KompetIQ')
         doc.build(self.story, onFirstPage=footer, onLaterPages=footer)
         return buf.getvalue()
 

@@ -47,7 +47,7 @@ export function LoginPage() {
       </div>
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm space-y-5" aria-labelledby="login-title">
-          <div className="flex items-center gap-3 md:hidden"><CompassMark /><span className="font-serif text-xl">Kompas Kompetencji</span></div>
+          <div className="flex items-center gap-3 md:hidden"><CompassMark /><span className="font-serif text-xl">KompetIQ</span></div>
           <h1 id="login-title" className="text-3xl">Zaloguj się</h1>
           <Field label="Login">{(id) => <Input id={id} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required />}</Field>
           <Field label="Hasło">{(id) => <Input id={id} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />}</Field>

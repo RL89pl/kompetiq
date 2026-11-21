@@ -1,4 +1,4 @@
-"""Ustawienia projektu Kompas Kompetencji.
+"""Ustawienia projektu KompetIQ.
 
 Konfiguracja wyłącznie przez zmienne środowiskowe (plik .env w docker compose).
 Lokalnie bez DB_ENGINE używany jest SQLite.
@@ -148,7 +148,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Kompas Kompetencji API',
+    'TITLE': 'KompetIQ API',
     'VERSION': '1.0.0',
     'COMPONENT_SPLIT_REQUEST': True,
     'ENUM_NAME_OVERRIDES': {

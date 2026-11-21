@@ -4,7 +4,7 @@ import { api } from '../api/client'
 import { useMe, useNotifications } from '../api/hooks'
 
 const NAV: { to: string; label: string; end?: boolean; roles?: string[] }[] = [
-  { to: '/', label: 'Kompas', end: true },
+  { to: '/', label: 'Pulpit', end: true },
   { to: '/panel-hr', label: 'Panel HR', roles: ['HR', 'ADMIN'] },
   { to: '/pracownicy', label: 'Pracownicy' },
   { to: '/oceny', label: 'Oceny' },
@@ -45,7 +45,7 @@ export function Layout() {
         <div className="flex items-center gap-3 px-5 py-5">
           <CompassMark />
           <div>
-            <p className="font-serif text-lg font-semibold leading-tight">Kompas Kompetencji</p>
+            <p className="font-serif text-lg font-semibold leading-tight">KompetIQ</p>
             <p className="text-[13px] text-ink-soft">{m?.institution_name}</p>
           </div>
         </div>

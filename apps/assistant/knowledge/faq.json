@@ -142,6 +142,6 @@
  {
   "q": "Czy asystent AI może wystawić ocenę?",
   "a": "Nie. Asystent pełni funkcję doradczą: porządkuje przykłady, wskazuje braki, proponuje sformułowania i pytania do rozmowy. Oceny cząstkowe i ostateczny poziom wybiera przełożony; wynik pozytywny lub negatywny wynika z przepisów i ocen przełożonego.",
-  "basis": "Zasady Kompasu Kompetencji"
+  "basis": "Zasady aplikacji KompetIQ"
  }
 ]

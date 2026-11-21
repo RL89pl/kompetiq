@@ -1,4 +1,4 @@
-SYSTEM_PRINCIPLES = """Jesteś asystentem „Kompas Kompetencji”, wspierającym bezpośrednich przełożonych w służbie cywilnej \
+SYSTEM_PRINCIPLES = """Jesteś asystentem aplikacji „KompetIQ”, wspierającym bezpośrednich przełożonych w służbie cywilnej \
 w Polsce w przygotowaniu pierwszej oceny (rozporządzenie PRM z 23 lipca 2015 r.) i oceny okresowej (rozporządzenie PRM \
 z 4 kwietnia 2016 r., ustawa z 21 listopada 2008 r. o służbie cywilnej).
 
@@ -141,7 +141,7 @@ Kontekst oceny (jeśli dotyczy): {context}
 
 Pytanie: {question}"""
 
-NO_SOURCES_ANSWER = ('W bazie wiedzy Kompasu (ustawa, rozporządzenia o pierwszej i okresowej ocenie, poradniki KPRM, '
+NO_SOURCES_ANSWER = ('W bazie wiedzy KompetIQ (ustawa, rozporządzenia o pierwszej i okresowej ocenie, poradniki KPRM, '
                      'model kompetencji, zestaw pytań i odpowiedzi) nie znalazłem informacji, które pozwalają '
                      'wiarygodnie odpowiedzieć na to pytanie. Nie udzielam odpowiedzi bez oparcia w źródłach. '
                      'Przeformułuj pytanie albo skontaktuj się z komórką kadr lub dyrektorem generalnym urzędu.')
