@@ -6,6 +6,7 @@ import { qk, useCreateAssessment, useEmployees, useMe } from '../api/hooks'
 import type { Employee, FormType } from '../api/types'
 import { Badge, Button, ErrorList, Loading, Notice, PageHeader } from '../components/ui'
 import { fmtDate } from '../lib'
+import { EmployeeDialog } from '../components/EmployeeDialog'
 
 const FORM_NAMES: Record<FormType, string> = {
   FIRST: 'Pierwsza ocena', PERIODIC_A: 'Okresowa, arkusz A', PERIODIC_B: 'Okresowa, arkusz B', PERIODIC_C: 'Okresowa, arkusz C',
@@ -14,8 +15,11 @@ const FORM_NAMES: Record<FormType, string> = {
 function StartButtons({ e, mode }: { e: Employee; mode: string | null }) {
   const create = useCreateAssessment()
   const nav = useNavigate()
+  const role = useMe().data?.active_membership?.role
   if (e.active_assessment)
     return <Link to={`/oceny/${e.active_assessment.id}`} className="font-bold text-ink underline underline-offset-2">Otwórz ocenę w toku</Link>
+  // ocenę rozpoczyna bezpośredni przełożony (lub administrator) — kadry tylko podglądają
+  if (role === 'HR') return null
   const options: FormType[] = mode === 'FIRST' ? ['FIRST'] : mode === 'PERIODIC' ? [e.suggested_form] : ['FIRST', e.suggested_form]
   return (
     <div className="flex flex-col items-end gap-2">
@@ -30,6 +34,20 @@ function StartButtons({ e, mode }: { e: Employee; mode: string | null }) {
       </div>
       {create.error && <ErrorList error={create.error} />}
     </div>
+  )
+}
+
+function Deactivate({ e }: { e: Employee }) {
+  const qc = useQueryClient()
+  const [ask, setAsk] = useState(false)
+  const m = useMutation({ mutationFn: () => api(`/employees/${e.id}/`, { method: 'DELETE' }), onSuccess: () => qc.invalidateQueries({ queryKey: qk.employees }) })
+  if (!ask) return <button className="text-ink-soft underline underline-offset-2" onClick={() => setAsk(true)}>Usuń z listy</button>
+  return (
+    <span className="flex items-center gap-2">
+      <span className="text-ink-soft">Ukryć {e.full_name}? Oceny i dokumenty zostaną.</span>
+      <button className="font-bold text-bad underline underline-offset-2" disabled={m.isPending} onClick={() => m.mutate()}>Tak, usuń</button>
+      <button className="underline underline-offset-2" onClick={() => setAsk(false)}>Anuluj</button>
+    </span>
   )
 }
 
@@ -58,6 +76,8 @@ export function EmployeesPage() {
   const [params] = useSearchParams()
   const mode = params.get('rozpocznij')
   const [q, setQ] = useState('')
+  const [dialog, setDialog] = useState<Employee | 'new' | null>(null)
+  const [saved, setSaved] = useState('')
   const list = (data ?? []).filter((e) => `${e.full_name} ${e.position}`.toLowerCase().includes(q.toLowerCase()))
 
   return (
@@ -65,7 +85,13 @@ export function EmployeesPage() {
       <PageHeader title="Pracownicy"
         lead={mode === 'FIRST' ? 'Wybierz osobę, której pierwszą ocenę przygotowujesz.'
           : mode === 'PERIODIC' ? 'Wybierz osobę do oceny okresowej. Arkusz podpowiadamy na podstawie danych o stanowisku (§ 3 rozporządzenia z 2016 r.).'
-            : 'Osoby, dla których jesteś bezpośrednim przełożonym lub kierujesz ich komórką.'} />
+            : isHR ? 'Kartoteka pracowników urzędu: dane do arkuszy ocen, przełożeni i opisy stanowisk.'
+              : 'Osoby, dla których jesteś bezpośrednim przełożonym lub kierujesz ich komórką.'}>
+        {isHR && <Button onClick={() => setDialog('new')}>Dodaj pracownika</Button>}
+      </PageHeader>
+      {dialog && <EmployeeDialog employee={dialog === 'new' ? undefined : dialog} onClose={() => setDialog(null)}
+        onSaved={(e) => setSaved(`${dialog === 'new' ? 'Dodano' : 'Zapisano'}: ${e.first_name} ${e.last_name}`)} />}
+      {saved && <div className="mb-4"><Notice tone="ok" title={saved}>{isHR && 'Przełożony zobaczy tę osobę na swojej liście pracowników i rozpocznie ocenę.'}</Notice></div>}
       <label className="mb-4 block max-w-sm">
         <span className="sr-only">Szukaj pracownika</span>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Szukaj po nazwisku lub stanowisku"
@@ -88,7 +114,15 @@ export function EmployeesPage() {
                   {!e.latest_job_description && <Badge tone="warn">brak opisu stanowiska</Badge>}
                 </p>
               </div>
-              <StartButtons e={e} mode={mode} />
+              <div className="flex flex-col items-end gap-2">
+                <StartButtons e={e} mode={mode} />
+                {isHR && (
+                  <div className="flex gap-3 text-sm">
+                    <button className="underline underline-offset-2" onClick={() => setDialog(e)}>Edytuj dane</button>
+                    <Deactivate e={e} />
+                  </div>
+                )}
+              </div>
             </li>
           ))}
         </ul>

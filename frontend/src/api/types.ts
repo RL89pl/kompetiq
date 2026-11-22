@@ -431,3 +431,6 @@ export interface OutgoingEmail {
 }
 
 export interface MessageRecipient { key: 'evaluator' | 'unit_head' | 'hr'; label: string; hint: string; names: string[] }
+
+export interface OrgUnit { id: number; name: string; parent: number | null; head: number | null; head_name: string }
+export interface InstitutionUser { id: number; full_name: string; role: Role; role_display: string; org_unit: number | null; position: string }

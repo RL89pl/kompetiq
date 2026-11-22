@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers, status, viewsets
@@ -44,6 +46,31 @@ class EmployeeSerializer(serializers.ModelSerializer):
                   'supervisor', 'supervisor_name', 'employment_date', 'contract_end_date', 'is_civil_servant',
                   'service_grade', 'appointment_year', 'service_grade_date', 'is_managerial', 'is_office_head', 'is_active', 'suggested_form',
                   'latest_job_description', 'active_assessment', 'first_assessment_block']
+
+    def validate(self, attrs):
+        from apps.institutions.models import Membership
+        from apps.institutions.permissions import membership
+        inst = membership(self.context['request']).institution
+        get = lambda k: attrs.get(k, getattr(self.instance, k, None))  # noqa: E731 — PATCH: wartość nowa albo obecna
+        errors = {}
+        unit, sup = get('org_unit'), get('supervisor')
+        if unit is not None and unit.institution_id != inst.id:
+            errors['org_unit'] = 'Komórka nie należy do tej instytucji.'
+        if sup is not None and not Membership.objects.filter(user=sup, institution=inst).exists():
+            errors['supervisor'] = 'Przełożony musi mieć konto w tej instytucji.'
+        start, end = get('employment_date'), get('contract_end_date')
+        if start and end and end <= start:
+            errors['contract_end_date'] = 'Data zakończenia umowy musi być późniejsza niż data zatrudnienia.'
+        if not get('is_civil_servant') and (get('service_grade') or get('appointment_year') or get('service_grade_date')):
+            errors['is_civil_servant'] = 'Stopień służbowy i rok mianowania dotyczą urzędnika służby cywilnej — zaznacz to pole albo je wyczyść.'
+        year = get('appointment_year')
+        if year and not 1996 <= year <= date.today().year:
+            errors['appointment_year'] = f'Rok mianowania z zakresu 1996–{date.today().year}.'
+        if get('is_office_head') and not get('is_managerial'):
+            attrs['is_managerial'] = True  # kierownik urzędu kieruje pracownikami (arkusz A)
+        if errors:
+            raise ValidationError(errors)
+        return attrs
 
     def get_supervisor_name(self, obj) -> str:
         return obj.supervisor.get_full_name() if obj.supervisor else ''

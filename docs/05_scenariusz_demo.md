@@ -64,3 +64,15 @@ Podgląd nie wywołuje modelu i nic nie zapisuje — działa także bez dostępu
 ## Panel HR
 
 `kadry`: statusy, etapy, komórki, oceny po terminie, „Przypomnij” przy ocenie, „Wyślij przypomnienia o terminach”.
+
+## Nowy pracownik od zera
+
+1. Zaloguj się jako **kadry** → **Pracownicy → Dodaj pracownika**.
+2. Uzupełnij dane: forma zwracania się (Pani/Pan), stanowisko, komórka (podpowiada kierującego, który potwierdza
+   pierwszą ocenę), bezpośredni przełożony (np. Tomasz Zieliński), data zatrudnienia, status urzędnika i opis stanowiska
+   (wpisane zadania albo plik OSP .docx). Podsumowanie na dole pokazuje arkusz oceny okresowej i termin pierwszej oceny.
+3. Do pierwszej oceny wybierz datę zatrudnienia sprzed kilku miesięcy — gdy termin z art. 38 ust. 1 minął, aplikacja
+   zaproponuje tylko ocenę okresową.
+4. Zaloguj się jako **przelozony** → **Pracownicy** → „Rozpocznij: Pierwsza ocena”.
+
+Reset danych demo usuwa także ręcznie dodanych pracowników.
