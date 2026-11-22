@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { RateLimitNotice } from './RateLimitNotice'
 import { api } from '../api/client'
 import { useMe, useNotifications } from '../api/hooks'
 
@@ -76,6 +77,7 @@ export function Layout() {
       </aside>
       <main id="tresc" className="mx-auto w-full max-w-6xl px-4 py-8 md:px-10">
         <Outlet />
+        <RateLimitNotice />
         <button onClick={logout} className="mt-10 text-sm underline md:hidden">Wyloguj ({me?.full_name})</button>
       </main>
     </div>

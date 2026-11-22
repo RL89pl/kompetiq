@@ -6,6 +6,12 @@ class Detail(serializers.Serializer):
     detail = serializers.CharField(help_text='Komunikat błędu dla użytkownika')
 
 
+class RateLimited(Detail):
+    code = serializers.CharField(help_text='„llm_rate_limit” — limit zapytań dostawcy modelu')
+    retry_after = serializers.IntegerField(help_text='Po ilu sekundach ponowić zapytanie')
+    plan = serializers.CharField(help_text='Plan dostawcy z limitem, np. „darmowy plan Groq”; pusty, gdy nieznany')
+
+
 # ── Uwierzytelnianie ─────────────────────────────────────────────────────────────────────────────
 class CsrfOut(serializers.Serializer):
     csrfToken = serializers.CharField(help_text='Token do nagłówka X-CSRFToken przy żądaniach POST/PATCH/DELETE')

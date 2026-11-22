@@ -28,7 +28,40 @@ function flattenErrors(data: unknown): string[] {
   return out
 }
 
+/** Limit zapytań dostawcy modelu (np. darmowy plan Groq): stan dla komunikatu z odliczaniem w interfejsie. */
+export interface RateLimitState { plan: string; until: number; attempt: number; max: number }
+type Listener = (s: RateLimitState | null) => void
+const rateListeners = new Set<Listener>()
+export function onRateLimit(fn: Listener) { rateListeners.add(fn); return () => { rateListeners.delete(fn) } }
+const emitRate = (s: RateLimitState | null) => rateListeners.forEach((f) => f(s))
+const MAX_RATE_RETRIES = 3
+
 export async function api<T = unknown>(path: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const out = await request<T>(path, opts)
+      if (attempt > 1) emitRate(null)
+      return out
+    } catch (e) {
+      const d = e instanceof ApiError ? (e.data as { code?: string; retry_after?: number; plan?: string } | null) : null
+      if (!(e instanceof ApiError) || e.status !== 429 || d?.code !== 'llm_rate_limit') {
+        if (attempt > 1) emitRate(null)
+        throw e
+      }
+      if (attempt > MAX_RATE_RETRIES) {
+        emitRate(null)
+        throw new ApiError(429, `Limit zapytań${d.plan ? ` (${d.plan})` : ''} nadal obowiązuje mimo ${MAX_RATE_RETRIES} ponowień. `
+          + 'Odczekaj około minuty i spróbuj ponownie.', [], e.data)
+      }
+      // Serwer nie czeka po cichu: zwraca czas oczekiwania, a przeglądarka informuje użytkownika i sama ponawia.
+      const wait = Math.min(120, Math.max(1, d.retry_after ?? 20)) * 1000
+      emitRate({ plan: d.plan ?? '', until: Date.now() + wait, attempt, max: MAX_RATE_RETRIES })
+      await new Promise((r) => setTimeout(r, wait))
+    }
+  }
+}
+
+async function request<T>(path: string, opts: { method?: string; body?: unknown }): Promise<T> {
   const method = opts.method ?? 'GET'
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (method !== 'GET') {

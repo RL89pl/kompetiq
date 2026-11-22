@@ -40,8 +40,46 @@ class AssistantDisabled(AssistantError):
 
 
 class AssistantBusy(AssistantError):
+    """Limit zapytań dostawcy (HTTP 429). retry_after — ile sekund odczekać; plan — np. „Groq (darmowy plan)”.
+
+    Przeglądarka pokazuje komunikat z odliczaniem i sama ponawia zapytanie (frontend/src/api/client.ts).
+    """
     status = 429
     public_message = 'Asystent AI jest przeciążony lub wyczerpano limit zapytań. Spróbuj ponownie za minutę.'
+
+    def __init__(self, *args, retry_after=None, plan=''):
+        super().__init__(*args)
+        self.retry_after = retry_after
+        self.plan = plan
+        if plan:
+            self.public_message = (f'Osiągnięto limit zapytań na minutę: {plan}. '
+                                   'Asystent ponowi zapytanie automatycznie za chwilę.')
+
+
+def retry_after_seconds(headers, default=20):
+    """Czas oczekiwania z nagłówków odpowiedzi 429: Retry-After albo x-ratelimit-reset-* (np. „7.66s”, „1m2.5s”)."""
+    import re
+    if headers is None:
+        return default
+    for name in ('retry-after', 'x-ratelimit-reset-requests', 'x-ratelimit-reset-tokens'):
+        v = headers.get(name)
+        if not v:
+            continue
+        try:
+            return max(1, min(120, round(float(v))))
+        except ValueError:
+            m = re.fullmatch(r'(?:(\d+)m)?(?:([\d.]+)s)?', v.strip())
+            if m and (m.group(1) or m.group(2)):
+                return max(1, min(120, round(int(m.group(1) or 0) * 60 + float(m.group(2) or 0))))
+    return default
+
+
+def busy_payload(e):
+    """Treść odpowiedzi API dla błędu asystenta (wspólna dla funkcji, czatu i podglądu)."""
+    body = {'detail': str(e) if e.args else e.public_message}
+    if isinstance(e, AssistantBusy):
+        body.update(code='llm_rate_limit', retry_after=e.retry_after or 20, plan=e.plan)
+    return body
 
 
 class AssistantRefused(AssistantError):
@@ -97,7 +135,7 @@ class AnthropicProvider(LLMProvider):
             resp = fn(model=self.model, betas=[FALLBACK_BETA], fallbacks='default', **kwargs)
         except a.RateLimitError as e:
             log.warning('Claude rate limit: %s', e)
-            raise AssistantBusy() from e
+            raise AssistantBusy(retry_after=retry_after_seconds(getattr(e.response, 'headers', None))) from e
         except a.APIStatusError as e:
             log.error('Claude API error %s: %s', e.status_code, e)
             raise AssistantError() from e
@@ -179,8 +217,11 @@ class OpenAICompatibleProvider(LLMProvider):
     def __init__(self, base_url, api_key, model, json_mode='json_object', timeout=120.0):
         import openai
         self.openai = openai
+        # Darmowy plan Groq ma limity na minutę. Zamiast ukrytych ponowień po stronie serwera (użytkownik czeka
+        # bez informacji) od razu zwracamy 429 z czasem oczekiwania — przeglądarka pokazuje komunikat i ponawia.
+        self.plan = 'darmowy plan Groq' if 'groq.com' in (base_url or '') else ''
         self.client = openai.OpenAI(base_url=base_url, api_key=api_key or 'brak-klucza', timeout=timeout,
-                                    max_retries=2)
+                                    max_retries=0 if self.plan else 2)
         self.model = model
         self.json_mode = json_mode
 
@@ -194,7 +235,8 @@ class OpenAICompatibleProvider(LLMProvider):
             resp = self.client.chat.completions.create(**kwargs)
         except o.RateLimitError as e:
             log.warning('LLM rate limit: %s', e)
-            raise AssistantBusy() from e
+            raise AssistantBusy(retry_after=retry_after_seconds(getattr(e.response, 'headers', None)),
+                                plan=self.plan) from e
         except o.APIStatusError as e:
             log.error('LLM API error %s: %s', e.status_code, e)
             raise AssistantError() from e

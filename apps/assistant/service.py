@@ -7,7 +7,7 @@ from apps.assessments.models import Assessment, AssessmentCriterion
 from apps.competencies.models import LEVEL_LABELS
 
 from . import prompts, schemas
-from .client import AssistantError, AssistantInputError, get_provider
+from .client import AssistantBusy, AssistantError, AssistantInputError, get_provider
 from .models import AIInteraction, Conversation, GuidingQuestionCache, Message
 from .retrieval import build_context, coverage, search_scored
 
@@ -247,7 +247,7 @@ def chat(request, conv: Conversation, text: str):
     anon = Pseudonymizer(a.employee) if a else (lambda t: t)
     question = anon(text)
     history = _history(conv)
-    Message.objects.create(conversation=conv, role=Message.Role.USER, content=text)
+    user_msg = Message.objects.create(conversation=conv, role=Message.Role.USER, content=text)
     if not conv.title:
         conv.title = text[:120]
     conv.save()
@@ -295,6 +295,11 @@ def chat(request, conv: Conversation, text: str):
         result = get_provider().answer_with_citations(system=_system(model, codes, levels=False), prompt=prompt,
                                                       documents=docs,
                                                       history=history)
+    except AssistantBusy as e:
+        # Limit zapytań: przeglądarka ponowi to samo pytanie — nie zostawiamy go w historii podwójnie.
+        _log(request, a, feature, prompt, error=f'{type(e).__name__}: {e}')
+        user_msg.delete()
+        raise
     except AssistantError as e:
         _log(request, a, feature, prompt, error=f'{type(e).__name__}: {e}')
         Message.objects.create(conversation=conv, role=Message.Role.ASSISTANT, grounded=False,

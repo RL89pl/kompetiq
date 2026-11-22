@@ -296,3 +296,38 @@ def test_address_note_applies_only_to_employee():
         note = prompts.ADDRESS_NOTES[key]
         assert prompts.READER_NOTE in note  # do pytającego (oceniającego) bez formy „Pan/Pani”
     assert 'wyłącznie ocenianego' in prompts.ADDRESS_NOTES['PANI']
+
+
+def test_rate_limit_returns_retry_after_and_does_not_duplicate_question(org, api, settings):
+    settings.ASSISTANT_MIN_RETRIEVAL_SCORE = 0.1  # mini-korpus testowy ma niskie IDF
+    from apps.assistant.client import AssistantBusy, retry_after_seconds, set_provider
+    from apps.assistant.models import Message
+
+    class Limited:
+        def answer_with_citations(self, **kw):
+            raise AssistantBusy(retry_after=12, plan='darmowy plan Groq')
+
+        def structured(self, **kw):
+            raise AssistantBusy(retry_after=7, plan='darmowy plan Groq')
+
+    LegalChunk.objects.create(kind='FAQ', source='faq', title='Pytania i odpowiedzi: sprzeciw', page=1,
+                              text='Pytanie: termin na sprzeciw od oceny okresowej. Odpowiedź: 7 dni od zapoznania.')
+    set_provider(Limited())
+    try:
+        c = api(org.sup)
+        conv = c.post('/api/v1/assistant/conversations/', {'mode': 'FORMAL'}, format='json').data
+        r = c.post(f"/api/v1/assistant/conversations/{conv['id']}/messages/",
+                   {'content': 'Jaki jest termin na sprzeciw od oceny?'}, format='json')
+        assert r.status_code == 429
+        assert r.data['code'] == 'llm_rate_limit' and r.data['retry_after'] == 12 and 'Groq' in r.data['detail']
+        # przeglądarka ponowi pytanie — w historii nie zostaje ani pytanie, ani komunikat o błędzie
+        assert not Message.objects.filter(conversation_id=conv['id']).exists()
+        a = create(api, org.sup, org.emp)
+        r = c.post(f"/api/v1/assessments/{a['id']}/assistant/interview-script/", {}, format='json')
+        assert r.status_code == 429 and r.data['retry_after'] == 7
+    finally:
+        set_provider(None)
+    assert retry_after_seconds({'retry-after': '3'}) == 3
+    assert retry_after_seconds({'x-ratelimit-reset-tokens': '1m2.5s'}) == 62
+    assert retry_after_seconds({'x-ratelimit-reset-requests': '7.66s'}) == 8
+    assert retry_after_seconds({}) == 20

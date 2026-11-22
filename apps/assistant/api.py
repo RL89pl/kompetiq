@@ -17,7 +17,7 @@ from apps.institutions.permissions import IsHROrAdmin
 from kompetiq import openapi as o
 
 from . import service
-from .client import AssistantError
+from .client import AssistantError, busy_payload
 from .knowledge import ALLOWED_EXT, MAX_UPLOAD, KnowledgeFileError, index_document
 from .models import AIInteraction, Conversation, KnowledgeDocument, LegalChunk, Message, visible_chunks
 
@@ -44,7 +44,7 @@ class AssistantFeatureView(APIView):
 
     @extend_schema(
         parameters=[OpenApiParameter('feature', str, OpenApiParameter.PATH, enum=list(FEATURES))],
-        request=o.AssistantFeatureIn, responses={200: o.AssistantFeatureOut, 400: o.Detail, 503: o.Detail},
+        request=o.AssistantFeatureIn, responses={200: o.AssistantFeatureOut, 400: o.Detail, 429: o.RateLimited, 503: o.Detail},
         tags=['Asystent AI'], summary='Funkcja asystenta dla oceny (sugestia — wymaga weryfikacji przełożonego)')
     def post(self, request, pk, feature):
         if feature not in FEATURES:
@@ -61,8 +61,7 @@ class AssistantFeatureView(APIView):
         try:
             log, out = service.run_feature(request, a, feature, crit)
         except AssistantError as e:
-            msg = str(e) if e.args else e.public_message
-            return Response({'detail': msg}, status=e.status)
+            return Response(busy_payload(e), status=e.status)
         return Response(_payload(log, out))
 
 
@@ -112,7 +111,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
             raise ValidationError('Tryb przygotowania do rozmowy wymaga wskazania oceny.')
         serializer.save(user=self.request.user, institution=self.request.membership.institution, assessment=a)
 
-    @extend_schema(request=o.ChatIn, responses={200: MessageSerializer, 400: o.Detail}, tags=['Asystent AI'],
+    @extend_schema(request=o.ChatIn, responses={200: MessageSerializer, 400: o.Detail, 429: o.RateLimited}, tags=['Asystent AI'],
                    summary='Kolejna wiadomość w rozmowie; odpowiedź z cytowaniami źródeł')
     @action(detail=True, methods=['post'], throttle_classes=[ScopedRateThrottle])
     def messages(self, request, pk=None):
@@ -123,8 +122,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
         try:
             msg = service.chat(request, conv, text)
         except AssistantError as e:
-            msg = str(e) if e.args else e.public_message
-            return Response({'detail': msg}, status=e.status)
+            return Response(busy_payload(e), status=e.status)
         return Response(MessageSerializer(msg).data)
 
     def get_throttles(self):
@@ -302,7 +300,7 @@ class PreviewView(APIView):
     Nie wywołuje modelu i niczego nie zapisuje — działa także bez skonfigurowanego dostawcy AI.
     """
 
-    @extend_schema(request=o.PreviewIn, responses={200: o.PreviewOut, 400: o.Detail}, tags=['Asystent AI'],
+    @extend_schema(request=o.PreviewIn, responses={200: o.PreviewOut, 400: o.Detail, 429: o.RateLimited}, tags=['Asystent AI'],
                    summary='Podgląd wysyłki do modelu AI (bez wywołania modelu)')
     def post(self, request):
         from .preview import FEATURE_LABELS, run_preview
@@ -326,5 +324,4 @@ class PreviewView(APIView):
         try:
             return Response(run_preview(request, feature, a, crit, question[:2000]))
         except AssistantError as e:
-            msg = str(e) if e.args else e.public_message
-            return Response({'detail': msg}, status=e.status)
+            return Response(busy_payload(e), status=e.status)
