@@ -48,6 +48,9 @@ class OutgoingEmail(models.Model):
     institution = models.ForeignKey(Institution, null=True, blank=True, on_delete=models.CASCADE)
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
                                   related_name='+')
+    # kto spowodował wysyłkę (np. autor wiadomości) — widzi ten e-mail w swojej skrzynce testowej
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+                               related_name='+')
     from_email = models.CharField(max_length=255)
     to = models.CharField('adresaci', max_length=1000)
     delivered_to = models.CharField('faktycznie wysłano do', max_length=1000, blank=True)

@@ -9,7 +9,7 @@ class OutgoingEmailAdmin(admin.ModelAdmin):
     list_display = ('created_at', 'subject', 'to', 'status', 'institution')
     list_filter = ('status', 'institution')
     search_fields = ('subject', 'to')
-    readonly_fields = ('created_at', 'institution', 'recipient', 'from_email', 'to', 'subject', 'status', 'error',
+    readonly_fields = ('created_at', 'institution', 'recipient', 'sender', 'from_email', 'to', 'subject', 'status', 'error',
                        'preview', 'body_text')
     exclude = ('body_html',)
 

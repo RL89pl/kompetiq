@@ -18,15 +18,19 @@ def notify(recipient, *, institution, kind, title, body='', assessment=None, sen
         return None
     n = Notification.objects.create(institution=institution, recipient=recipient, sender=sender, kind=kind,
                                     title=title, body=body, assessment=assessment, dedupe_key=dedupe_key)
-    if email and recipient.email:
+    # W trybie testowym poczty e-mail powstaje także dla konta bez adresu — i tak trafi na adres testowy.
+    from kompetiq.mail import test_recipient
+    address = recipient.email or (f'{recipient.username}@brak-adresu.invalid' if email and test_recipient() else '')
+    if email and address:
         try:
             # Bez danych oceny w treści e-maila — tylko informacja i odesłanie do aplikacji (minimalizacja danych).
             from .emails import render
             subject, text, html = render(n)
             name = recipient.get_full_name()
-            msg = EmailMultiAlternatives(subject, text, None, [f'{name} <{recipient.email}>' if name else recipient.email],
+            msg = EmailMultiAlternatives(subject, text, None, [f'{name} <{address}>' if name else address],
                                          headers={'X-KompetIQ-Institution': str(institution.pk),
-                                                  'X-KompetIQ-Recipient': str(recipient.pk)})
+                                                  'X-KompetIQ-Recipient': str(recipient.pk),
+                                                  **({'X-KompetIQ-Sender': str(sender.pk)} if sender else {})})
             msg.attach_alternative(html, 'text/html')
             msg.send()
             n.email_sent = True

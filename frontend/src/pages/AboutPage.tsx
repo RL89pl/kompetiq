@@ -462,7 +462,7 @@ export function AboutPage() {
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Card title="Skalowanie">Bezstanowy backend, kolejne repliki za nginx; wiele instytucji w jednej instalacji.</Card>
             <Card title="Integracje">Udokumentowane API REST — <a className="font-bold text-first underline" href="/api/v1/docs/">podgląd Swagger</a> dostępny bez logowania.</Card>
-            <Card title="Jakość" tone="ok">76 testów automatycznych: przepisy, terminy, uprawnienia, izolacja instytucji, AI, dokumenty. Uruchamiane automatycznie przy każdej zmianie kodu.</Card>
+            <Card title="Jakość" tone="ok">82 testy automatyczne: przepisy, terminy, uprawnienia, izolacja instytucji, AI, dokumenty. Uruchamiane automatycznie przy każdej zmianie kodu.</Card>
           </div>
         </Section>
 

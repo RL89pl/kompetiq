@@ -1,6 +1,7 @@
 from collections import Counter, defaultdict
 from datetime import date
 
+from django.db.models import Q
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import serializers, status, viewsets
@@ -102,19 +103,40 @@ class SendRemindersView(APIView):
 class AssessmentMessageView(APIView):
     """Komunikacja w procesie: wiadomość / przypomnienie do oceniającego, kierującego komórką lub kadr."""
 
+    LABELS = {'evaluator': 'Oceniający', 'unit_head': 'Kierujący komórką organizacyjną', 'hr': 'Kadry (HR)'}
+    HINTS = {'evaluator': 'bezpośredni przełożony prowadzący ocenę', 'unit_head': 'kieruje komórką, w której pracuje oceniany',
+             'hr': 'komórka kadr urzędu'}
+
+    @staticmethod
+    def _recipients(request, a):
+        """Adresaci dostępni dla bieżącego użytkownika (bez niego samego). Te same reguły przy GET i POST."""
+        m = membership(request)
+        groups = {'unit_head': [unit_head_for(a)], 'hr': hr_users(a.institution)}
+        if m.role in (Role.HR, Role.ADMIN, Role.UNIT_HEAD):
+            groups = {'evaluator': [a.evaluator], **groups}
+        return {k: [u for u in users if u is not None and u.id != request.user.id] for k, users in groups.items()}
+
+    @extend_schema(responses=o.MessageRecipientsOut(many=True), tags=['Komunikacja'],
+                   summary='Adresaci wiadomości w sprawie oceny')
+    def get(self, request, pk):
+        a = get_visible_assessment(request, pk)
+        return Response([{'key': k, 'label': self.LABELS[k], 'hint': self.HINTS[k],
+                          'names': [u.get_full_name() or u.username for u in users]}
+                         for k, users in self._recipients(request, a).items() if users])
+
     @extend_schema(request=o.MessageIn, responses={201: o.SentOut, 400: o.Detail}, tags=['Komunikacja'])
     def post(self, request, pk):
         a = get_visible_assessment(request, pk)
-        m = membership(request)
         to = request.data.get('to')
         text = (request.data.get('message') or '').strip()
         if len(text) > 1000:
             raise ValidationError('Wiadomość do 1000 znaków.')
-        recipients = {'evaluator': [a.evaluator], 'unit_head': [unit_head_for(a)], 'hr': hr_users(a.institution)}.get(to)
-        if recipients is None:
+        if to not in self.LABELS:
             raise ValidationError('Nieznany adresat.')
-        if to == 'evaluator' and m.role not in (Role.HR, Role.ADMIN, Role.UNIT_HEAD):
+        allowed = self._recipients(request, a)
+        if to not in allowed:
             raise PermissionDenied()
+        recipients = allowed[to]
         kind = Notification.Kind.REMINDER if request.data.get('reminder') else Notification.Kind.MESSAGE
         if kind == Notification.Kind.REMINDER and a.status in (Status.ACKNOWLEDGED, Status.CANCELLED):
             raise ValidationError('Ocena jest zakończona — przypomnienie o kontynuacji procesu nie jest potrzebne.')
@@ -123,7 +145,7 @@ class AssessmentMessageView(APIView):
                  else f'Wiadomość od {who}: ocena {a.employee.full_name}')
         sent = 0
         for r in recipients:
-            if r is not None and r.id != request.user.id:
+            if r is not None:
                 sent += notify(r, institution=a.institution, kind=kind, assessment=a, sender=request.user,
                                title=title, body=text) is not None
         if not sent:
@@ -168,10 +190,17 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
 
 class OutgoingEmailSerializer(serializers.ModelSerializer):
     status_label = serializers.CharField(source='get_status_display', read_only=True)
+    sent_by_me = serializers.SerializerMethodField()
 
     class Meta:
         model = OutgoingEmail
-        fields = ['id', 'to', 'delivered_to', 'subject', 'body_text', 'body_html', 'status', 'status_label', 'created_at']
+        fields = ['id', 'to', 'delivered_to', 'subject', 'body_text', 'body_html', 'status', 'status_label', 'created_at',
+                  'sent_by_me', 'error']
+
+    def get_sent_by_me(self, obj) -> bool:
+        """E-mail do innej osoby, wysłany w wyniku działania bieżącego użytkownika (np. jego wiadomości)."""
+        u = self.context['request'].user
+        return obj.sender_id == u.id and obj.recipient_id != u.id
 
 
 @extend_schema_view(list=extend_schema(tags=['Komunikacja'], summary='Skrzynka testowa: wysłane e-maile'),
@@ -187,5 +216,5 @@ class TestMailboxViewSet(viewsets.ReadOnlyModelViewSet):
         m = membership(self.request)
         qs = OutgoingEmail.objects.filter(institution=m.institution)
         if m.role != Role.ADMIN:
-            qs = qs.filter(recipient=self.request.user)
+            qs = qs.filter(Q(recipient=self.request.user) | Q(sender=self.request.user))
         return qs[:200]

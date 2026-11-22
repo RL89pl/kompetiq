@@ -3,12 +3,33 @@ from django.db import transaction
 from apps.competencies.models import Competency, CompetencyModel
 from apps.deadlines import rules
 
-from .forms_config import get_form
+from .forms_config import FormType, get_form
 from .models import Assessment, AssessmentCriterion
 
 
 class AssessmentError(Exception):
     pass
+
+
+def first_assessment_block(employee, today=None) -> str:
+    """Powód, dla którego pierwsza ocena nie jest możliwa; pusty, gdy można ją rozpocząć.
+
+    Pierwszą ocenę przeprowadza się wobec osoby podejmującej po raz pierwszy pracę w służbie cywilnej, przed
+    końcem pierwszej umowy (art. 38 ust. 1 ustawy) — nie wobec pracownika z dłuższym stażem czy po ocenie okresowej.
+    """
+    from datetime import date
+    today = today or date.today()
+    other = employee.assessments.exclude(status='CANCELLED')
+    if other.filter(form_type=FormType.FIRST).exists():
+        return 'Pracownik ma już pierwszą ocenę — dokonuje się jej raz, w pierwszym okresie zatrudnienia.'
+    if other.exclude(form_type=FormType.FIRST).exists():
+        return 'Pracownik ma ocenę okresową — pierwsza ocena dotyczy tylko pierwszego okresu zatrudnienia w służbie cywilnej.'
+    if employee.employment_date:
+        end = rules.first_assessment_dates(employee.employment_date, employee.contract_end_date).window_to
+        if end < today:
+            return (f'Termin pierwszej oceny minął {end:%d.%m.%Y} (miesiąc przed końcem pierwszej umowy, art. 38 '
+                    'ust. 1 ustawy). Pierwsza ocena dotyczy osób w pierwszym okresie zatrudnienia w służbie cywilnej.')
+    return ''
 
 
 @transaction.atomic

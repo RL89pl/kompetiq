@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+{% block after_field_sets %}
+  {{ block.super }}
+  <div class="module" style="padding:12px 16px;margin-top:8px;">
+    <p style="margin:0 0 8px;">Sprawdź wysyłkę: e-mail próbny trafi na adres testowy (albo na adres Twojego konta). Najpierw zapisz zmiany.</p>
+    <button type="submit" form="send-test-form" class="button">Wyślij e-mail testowy</button>
+  </div>
+{% endblock %}
+{% block admin_change_form_document_ready %}
+  {{ block.super }}
+  <form id="send-test-form" method="post" action="{% url 'admin:institutions_systemsettings_send_test' %}">{% csrf_token %}</form>
+{% endblock %}

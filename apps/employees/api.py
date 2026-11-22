@@ -36,16 +36,22 @@ class EmployeeSerializer(serializers.ModelSerializer):
     suggested_form = serializers.SerializerMethodField()
     latest_job_description = serializers.SerializerMethodField()
     active_assessment = serializers.SerializerMethodField()
+    first_assessment_block = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
         fields = ['id', 'first_name', 'last_name', 'full_name', 'position', 'form_of_address', 'org_unit', 'org_unit_name',
                   'supervisor', 'supervisor_name', 'employment_date', 'contract_end_date', 'is_civil_servant',
                   'service_grade', 'appointment_year', 'service_grade_date', 'is_managerial', 'is_office_head', 'is_active', 'suggested_form',
-                  'latest_job_description', 'active_assessment']
+                  'latest_job_description', 'active_assessment', 'first_assessment_block']
 
     def get_supervisor_name(self, obj) -> str:
         return obj.supervisor.get_full_name() if obj.supervisor else ''
+
+    def get_first_assessment_block(self, obj) -> str:
+        """Pusty, gdy można rozpocząć pierwszą ocenę; inaczej powód (do podpowiedzi przy nieaktywnym przycisku)."""
+        from apps.assessments.services import first_assessment_block
+        return first_assessment_block(obj)
 
     def get_suggested_form(self, obj) -> str:
         return suggest_periodic_form(obj)

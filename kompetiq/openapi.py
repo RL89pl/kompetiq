@@ -128,6 +128,13 @@ class SentOut(serializers.Serializer):
     sent = serializers.IntegerField(help_text='Liczba wysłanych powiadomień')
 
 
+class MessageRecipientsOut(serializers.Serializer):
+    key = serializers.CharField(help_text='evaluator | unit_head | hr — wartość pola „to” przy wysyłce')
+    label = serializers.CharField()
+    hint = serializers.CharField()
+    names = serializers.ListField(child=serializers.CharField())
+
+
 class MessageIn(serializers.Serializer):
     to = serializers.ChoiceField(choices=['evaluator', 'unit_head', 'hr'])
     message = serializers.CharField(max_length=1000, required=False, allow_blank=True)

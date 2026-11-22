@@ -35,6 +35,23 @@ def mark_as_test(subject, text, html, original_to):
     return f'[TEST] {subject}', f'[Wiadomość testowa — pierwotny adresat: {original_to}]\n\n{text}', html
 
 
+def delivery_description() -> str:
+    """Czym serwer faktycznie wysyła pocztę — do panelu ustawień (diagnoza „nie dostałem e-maila”)."""
+    path = settings.MAILERS['delivery']['BACKEND']
+    if 'emaillabs' in path:
+        ok = bool(settings.EMAILLABS_APP_KEY and settings.EMAILLABS_SECRET_KEY and settings.EMAILLABS_SMTP)
+        return ('EmailLabs (API)' if ok else 'EmailLabs — brak EMAILLABS_SMTP lub kluczy w .env, wysyłka się nie powiedzie')
+    if 'console' in path:
+        return 'konsola serwera (tryb deweloperski) — e-maile nie wychodzą na zewnątrz'
+    if 'locmem' in path:
+        return 'pamięć (testy automatyczne)'
+    if 'smtp' in path:
+        opts = settings.MAILERS['delivery'].get('OPTIONS', {})
+        return (f'SMTP {opts.get("host", "localhost")}:{opts.get("port", 25)} — jeśli to nie jest skonfigurowany serwer '
+                'poczty, ustaw EMAILLABS_APP_KEY, EMAILLABS_SECRET_KEY i EMAILLABS_SMTP w .env')
+    return path
+
+
 def is_captured(address: str) -> bool:
     domain = parseaddr(address)[1].rpartition('@')[2].lower()
     return any(domain == d.lstrip('.') or domain.endswith(d if d.startswith('.') else '.' + d)
@@ -73,6 +90,7 @@ class OutboxBackend(BaseEmailBackend):
             OutgoingEmail.objects.create(
                 institution_id=headers.get('X-KompetIQ-Institution') or None,
                 recipient_id=headers.get('X-KompetIQ-Recipient') or None,
+                sender_id=headers.get('X-KompetIQ-Sender') or None,
                 from_email=m.from_email or settings.DEFAULT_FROM_EMAIL, to=', '.join(m.to)[:1000],
                 delivered_to=', '.join(targets)[:1000] if status != OutgoingEmail.Status.CAPTURED else '',
                 subject=m.subject[:255], body_text=m.body, body_html=html, status=status, error=error)

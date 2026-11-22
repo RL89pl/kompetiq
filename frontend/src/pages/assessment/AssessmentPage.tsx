@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useAssessment, useCompetencyModel, useForms, useMe } from '../../api/hooks'
 import { AssistantDrawer } from '../../components/AssistantDrawer'
-import { MessageBox } from '../../components/MessageBox'
+import { MessageDialog } from '../../components/MessageBox'
 import { Badge, Button, Loading, Notice } from '../../components/ui'
 import { fmtDate } from '../../lib'
 import { stepsFor } from './steps'
@@ -74,14 +74,10 @@ export function AssessmentPage() {
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => setMsg((v) => !v)} aria-expanded={msg}>Wiadomość</Button>
+            <Button variant="secondary" onClick={() => setMsg(true)} aria-haspopup="dialog">Wiadomość</Button>
             <Button variant="ai" onClick={() => setDrawer(true)}>Zapytaj asystenta</Button>
           </div>
-          {msg && me.data?.active_membership && (
-            <div className="w-80 rounded-md border border-rule-strong bg-white p-4">
-              <MessageBox assessmentId={as.id} role={me.data.active_membership.role} isEvaluator={me.data.id === as.evaluator} />
-            </div>
-          )}
+          {msg && <MessageDialog assessmentId={as.id} employeeName={as.employee_detail.full_name} onClose={() => setMsg(false)} />}
         </div>
       </header>
 

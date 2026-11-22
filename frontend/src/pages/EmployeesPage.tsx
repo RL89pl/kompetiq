@@ -22,6 +22,7 @@ function StartButtons({ e, mode }: { e: Employee; mode: string | null }) {
       <div className="flex flex-wrap justify-end gap-2">
         {options.map((ft) => (
           <Button key={ft} variant={ft === 'FIRST' ? 'secondary' : 'primary'} busy={create.isPending && create.variables?.form_type === ft}
+            disabled={ft === 'FIRST' && !!e.first_assessment_block} disabledReason={ft === 'FIRST' ? e.first_assessment_block : null}
             onClick={() => create.mutate({ employee: e.id, form_type: ft }, { onSuccess: (a) => nav(`/oceny/${a.id}`) })}>
             Rozpocznij: {FORM_NAMES[ft]}
           </Button>

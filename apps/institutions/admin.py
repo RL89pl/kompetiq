@@ -55,10 +55,46 @@ class MembershipAdmin(admin.ModelAdmin):
 @admin.register(SystemSettings)
 class SystemSettingsAdmin(admin.ModelAdmin):
     """Jeden rekord ustawień: lista od razu otwiera formularz."""
-    fieldsets = [('Poczta e-mail', {'fields': ('email_test_mode', 'email_test_address'),
+    fieldsets = [('Poczta e-mail', {'fields': ('email_test_mode', 'email_test_address', 'delivery'),
                                    'description': 'Na czas testów wszystkie e-maile z systemu mogą trafiać na jeden '
                                                   'wskazany adres. Kopia każdej wiadomości jest też w „Skrzynce '
                                                   'testowej” w aplikacji.'})]
+    readonly_fields = ('delivery',)
+    change_form_template = 'admin/institutions/systemsettings/change_form.html'
+
+    @admin.display(description='Wysyłka poczty na serwerze')
+    def delivery(self, obj):
+        from kompetiq.mail import delivery_description
+        return delivery_description()
+
+    def get_urls(self):
+        return [path('send-test/', self.admin_site.admin_view(self.send_test), name='institutions_systemsettings_send_test'),
+                *super().get_urls()]
+
+    def send_test(self, request):
+        """Wysyła jeden e-mail próbny na adres testowy (albo adres zalogowanego) i pokazuje wynik z błędem dostawcy."""
+        from django.core.mail import EmailMultiAlternatives
+        from apps.deadlines.models import OutgoingEmail
+        if request.method != 'POST' or not request.user.is_superuser:
+            raise PermissionDenied
+        obj = SystemSettings.load()
+        target = obj.email_test_address or request.user.email
+        if not target:
+            messages.error(request, 'Wpisz adres testowy (albo uzupełnij swój e-mail w koncie), aby wysłać próbę.')
+            return redirect('admin:institutions_systemsettings_change', obj.pk)
+        msg = EmailMultiAlternatives('KompetIQ: e-mail próbny', 'To jest e-mail próbny z panelu ustawień KompetIQ. '
+                                     'Skoro go widzisz, wysyłka poczty działa.', None, [target])
+        try:
+            msg.send()
+        except Exception:  # noqa: BLE001 — przyczynę zapisuje skrzynka testowa (OutgoingEmail.error)
+            pass
+        row = OutgoingEmail.objects.order_by('-id').first()
+        if row and row.status in (OutgoingEmail.Status.SENT, OutgoingEmail.Status.REDIRECTED):
+            messages.success(request, f'Wysłano e-mail próbny na {row.delivered_to}. Sprawdź skrzynkę (także SPAM).')
+        else:
+            messages.error(request, 'Nie udało się wysłać e-maila próbnego: '
+                                    f'{(row.error if row else "") or "adres w domenie testowej — e-mail został tylko zapisany w skrzynce testowej"}')
+        return redirect('admin:institutions_systemsettings_change', obj.pk)
 
     def changelist_view(self, request, extra_context=None):
         obj = SystemSettings.load()

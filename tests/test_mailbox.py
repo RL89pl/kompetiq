@@ -129,3 +129,58 @@ def test_settings_admin_opens_single_record(admin_client):
     r = admin_client.get('/admin/institutions/systemsettings/')
     assert r.status_code == 302 and r.url.endswith('/admin/institutions/systemsettings/1/change/')
     assert 'Tryb testowy poczty' in admin_client.get(r.url).content.decode()
+
+
+@override_settings(MAILERS=OUTBOX_MAILERS)
+def test_test_mode_sends_even_when_account_has_no_email(org):
+    from apps.institutions.models import SystemSettings
+    s = SystemSettings.load()
+    s.email_test_mode, s.email_test_address = True, 'tester@example.pl'
+    s.save()
+    mail.outbox = []
+    org.head.email = ''
+    org.head.save()
+    notify(org.head, institution=org.inst, kind=Notification.Kind.APPROVAL, title='Ocena czeka', sender=org.sup)
+    assert [m.to for m in mail.outbox] == [['tester@example.pl']]
+    row = OutgoingEmail.objects.get()
+    assert row.status == OutgoingEmail.Status.REDIRECTED and row.sender == org.sup
+    s.email_test_mode = False
+    s.save()
+    mail.outbox = []
+    notify(org.head, institution=org.inst, kind=Notification.Kind.APPROVAL, title='Bez adresu')
+    assert mail.outbox == []  # poza trybem testowym konto bez adresu nie dostaje e-maila
+
+
+@override_settings(MAILERS=OUTBOX_MAILERS)
+def test_sender_sees_own_message_email_in_mailbox(org, api):
+    org.hr.email = 'kadry@a.test'
+    org.hr.save()
+    a = api(org.sup).post('/api/v1/assessments/', {'employee': org.emp.id, 'form_type': 'PERIODIC_C'}, format='json').data
+    r = api(org.sup).get(f"/api/v1/assessments/{a['id']}/message/")
+    assert {x['key'] for x in r.data} == {'unit_head', 'hr'}  # przełożony nie pisze sam do siebie
+    assert api(org.sup).post(f"/api/v1/assessments/{a['id']}/message/", {'to': 'hr', 'message': 'Pytanie'},
+                             format='json').status_code == 201
+    box = api(org.sup).get('/api/v1/test-mailbox/').data
+    assert len(box) == 1 and box[0]['sent_by_me'] and 'kadry@a.test' in box[0]['to']
+
+
+@override_settings(MAILERS=OUTBOX_MAILERS)
+def test_settings_admin_sends_test_email(admin_client):
+    from apps.institutions.models import SystemSettings
+    s = SystemSettings.load()
+    s.email_test_mode, s.email_test_address = True, 'tester@example.pl'
+    s.save()
+    mail.outbox = []
+    page = admin_client.get('/admin/institutions/systemsettings/1/change/').content.decode()
+    assert 'Wyślij e-mail testowy' in page and 'Wysyłka poczty na serwerze' in page
+    r = admin_client.post('/admin/institutions/systemsettings/send-test/')
+    assert r.status_code == 302 and [m.to for m in mail.outbox] == [['tester@example.pl']]
+
+
+def test_first_assessment_only_in_first_employment_period(org, api):
+    # org.emp pracuje od ponad 2 lat — termin pierwszej oceny minął
+    r = api(org.sup).post('/api/v1/assessments/', {'employee': org.emp.id, 'form_type': 'FIRST'}, format='json')
+    assert r.status_code == 400 and 'Termin pierwszej oceny minął' in str(r.data)
+    emp = api(org.sup).get('/api/v1/employees/').data
+    by = {e['id']: e for e in emp}
+    assert by[org.emp.id]['first_assessment_block'] and by[org.new.id]['first_assessment_block'] == ''

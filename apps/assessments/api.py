@@ -18,7 +18,7 @@ from .checklist import build_checklist
 from .forms_config import FORMS, FormType
 from .models import Assessment, AssessmentCriterion, BehavioralEvidence, IndicatorRating, Status
 from .scoring import suggest_points_from_indicator_levels
-from .services import AssessmentError, create_assessment, set_additional_criteria
+from .services import AssessmentError, create_assessment, first_assessment_block, set_additional_criteria
 
 
 def forms_payload():
@@ -218,6 +218,8 @@ class AssessmentViewSet(InstitutionScopedMixin, mixins.ListModelMixin, mixins.Re
             raise PermissionDenied('Ocenę rozpoczyna bezpośredni przełożony pracownika.')
         if emp.assessments.exclude(status__in=[Status.ACKNOWLEDGED, Status.CANCELLED]).exists():
             raise ValidationError('Pracownik ma już ocenę w toku.')
+        if ser.validated_data['form_type'] == FormType.FIRST and (why := first_assessment_block(emp)):
+            raise ValidationError(why)
         try:
             a = create_assessment(institution=m.institution, employee=emp, evaluator=request.user,
                                   form_type=ser.validated_data['form_type'])

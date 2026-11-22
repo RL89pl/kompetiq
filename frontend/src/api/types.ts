@@ -61,6 +61,8 @@ export interface Employee {
   suggested_form: FormType
   latest_job_description: JobDescription | null
   active_assessment: { id: number; status: Status; form_type: FormType } | null
+  /** Pusty, gdy można rozpocząć pierwszą ocenę; inaczej powód. */
+  first_assessment_block: string
 }
 
 export interface LevelText { level: number; text: string }
@@ -422,4 +424,10 @@ export interface OutgoingEmail {
   status: 'CAPTURED' | 'SENT' | 'REDIRECTED' | 'FAILED'
   status_label: string
   created_at: string
+  /** E-mail do innej osoby, wysłany w wyniku Twojego działania (np. Twojej wiadomości). */
+  sent_by_me: boolean
+  /** Przyczyna nieudanej wysyłki (status FAILED). */
+  error: string
 }
+
+export interface MessageRecipient { key: 'evaluator' | 'unit_head' | 'hr'; label: string; hint: string; names: string[] }
