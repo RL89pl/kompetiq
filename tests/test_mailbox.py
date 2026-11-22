@@ -162,6 +162,14 @@ def test_sender_sees_own_message_email_in_mailbox(org, api):
                              format='json').status_code == 201
     box = api(org.sup).get('/api/v1/test-mailbox/').data
     assert len(box) == 1 and box[0]['sent_by_me'] and 'kadry@a.test' in box[0]['to']
+    # administrator nie dostaje kopii wiadomości „do kadr” (w trybie testowym byłby to drugi, identyczny e-mail)
+    adm = make_user(org.inst, 'adm2', Role.ADMIN)
+    adm.email = 'adm2@a.test'
+    adm.save()
+    names = api(org.sup).get(f"/api/v1/assessments/{a['id']}/message/").data
+    assert next(x for x in names if x['key'] == 'hr')['names'] == ['Hr Test']
+    api(org.sup).post(f"/api/v1/assessments/{a['id']}/message/", {'to': 'hr', 'message': 'Drugie'}, format='json')
+    assert OutgoingEmail.objects.count() == 2 and not OutgoingEmail.objects.filter(recipient=adm).exists()
 
 
 @override_settings(MAILERS=OUTBOX_MAILERS)

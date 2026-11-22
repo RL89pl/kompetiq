@@ -111,7 +111,7 @@ class AssessmentMessageView(APIView):
     def _recipients(request, a):
         """Adresaci dostępni dla bieżącego użytkownika (bez niego samego). Te same reguły przy GET i POST."""
         m = membership(request)
-        groups = {'unit_head': [unit_head_for(a)], 'hr': hr_users(a.institution)}
+        groups = {'unit_head': [unit_head_for(a)], 'hr': hr_users(a.institution, include_admins=False)}
         if m.role in (Role.HR, Role.ADMIN, Role.UNIT_HEAD):
             groups = {'evaluator': [a.evaluator], **groups}
         return {k: [u for u in users if u is not None and u.id != request.user.id] for k, users in groups.items()}

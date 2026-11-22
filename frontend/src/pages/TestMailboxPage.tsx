@@ -53,7 +53,8 @@ export function TestMailboxPage() {
                 {current.status === 'FAILED' && (
                   <p className="mt-2 rounded-md bg-bad-tint px-3 py-2 text-sm text-bad">
                     <b>Nie wysłano{current.delivered_to ? ` na ${current.delivered_to}` : ''}.</b> {current.error || 'Dostawca poczty zwrócił błąd.'}
-                    {' '}Sprawdź konfigurację poczty w panelu Django: Ustawienia systemu → „Wyślij e-mail testowy”.
+                    <span className="mt-1 block">To stan z chwili wysyłki ({when(current.created_at)}) — ten e-mail nie zostanie wysłany ponownie.
+                    Po poprawieniu konfiguracji sprawdź ją w panelu Django: Ustawienia systemu → „Wyślij e-mail testowy”.</span>
                   </p>
                 )}
               </header>

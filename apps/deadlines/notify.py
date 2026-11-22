@@ -48,9 +48,14 @@ def unit_head_for(a):
     return None
 
 
-def hr_users(institution):
-    return [m.user for m in Membership.objects.filter(institution=institution).filter(
-        Q(role=Role.HR) | Q(role=Role.ADMIN)).select_related('user')]
+def hr_users(institution, *, include_admins=True):
+    """Kadry urzędu. include_admins=False — wiadomość „do kadr”: tylko rola HR (administrator, gdy kadr brak),
+    żeby jedna wiadomość nie trafiała podwójnie do tej samej skrzynki w trybie testowym poczty."""
+    roles = Q(role=Role.HR) | Q(role=Role.ADMIN) if include_admins else Q(role=Role.HR)
+    users = [m.user for m in Membership.objects.filter(institution=institution).filter(roles).select_related('user')]
+    if not users and not include_admins:
+        return hr_users(institution)
+    return users
 
 
 def on_transition(a, action, user):
