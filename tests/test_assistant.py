@@ -331,3 +331,15 @@ def test_rate_limit_returns_retry_after_and_does_not_duplicate_question(org, api
     assert retry_after_seconds({'x-ratelimit-reset-tokens': '1m2.5s'}) == 62
     assert retry_after_seconds({'x-ratelimit-reset-requests': '7.66s'}) == 8
     assert retry_after_seconds({}) == 20
+
+
+def test_prompts_carry_current_date_and_period(org, api, fake):
+    from datetime import date
+    from apps.assistant.service import date_note
+    p = fake(lambda s, pr: schemas.GuidingQuestions(items=[]))
+    a = create(api, org.sup, org.emp)
+    crit = a['criteria'][0]
+    api(org.sup).post(f"/api/v1/assessments/{a['id']}/assistant/guiding-questions/", {'criterion': crit['id']}, format='json')
+    assert f"Dzisiejsza data: {date.today():%d.%m.%Y}" in p.calls[0]['prompt']
+    assert 'Nie wymyślaj lat' in p.calls[0]['prompt']
+    assert 'Okres' not in date_note(None)

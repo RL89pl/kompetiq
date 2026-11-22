@@ -33,6 +33,10 @@ def jd_from_osp(employee, filename):
         requirements='Kompetencje miękkie: ' + ', '.join(osp.soft_competencies))
 from apps.institutions.models import Institution, Membership, OrgUnit, Role
 
+# „w marcu”, „w lipcu” — nazwa miesiąca zgodna z datą przykładu (daty demo liczone są od dnia resetu)
+MONTH_IN = ['w styczniu', 'w lutym', 'w marcu', 'w kwietniu', 'w maju', 'w czerwcu', 'w lipcu', 'w sierpniu',
+            'we wrześniu', 'w październiku', 'w listopadzie', 'w grudniu']
+
 User = get_user_model()
 # Domena testowa (RFC 2606): poczta kont demo trafia tylko do skrzynki testowej w aplikacji.
 DEMO_EMAIL_DOMAIN = 'urzad-demo.test'
@@ -124,9 +128,10 @@ class Command(BaseCommand):
         a1.save()
         wsp = a1.criteria.get(competency__code='wspolpraca')
         inds = list(wsp.selected_indicators.all())
+        ev_date = today - timedelta(days=120)
         BehavioralEvidence.objects.create(
-            criterion=wsp, indicator=inds[0], occurred_on=today - timedelta(days=120), created_by=sup,
-            situation='W marcu wydział miał opóźnienie w aktualizacji krajowego planu reagowania na incydenty — trzy rozdziały wymagały uzgodnień z CSIRT NASK i RCB.',
+            criterion=wsp, indicator=inds[0], occurred_on=ev_date, created_by=sup,
+            situation=f'{MONTH_IN[ev_date.month - 1].capitalize()} wydział miał opóźnienie w aktualizacji krajowego planu reagowania na incydenty — trzy rozdziały wymagały uzgodnień z CSIRT NASK i RCB.',
             action='Zaproponowała podział rozdziałów między członków zespołu, przejęła uzgodnienia z CSIRT NASK i zorganizowała wspólne spotkanie robocze.',
             result='Projekt aktualizacji przekazano kierownictwu w terminie, z uwagami CSIRT uwzględnionymi w jednej rundzie.')
         BehavioralEvidence.objects.create(

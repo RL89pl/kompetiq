@@ -3,6 +3,8 @@ import hashlib
 import json
 import re
 
+from django.utils import timezone
+
 from apps.assessments.models import Assessment, AssessmentCriterion
 from apps.competencies.models import LEVEL_LABELS
 
@@ -56,8 +58,27 @@ def address_note(a):
     return prompts.ADDRESS_NOTES.get(a.employee.form_of_address or '', prompts.ADDRESS_NOTES[''])
 
 
+def assessment_period(a):
+    """(od, do) okresu, którego dotyczy ocena — do osadzenia dat w odpowiedziach AI."""
+    if a is None:
+        return None, None
+    if a.is_first:
+        return a.employee.employment_date, a.window_to or a.due_date
+    return a.period_from or a.criteria_interview_date or a.previous_date, a.period_to or a.due_date
+
+
+def date_note(a=None, today=None):
+    """Model nie zna bieżącej daty — bez tej informacji w przykładach wpisuje lata ze swoich danych treningowych."""
+    today = today or timezone.localdate()
+    start, end = assessment_period(a)
+    period = (f' Okres, którego dotyczy ocena: od {start:%d.%m.%Y} do {(end or today):%d.%m.%Y}.' if start else '')
+    return (f'Dzisiejsza data: {today:%d.%m.%Y}.{period} Gdy podajesz daty lub lata (np. w przykładach zachowań, '
+            'pytaniach lub scenariuszu), używaj wyłącznie dat z materiału oceny albo z tego okresu. Nie wymyślaj '
+            'lat ani dat spoza okresu; jeśli data nie jest znana, pisz bez daty (np. „w ocenianym okresie”).')
+
+
 def _run_structured(request, assessment, feature, prompt, schema, effort='medium', codes=None, levels=True):
-    prompt = f'{prompt}\n\n{address_note(assessment)}'
+    prompt = f'{prompt}\n\n{address_note(assessment)}\n\n{date_note(assessment)}'
     try:
         result = get_provider().structured(system=_system(assessment.competency_model, codes, levels), prompt=prompt,
                                            schema=schema, effort=effort)
@@ -277,7 +298,7 @@ def chat(request, conv: Conversation, text: str):
             return Message.objects.create(conversation=conv, role=Message.Role.ASSISTANT,
                                           content=prompts.NO_SOURCES_ANSWER, grounded=False)
         prompt = prompts.CHAT_FORMAL.format(context=_formal_context(a), question=question)
-        prompt += f'\n\n{address_note(a) if a is not None else prompts.READER_NOTE}'
+        prompt += f'\n\n{address_note(a) if a is not None else prompts.READER_NOTE}\n\n{date_note(a)}'
         feature = 'chat_formal'
     else:
         if a is None:
@@ -285,7 +306,7 @@ def chat(request, conv: Conversation, text: str):
         material = _assessment_material(a, anon)
         docs = [{'title': 'Materiał z oceny', 'text': material}] + [
             d for (s_, _), d in zip(scored, docs) if s_ >= threshold][:4]
-        prompt = prompts.CHAT_INTERVIEW.format(question=question) + f'\n\n{address_note(a)}'
+        prompt = prompts.CHAT_INTERVIEW.format(question=question) + f'\n\n{address_note(a)}\n\n{date_note(a)}'
         feature = 'chat_interview'
 
     from apps.competencies.models import CompetencyModel
