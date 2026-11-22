@@ -65,6 +65,13 @@ Podgląd nie wywołuje modelu i nic nie zapisuje — działa także bez dostępu
 
 `kadry`: statusy, etapy, komórki, oceny po terminie, „Przypomnij” przy ocenie, „Wyślij przypomnienia o terminach”.
 
+## Osoby bez żadnej oceny (gotowe po każdym resecie)
+
+- **Michał Zając**, młodszy referent, zatrudniony 12 dni przed resetem: **Rozpocznij: Pierwsza ocena**. Rozmowa
+  wstępna jest jeszcze w terminie 21 dni (§ 3 rozporządzenia z 2015 r.), aplikacja wylicza termin sprawozdania i okres oceny.
+- **Agnieszka Wróbel**, specjalistka (arkusz C): **Rozpocznij: Okresowa, arkusz C**. W kroku „Ustalenie kryteriów”
+  wpisz datę poprzedniej oceny, np. sprzed 23 miesięcy, a aplikacja zaproponuje termin 24 miesięcy (art. 81 ust. 4 ustawy).
+
 ## Nowy pracownik od zera
 
 1. Zaloguj się jako **kadry** → **Pracownicy → Dodaj pracownika**.

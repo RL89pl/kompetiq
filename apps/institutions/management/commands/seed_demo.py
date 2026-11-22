@@ -47,6 +47,9 @@ współpraca z innymi komórkami przy sprawach złożonych, przygotowywanie zest
 JD_LEADER = """Kierowanie zespołem 6 osób ds. obsługi klienta, planowanie i rozdzielanie zadań, monitorowanie terminowości
 spraw, ocena pracowników i ich rozwój, rozpatrywanie skarg, udział w negocjacjach z wykonawcami usług,
 przygotowywanie sprawozdań kwartalnych, reprezentowanie urzędu na spotkaniach z interesariuszami."""
+JD_JUNIOR = """Przyjmowanie i rejestrowanie wniosków o zezwolenia, sprawdzanie kompletności dokumentów według listy
+kontrolnej, przygotowywanie wezwań do uzupełnienia braków, udzielanie informacji wnioskodawcom o stanie sprawy,
+prowadzenie rejestru spraw w systemie EZD."""
 JD_NEW = """Obsługa korespondencji wpływającej, wprowadzanie danych do systemu EZD, przygotowywanie projektów odpowiedzi
 w sprawach prostych, archiwizacja dokumentacji, wsparcie zespołu w organizacji szkoleń."""
 
@@ -117,6 +120,20 @@ class Command(BaseCommand):
                                      last_name='Kowalczyk', position='Radca', is_civil_servant=True,
                                      service_grade='starszy radca', employment_date=today - timedelta(days=1500))
         jd_from_osp(e4, 'OSP DSI WWI 5 radca.docx')
+
+        # Dwie osoby bez żadnej oceny — do pokazania całej ścieżki od pierwszego kliknięcia „Rozpocznij”.
+        # Michał Zając: nowo zatrudniony (12 dni) — rozmowa wstępna jeszcze w terminie 21 dni (§ 3 rozp. z 2015 r.).
+        e5_start = today - timedelta(days=12)
+        e5 = Employee.objects.create(institution=inst, org_unit=team, supervisor=sup, first_name='Michał', form_of_address='PAN',
+                                     last_name='Zając', position='Młodszy referent ds. zezwoleń', employment_date=e5_start,
+                                     contract_end_date=add_months(e5_start, 12) - timedelta(days=1))
+        JobDescription.objects.create(employee=e5, main_duties=JD_JUNIOR)
+        # Agnieszka Wróbel: zatrudniona na czas nieokreślony, arkusz C. Datę poprzedniej oceny przełożony wpisuje
+        # w kroku „Ustalenie kryteriów” — aplikacja proponuje wtedy termin 24 miesięcy (art. 81 ust. 4 ustawy).
+        e6 = Employee.objects.create(institution=inst, org_unit=team, supervisor=sup, first_name='Agnieszka',
+                                     form_of_address='PANI', last_name='Wróbel', position='Specjalista ds. zezwoleń',
+                                     is_civil_servant=False, employment_date=today - timedelta(days=1300))
+        JobDescription.objects.create(employee=e6, main_duties=JD_SPECIALIST)
 
         # Ocena okresowa C w toku — z przykładami zachowań
         a1 = create_assessment(institution=inst, employee=e1, evaluator=sup, form_type=FormType.PERIODIC_C,

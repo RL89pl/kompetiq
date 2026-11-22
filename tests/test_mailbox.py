@@ -73,6 +73,14 @@ def test_seed_demo_reset_restores_initial_state(competency_model):
     assert not OutgoingEmail.objects.exists()
     assert get_user_model().objects.filter(username='przelozony').count() == 1
     assert get_user_model().objects.get(username='przelozony').check_password('Demo-haslo-2026!')
+    # po resecie na liście są też dwie osoby bez żadnej oceny: do pierwszej i do okresowej
+    from apps.assessments.services import first_assessment_block
+    from apps.employees.models import Employee
+    zajac = Employee.objects.get(institution=inst, last_name='Zając')
+    wrobel = Employee.objects.get(institution=inst, last_name='Wróbel')
+    assert not zajac.assessments.exists() and not wrobel.assessments.exists()
+    assert first_assessment_block(zajac) == '' and first_assessment_block(wrobel)
+    assert {zajac.supervisor.username, wrobel.supervisor.username} == {'przelozony'}
 
 
 def test_admin_reset_view_only_for_superuser(client, competency_model, monkeypatch):
